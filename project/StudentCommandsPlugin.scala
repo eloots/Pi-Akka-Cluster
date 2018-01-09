@@ -2,6 +2,7 @@ package sbtstudent
 
 import sbt.Keys._
 import sbt._
+import stbstudent.MPSelection
 
 import scala.Console
 
@@ -15,7 +16,7 @@ object StudentCommandsPlugin extends AutoPlugin {
     Seq(
       commands in Global ++=
         Seq(
-          Man.man
+          Man.man, MPSelection.activateAllExercises, MPSelection.setActiveExerciseNr
         ),
       onLoad in Global := {
         val state = (onLoad in Global).value
