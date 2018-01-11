@@ -30,6 +30,8 @@ class LEDStatusIndicator(pollingInterval: FiniteDuration,
   private val thisHost = context.system.settings.config.getString("akka.remote.netty.tcp.hostname")
   log.debug(s"Starting LED Status indicator on $thisHost")
 
+  var pendingPolls = 0
+
   override def receive: Receive = uninitialised()
 
   def uninitialised(): Receive = akka.actor.Actor.emptyBehavior
@@ -41,15 +43,21 @@ class LEDStatusIndicator(pollingInterval: FiniteDuration,
   }
 
   def running(pixel: Adafruit_NeoPixel.type, requestChannel: ActorRef): Receive = {
+    case PollNode if pendingPolls >= 3 =>
+      resetAllLeds(pixel)
+      requestChannel ! "sendStatusUpdate"
+
     case PollNode =>
+      pendingPolls += 1
       requestChannel ! "sendStatusUpdate"
 
     case LedUpdate(ledUpdates) =>
+      pendingPolls = 0
       ledUpdates.zipWithIndex.foreach {
         case (color, ledIndex) =>
           pixel.setPixelColor(ledIndex, color)
-          pixel.show()
       }
+      pixel.show()
   }
 
   override def preStart(): Unit = {
@@ -83,7 +91,7 @@ class LEDStatusIndicator(pollingInterval: FiniteDuration,
     val strip = Adafruit_NeoPixel(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS, LED_CHANNEL, LED_STRIP)
     strip.begin()
     resetAllLeds(strip)
-    strip.setBrightness(10)
+    strip.setBrightness(3)
     strip
   }
 }

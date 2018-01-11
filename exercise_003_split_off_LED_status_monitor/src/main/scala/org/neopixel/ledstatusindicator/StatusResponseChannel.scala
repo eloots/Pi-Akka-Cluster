@@ -28,9 +28,9 @@ class StatusResponseChannel(ledStatusIndicatorAddress: InetSocketAddress) extend
   def ready(socket: ActorRef): Receive = {
     case Udp.Received(data, remote) =>
       data.copyToArray(buf, 0, 32)
-//      log.debug(s"Received status from ${remote.getHostName}: ${remote.getPort} : ${buf.toList}")
+      // log.debug(s"Received status from ${remote.getHostName}: ${remote.getPort} : ${buf.toList}")
       val ledUpdates =
-        buf.toList
+        buf
           .sliding(4, 4)
           .map(toLedColor)
           .toList
@@ -43,10 +43,14 @@ class StatusResponseChannel(ledStatusIndicatorAddress: InetSocketAddress) extend
       context.stop(self)
   }
 
-  protected def toLedColor(colorComponents: List[Byte]): Long = {
-    colorComponents.foldLeft(0L) {
-      case (tally, component) => tally << 8 | component
-    }
+  protected def toLedColor(colorComponents: Array[Byte]): Long = {
+    import java.nio.ByteBuffer
+
+    val bb = ByteBuffer.wrap(colorComponents.reverse)
+    bb.order(java.nio.ByteOrder.nativeOrder())
+    val l = bb.getInt
+    bb.clear()
+    l
   }
 
 }

@@ -97,7 +97,7 @@ class ClusterStatusTracker(clusterNodeAddress: InetSocketAddress, ledStatusIndic
     case MemberRemoved(member, previousStatus) =>
       nodeState.update(HostToLedMapping(member.address.host.get), LED_Red)
       printNodeState(log, nodeState)
-      log.debug(s"~~~> Member Joined: $member with previous status: $previousStatus")
+      log.debug(s"~~~> Member Removed: $member with previous status: $previousStatus")
 
     case MemberWeaklyUp(member) =>
       log.debug(s"~~~> Member Weakly Up: $member")

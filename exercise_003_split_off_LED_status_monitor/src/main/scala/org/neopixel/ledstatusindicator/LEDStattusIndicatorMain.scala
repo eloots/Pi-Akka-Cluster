@@ -15,6 +15,6 @@ object Main {
     val ledStatusIndicatorAddress = new InetSocketAddress("localhost", 2501)
 
     val lEDStatusIndicator =
-      system.actorOf(LEDStatusIndicator.props(1000.milliseconds, clusterNodeAddress, ledStatusIndicatorAddress), "led-status-indicator")
+      system.actorOf(LEDStatusIndicator.props(200.milliseconds, clusterNodeAddress, ledStatusIndicatorAddress), "led-status-indicator")
   }
 }
