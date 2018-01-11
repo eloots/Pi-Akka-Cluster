@@ -15,7 +15,7 @@ class StatusResponseChannel(ledStatusIndicatorAddress: InetSocketAddress) extend
 
   import context.system
 
-  val buf: Array[Byte] = Array.fill[Byte](32)(140.toByte)
+  val buf: Array[Byte] = Array.fill[Byte](32)(0.toByte)
 
   IO(Udp) ! Udp.Bind(self, ledStatusIndicatorAddress)
 
@@ -28,7 +28,7 @@ class StatusResponseChannel(ledStatusIndicatorAddress: InetSocketAddress) extend
   def ready(socket: ActorRef): Receive = {
     case Udp.Received(data, remote) =>
       data.copyToArray(buf, 0, 32)
-      log.debug(s"Received status from ${remote.getHostName}: ${remote.getPort} : ${buf.toList}")
+//      log.debug(s"Received status from ${remote.getHostName}: ${remote.getPort} : ${buf.toList}")
       val ledUpdates =
         buf.toList
           .sliding(4, 4)

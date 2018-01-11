@@ -1,12 +1,18 @@
 package org.neopixel
 
-import akka.actor.{Actor, ActorLogging, Props}
+import java.net.InetSocketAddress
+
+import akka.actor.{Actor, ActorLogging, ActorRef, Props}
 import akka.cluster.{Cluster, Member}
 import akka.cluster.ClusterEvent._
 import akka.cluster.MemberStatus.Up
+import akka.event.LoggingAdapter
 import neopixel.{rpi_ws281xConstants => wsC}
 
 object ClusterStatusTracker {
+
+  case object SendUpdatedStatus
+  case class NodeUpdate(updates: List[Long])
 
   // LED strip configuration:
   val LED_COUNT = 8 // Number of LED pixels.
@@ -53,23 +59,28 @@ object ClusterStatusTracker {
       "192.168.0.105" -> 3
     )
 
-  def props(): Props = Props(new ClusterStatusTracker)
+  def props(clusterNodeAddress: InetSocketAddress, ledStatusIndicatorAddress: InetSocketAddress): Props =
+    Props(new ClusterStatusTracker(clusterNodeAddress, ledStatusIndicatorAddress))
 }
 
-class ClusterStatusTracker extends Actor with ActorLogging {
+class ClusterStatusTracker(clusterNodeAddress: InetSocketAddress, ledStatusIndicatorAddress: InetSocketAddress) extends Actor with ActorLogging {
   import ClusterStatusTracker._
 
   private val thisHost = context.system.settings.config.getString("akka.remote.netty.tcp.hostname")
   log.debug(s"Starting ClusterStatus Actor on $thisHost")
 
+  private val nodeState = Array.fill(8)(0L)
+
   override def receive: Receive = idle
 
   def idle: Receive = akka.actor.Actor.emptyBehavior
 
-  def running(strip: Adafruit_NeoPixel.type): Receive = {
+  def running(clusterStatusLEDRequestOutChannel: ActorRef): Receive = {
+    case SendUpdatedStatus => clusterStatusLEDRequestOutChannel ! NodeUpdate(nodeState.toList)
+
     case MemberUp(member) =>
-      strip.setPixelColor(HostToLedMapping(member.address.host.get), LED_Green)
-      strip.show()
+      nodeState.update(HostToLedMapping(member.address.host.get), LED_Green)
+      printNodeState(log, nodeState)
       log.debug(s"~~~> Member Up: $member")
 
     case MemberLeft(member) =>
@@ -79,50 +90,58 @@ class ClusterStatusTracker extends Actor with ActorLogging {
       log.debug(s"~~~> Member Exited: $member")
 
     case MemberJoined(member) =>
-      strip.setPixelColor(HostToLedMapping(member.address.host.get), LED_Yellow)
-      strip.show()
+      nodeState.update(HostToLedMapping(member.address.host.get), LED_Yellow)
+      printNodeState(log, nodeState)
       log.debug(s"~~~> Member Joined: $member")
 
     case MemberRemoved(member, previousStatus) =>
-      strip.setPixelColor(HostToLedMapping(member.address.host.get), LED_Red)
-      strip.show()
+      nodeState.update(HostToLedMapping(member.address.host.get), LED_Red)
+      printNodeState(log, nodeState)
       log.debug(s"~~~> Member Joined: $member with previous status: $previousStatus")
 
     case MemberWeaklyUp(member) =>
       log.debug(s"~~~> Member Weakly Up: $member")
 
     case ReachableMember(member) if member.status == Up =>
-      strip.setPixelColor(HostToLedMapping(member.address.host.get), LED_Green)
-      strip.show()
+      nodeState.update(HostToLedMapping(member.address.host.get), LED_Green)
+      printNodeState(log, nodeState)
       log.debug(s"~~~> Member Reachable: $member")
 
     case UnreachableMember(member) =>
-      strip.setPixelColor(HostToLedMapping(member.address.host.get), LED_WhiteLow)
-      strip.show()
+      nodeState.update(HostToLedMapping(member.address.host.get), LED_WhiteLow)
+      printNodeState(log, nodeState)
       log.debug(s"~~~> Member Unreachable: $member")
 
     case LeaderChanged(Some(leader)) if leader.host.getOrElse("") == thisHost =>
-      strip.setPixelColor(LeaderLedNumber, LED_Cyan)
-      strip.show()
+      nodeState.update(LeaderLedNumber, LED_Cyan)
+      printNodeState(log, nodeState)
       log.debug(s"~~~> Leader Changed: $leader")
 
     case LeaderChanged(Some(leader)) =>
-      strip.setPixelColor(LeaderLedNumber, LED_Black)
-      strip.show()
+      nodeState.update(LeaderLedNumber, LED_Black)
+      printNodeState(log, nodeState)
       log.debug(s"~~~> Leader Changed: $leader")
 
     case event =>
       log.debug(s"~~~> UNHANDLED CLUSTER DOMAIN EVENT: $event")
   }
 
-  override def preStart(): Unit =
+  override def preStart(): Unit = {
     Cluster(context.system).subscribe(self, InitialStateAsEvents, classOf[ClusterDomainEvent])
 
-    val strip = Adafruit_NeoPixel(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS, LED_CHANNEL, LED_STRIP)
-    strip.begin()
-    resetAllLeds(strip)
-    context.become(running(strip))
+    val clusterStatusLEDRequestInChannel =
+      context.actorOf(ClusterStatusLEDRequestInChannel.props(clusterNodeAddress), "cluster-status-request-in-channel")
+    val clusterStatusLEDRequestOutChannel =
+      context.actorOf(ClusterStatusLEDRequestOutChannel.props(ledStatusIndicatorAddress), "cluster-status-request-out-channel")
+
+    context.become(running(clusterStatusLEDRequestOutChannel))
+    super.preStart()
+  }
 
   override def postStop(): Unit =
     Cluster(context.system).unsubscribe(self)
+
+  private def printNodeState(log: LoggingAdapter, nodeState: Array[Long]): Unit = {
+//    log.debug(s"ClusterStateTracker: NodeState = ${nodeState.toList}")
+  }
 }
