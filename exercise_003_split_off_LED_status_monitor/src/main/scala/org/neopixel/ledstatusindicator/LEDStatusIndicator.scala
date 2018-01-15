@@ -57,7 +57,7 @@ class LEDStatusIndicator(pollingInterval: FiniteDuration,
         case (color, ledIndex) =>
           pixel.setPixelColor(ledIndex, color)
       }
-      pixel.show()
+      pixel.show(log)
   }
 
   override def preStart(): Unit = {
@@ -91,7 +91,7 @@ class LEDStatusIndicator(pollingInterval: FiniteDuration,
     val strip = Adafruit_NeoPixel(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS, LED_CHANNEL, LED_STRIP)
     strip.begin()
     resetAllLeds(strip)
-    strip.setBrightness(3)
+    strip.setBrightness(1)
     strip
   }
 }

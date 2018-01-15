@@ -30,19 +30,13 @@ object ClusterStatusTracker {
   val LED_Green = color(255, 0, 0)
   val LED_Red = color(0, 255, 0)
   val LED_Blue = color(0, 0, 255)
+  val LED_DarkBlue = color(0, 0, 100)
   val LED_Yellow = color(255, 255, 0)
   val LED_Cyan = color(255, 0, 255)
   val LED_Magenta = color(0, 255, 255)
   val LED_White = color(255, 255, 0)
   val LED_WhiteLow = color(100, 100, 100)
   val LeaderLedNumber = HighestLedIndex - 5
-
-  def resetAllLeds(strip: Adafruit_NeoPixel.type): Unit = {
-    for {
-      pixel <- 0 until strip.numPixels()
-    } strip.setPixelColor(pixel, LED_Black)
-    strip.show()
-  }
 
   val HostToLedMapping =
     Map(
@@ -80,10 +74,10 @@ class ClusterStatusTracker(clusterNodeAddress: InetSocketAddress, ledStatusIndic
 
     case MemberUp(member) =>
       nodeState.update(HostToLedMapping(member.address.host.get), LED_Green)
-      printNodeState(log, nodeState)
       log.debug(s"~~~> Member Up: $member")
 
     case MemberLeft(member) =>
+      nodeState.update(HostToLedMapping(member.address.host.get), LED_DarkBlue)
       log.debug(s"~~~> Member Left: $member")
 
     case MemberExited(member) =>
@@ -91,12 +85,10 @@ class ClusterStatusTracker(clusterNodeAddress: InetSocketAddress, ledStatusIndic
 
     case MemberJoined(member) =>
       nodeState.update(HostToLedMapping(member.address.host.get), LED_Yellow)
-      printNodeState(log, nodeState)
       log.debug(s"~~~> Member Joined: $member")
 
     case MemberRemoved(member, previousStatus) =>
       nodeState.update(HostToLedMapping(member.address.host.get), LED_Red)
-      printNodeState(log, nodeState)
       log.debug(s"~~~> Member Removed: $member with previous status: $previousStatus")
 
     case MemberWeaklyUp(member) =>
@@ -104,22 +96,18 @@ class ClusterStatusTracker(clusterNodeAddress: InetSocketAddress, ledStatusIndic
 
     case ReachableMember(member) if member.status == Up =>
       nodeState.update(HostToLedMapping(member.address.host.get), LED_Green)
-      printNodeState(log, nodeState)
       log.debug(s"~~~> Member Reachable: $member")
 
     case UnreachableMember(member) =>
       nodeState.update(HostToLedMapping(member.address.host.get), LED_WhiteLow)
-      printNodeState(log, nodeState)
       log.debug(s"~~~> Member Unreachable: $member")
 
     case LeaderChanged(Some(leader)) if leader.host.getOrElse("") == thisHost =>
       nodeState.update(LeaderLedNumber, LED_Cyan)
-      printNodeState(log, nodeState)
       log.debug(s"~~~> Leader Changed: $leader")
 
     case LeaderChanged(Some(leader)) =>
       nodeState.update(LeaderLedNumber, LED_Black)
-      printNodeState(log, nodeState)
       log.debug(s"~~~> Leader Changed: $leader")
 
     case event =>
@@ -127,7 +115,14 @@ class ClusterStatusTracker(clusterNodeAddress: InetSocketAddress, ledStatusIndic
   }
 
   override def preStart(): Unit = {
-    Cluster(context.system).subscribe(self, InitialStateAsEvents, classOf[ClusterDomainEvent])
+    Cluster(context.system)
+      .subscribe(
+        self,
+        InitialStateAsEvents,
+        classOf[LeaderChanged],
+        classOf[ReachabilityEvent],
+        classOf[MemberEvent]
+      )
 
     val clusterStatusLEDRequestInChannel =
       context.actorOf(ClusterStatusLEDRequestInChannel.props(clusterNodeAddress), "cluster-status-request-in-channel")
@@ -141,7 +136,4 @@ class ClusterStatusTracker(clusterNodeAddress: InetSocketAddress, ledStatusIndic
   override def postStop(): Unit =
     Cluster(context.system).unsubscribe(self)
 
-  private def printNodeState(log: LoggingAdapter, nodeState: Array[Long]): Unit = {
-//    log.debug(s"ClusterStateTracker: NodeState = ${nodeState.toList}")
-  }
 }

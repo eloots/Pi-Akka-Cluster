@@ -1,19 +1,55 @@
 package org
 
-import _root_.neopixel.{ rpi_ws281x => ws }
+import _root_.neopixel.{rpi_ws281x => ws}
 import _root_.neopixel.ws2811_t
-import _root_.neopixel.{ rpi_ws281xConstants => wsC}
-import _root_.neopixel.{ rpi_ws281xJNI => wsJ }
+import _root_.neopixel.{rpi_ws281xConstants => wsC}
+import _root_.neopixel.{rpi_ws281xJNI => wsJ}
 import _root_.neopixel.ws2811_channel_t
-import _root_.neopixel.{ ws2811_return_t => wsRet }
+import _root_.neopixel.{ws2811_return_t => wsRet}
+
+import scala.collection.mutable.ListBuffer
 
 package object neopixel {
+
+  val Black = color(0, 0, 0)
+  val Green = color(255, 0, 0)
+  val DarkGreen = color(100, 0, 0)
+  val Orange = color(255, 165, 0)
+  val DarkOrange = color(255, 140, 0)
+  val Red = color(0, 255, 0)
+  val DarkRed = color(0, 100, 0)
+  val Blue = color(0, 0, 255)
+  val DarkBlue = color(0, 0, 100)
+  val Yellow = color(255, 255, 0)
+  val Cyan = color(255, 0, 255)
+  val Magenta = color(0, 255, 255)
+  val White = color(255, 255, 0)
+  val WhiteLow = color(100, 100, 100)
+
+  val availableColorMap: Map[String, Long] =
+    Map(
+      "Black" -> Black,
+      "Green" -> Green,
+      "DarkGreen" -> DarkGreen,
+      "Orange" -> Orange,
+      "DarkOrange" -> DarkOrange,
+      "Red" -> Red,
+      "DarkRed" -> DarkRed,
+      "Blue" -> Blue,
+      "DarkBlue" -> DarkBlue,
+      "Yellow" -> Yellow,
+      "Cyan" -> Cyan,
+      "Magenta" -> Magenta,
+      "White" -> White,
+      "WhiteLow" -> WhiteLow
+    )
 
   def color(red: Int, green: Int, blue: Int, white: Int = 0): Long =
     (white << 24) | (red << 16)| (green << 8) | blue
 
   case class LED_Data (channel: ws2811_channel_t, size: Int) {
-    val ledData: Array[Long] = Array.fill[Long](size)(0L)
+//    val ledData: Array[Long] = Array.fill[Long](size)(0L)
+    val ledData = ListBuffer.fill[Long](size)(0L)
 
     def getitem(pos: Int): Long = ws.ws2811_led_get(channel, pos)
 

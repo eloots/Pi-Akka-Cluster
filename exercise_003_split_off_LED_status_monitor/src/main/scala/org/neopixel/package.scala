@@ -1,11 +1,12 @@
 package org
 
-import _root_.neopixel.{ rpi_ws281x => ws }
+import _root_.neopixel.{rpi_ws281x => ws}
 import _root_.neopixel.ws2811_t
-import _root_.neopixel.{ rpi_ws281xConstants => wsC}
-import _root_.neopixel.{ rpi_ws281xJNI => wsJ }
+import _root_.neopixel.{rpi_ws281xConstants => wsC}
+import _root_.neopixel.{rpi_ws281xJNI => wsJ}
 import _root_.neopixel.ws2811_channel_t
-import _root_.neopixel.{ ws2811_return_t => wsRet }
+import _root_.neopixel.{ws2811_return_t => wsRet}
+import akka.event.LoggingAdapter
 
 package object neopixel {
 
@@ -73,6 +74,15 @@ package object neopixel {
         val message = ws.ws2811_get_return_t_str(resp)
         println(s"ws2811_render failed with code $resp ($message)")
       }
+    }
+
+    def show(log: LoggingAdapter): Unit = {
+      val resp = ws.ws2811_render(leds)
+      if (resp != wsRet.WS2811_SUCCESS) {
+        val message = ws.ws2811_get_return_t_str(resp)
+        log.debug(s"ws2811_render failed with code $resp ($message)")
+      }
+      log.debug(s"Neopixel.show called")
     }
 
     def setPixelColor(n: Int, color: Long): Unit = {

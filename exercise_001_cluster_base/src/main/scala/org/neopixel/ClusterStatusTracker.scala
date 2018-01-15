@@ -1,6 +1,6 @@
 package org.neopixel
 
-import akka.actor.{Actor, ActorLogging, Props}
+import akka.actor.{Actor, ActorLogging, ActorRef, Props}
 import akka.cluster.{Cluster, Member}
 import akka.cluster.ClusterEvent._
 import akka.cluster.MemberStatus.Up
@@ -20,16 +20,8 @@ object ClusterStatusTracker {
 
   val HighestLedIndex = LED_COUNT - 1
 
-  val Black = color(0, 0, 0)
-  val Green = color(255, 0, 0)
-  val Red = color(0, 255, 0)
-  val Blue = color(0, 0, 255)
-  val Yellow = color(255, 255, 0)
-  val Cyan = color(255, 0, 255)
-  val Magenta = color(0, 255, 255)
-  val White = color(255, 255, 0)
-  val WhiteLow = color(100, 100, 100)
   val LeaderLedNumber = HighestLedIndex - 5
+  val HeartbeatLedNumber = HighestLedIndex - 7
 
   def resetAllLeds(strip: Adafruit_NeoPixel.type): Unit = {
     for {
@@ -53,76 +45,107 @@ object ClusterStatusTracker {
       "192.168.0.105" -> 3
     )
 
+  case object Heartbeat
+
   def props(): Props = Props(new ClusterStatusTracker)
 }
 
-class ClusterStatusTracker extends Actor with ActorLogging {
+class ClusterStatusTracker extends Actor with ActorLogging with SettingsActor {
   import ClusterStatusTracker._
+  import scala.concurrent.ExecutionContext.Implicits.global
 
   private val thisHost = context.system.settings.config.getString("akka.remote.netty.tcp.hostname")
   log.debug(s"Starting ClusterStatus Actor on $thisHost")
+
+  import scala.concurrent.duration._
+  import settings._
 
   override def receive: Receive = idle
 
   def idle: Receive = akka.actor.Actor.emptyBehavior
 
-  def running(strip: Adafruit_NeoPixel.type): Receive = {
-    case MemberUp(member) =>
-      strip.setPixelColor(HostToLedMapping(member.address.host.get), Green)
-      strip.show()
-      log.debug(s"~~~> Member Up: $member")
+  def running(strip: Adafruit_NeoPixel.type, hearbeatLEDOn: Boolean): Receive = {
+    case Heartbeat if hearbeatLEDOn =>
+      setPixelColorAndShow(strip, HeartbeatLedNumber, Black)
+      context.become(running(strip, hearbeatLEDOn = false))
 
-    case MemberLeft(member) =>
-      log.debug(s"~~~> Member Left: $member")
+    case Heartbeat =>
+      setPixelColorAndShow(strip, HeartbeatLedNumber, heartbeartIndicatorColor)
+      context.become(running(strip, hearbeatLEDOn = true))
 
-    case MemberExited(member) =>
-      log.debug(s"~~~> Member Exited: $member")
+    case msg @ MemberUp(member) =>
+      setPixelColorAndShow(strip, HostToLedMapping(member.address.host.get), nodeUpColor)
+      log.debug(s"$msg")
 
-    case MemberJoined(member) =>
-      strip.setPixelColor(HostToLedMapping(member.address.host.get), Yellow)
-      strip.show()
-      log.debug(s"~~~> Member Joined: $member")
+    case msg @ MemberLeft(member) =>
+      setPixelColorAndShow(strip, HostToLedMapping(member.address.host.get), nodeLeftColor)
+      log.debug(s"$msg")
 
-    case MemberRemoved(member, previousStatus) =>
-      strip.setPixelColor(HostToLedMapping(member.address.host.get), Red)
-      strip.show()
-      log.debug(s"~~~> Member Joined: $member with previous status: $previousStatus")
+    case msg @ MemberExited(member) =>
+      setPixelColorAndShow(strip, HostToLedMapping(member.address.host.get), nodeExitedColor)
+      log.debug(s"$msg")
 
-    case MemberWeaklyUp(member) =>
-      log.debug(s"~~~> Member Weakly Up: $member")
+    case msg @ MemberJoined(member) =>
+      setPixelColorAndShow(strip, HostToLedMapping(member.address.host.get), nodeJoinedColor)
+      log.debug(s"$msg")
 
-    case ReachableMember(member) if member.status == Up =>
-      strip.setPixelColor(HostToLedMapping(member.address.host.get), Green)
-      strip.show()
-      log.debug(s"~~~> Member Reachable: $member")
+    case msg @ MemberRemoved(member, previousStatus) =>
+      setPixelColorAndShow(strip, HostToLedMapping(member.address.host.get), nodeDownColor)
+      log.debug(s"$msg")
 
-    case UnreachableMember(member) =>
-      strip.setPixelColor(HostToLedMapping(member.address.host.get), WhiteLow)
-      strip.show()
-      log.debug(s"~~~> Member Unreachable: $member")
+    case msg @ MemberWeaklyUp(member) =>
+      setPixelColorAndShow(strip, HostToLedMapping(member.address.host.get), nodeWeaklyUpColor)
+      log.debug(s"$msg")
 
-    case LeaderChanged(Some(leader)) if leader.host.getOrElse("") == thisHost =>
-      strip.setPixelColor(LeaderLedNumber, Cyan)
-      strip.show()
-      log.debug(s"~~~> Leader Changed: $leader")
+    case msg @ ReachableMember(member) if member.status == Up =>
+      setPixelColorAndShow(strip, HostToLedMapping(member.address.host.get), nodeUpColor)
+      log.debug(s"$msg")
 
-    case LeaderChanged(Some(leader)) =>
-      strip.setPixelColor(LeaderLedNumber, Black)
-      strip.show()
-      log.debug(s"~~~> Leader Changed: $leader")
+    case msg @ UnreachableMember(member) =>
+      setPixelColorAndShow(strip, HostToLedMapping(member.address.host.get), nodeUnreachableColor)
+      log.debug(s"$msg")
+
+    case msg @ LeaderChanged(Some(leader)) if leader.host.getOrElse("") == thisHost =>
+      setPixelColorAndShow(strip, LeaderLedNumber, leaderIndicatorColor)
+      log.debug(s"$msg")
+
+    case msg @ LeaderChanged(Some(leader)) =>
+      setPixelColorAndShow(strip, LeaderLedNumber, Black)
+      log.debug(s"$msg")
+
+    case msg @ LeaderChanged(None) =>
+      setPixelColorAndShow(strip, LeaderLedNumber, Black)
+      log.debug(s"$msg")
 
     case event =>
       log.debug(s"~~~> UNHANDLED CLUSTER DOMAIN EVENT: $event")
+
   }
 
-  override def preStart(): Unit =
-    Cluster(context.system).subscribe(self, InitialStateAsEvents, classOf[ClusterDomainEvent])
-
+  override def preStart(): Unit = {
     val strip = Adafruit_NeoPixel(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS, LED_CHANNEL, LED_STRIP)
     strip.begin()
     resetAllLeds(strip)
-    context.become(running(strip))
+    Cluster(context.system)
+      .subscribe(self,
+        InitialStateAsEvents,
+        classOf[LeaderChanged],
+        classOf[ReachabilityEvent],
+        classOf[MemberEvent]
+      )
+    context.system.scheduler.schedule(0.millis, heartbeatIndicatorInterval, self, Heartbeat)
+    context.become(running(strip, hearbeatLEDOn = false))
 
-  override def postStop(): Unit =
+  }
+
+  override def postStop(): Unit = {
     Cluster(context.system).unsubscribe(self)
+  }
+
+  private def setPixelColorAndShow(strip: Adafruit_NeoPixel.type ,
+                                   ledNumber: Int,
+                                   ledColor: Long): Unit = {
+    strip.setPixelColor(ledNumber, ledColor)
+    strip.show()
+  }
 }

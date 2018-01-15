@@ -1,0 +1,5 @@
+#!/bin/ksh
+
+for node in 0 1 2 3 4;do
+  ssh pirate@node-${node} "sudo cp /dev/null neopixel.log"
+done

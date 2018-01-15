@@ -1,0 +1,7 @@
+#!/bin/ksh
+
+node=$1
+
+for node in $node;do
+  ssh pirate@node-${node} "sudo pkill -9 -f .\*004.\*"
+done
