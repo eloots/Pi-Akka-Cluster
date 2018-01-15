@@ -177,3 +177,5 @@ On node-1:
 sudo java -Djava.library.path=. -Dakka.remote.netty.tcp.port=2550 -Dakka.remote.netty.tcp.hostname=192.168.0.102 -jar exercise_001_cluster_base-assembly-1.3.0.jar com.neopixel.Main
 ```
 etc...
+
+> Note: The introduction of a heartbeat indicator has shown that there is an issue, probably in the Adafruit Neopixel driver library, that intermittently produces spurious updates on LED strips. This needs to be investigated to find the root cause.
