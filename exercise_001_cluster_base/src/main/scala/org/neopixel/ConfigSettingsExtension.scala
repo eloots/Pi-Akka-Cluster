@@ -50,7 +50,7 @@ class ConfigSettingsImpl(system: ExtendedActorSystem) extends Extension {
 
   val heartbeartIndicatorColor: Long =
     validateColor("cluster-status-indicator.cluster-heartbeat-indicator-color")
-  
+
   val heartbeatIndicatorInterval: FiniteDuration =
     Duration(system.settings.config.getDuration("cluster-status-indicator.cluster-heartbeat-indicator-interval", Millis), Millis)
 }

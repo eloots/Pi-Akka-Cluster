@@ -6,6 +6,20 @@ Start from standard _**Hypriot**_ [Raspberry Pi distro](http://blog.hypriot.com/
 
 Follow [instructions](http://blog.hypriot.com/getting-started-with-docker-and-mac-on-the-raspberry-pi/) on how to flash OS image to a micro SD card.
 
+> __Important__: Note the remark in the instructions that the first boot takes some time as it resizes the file system (allow for up to 3 minutes).
+
+> __Tip:__ In case you want to take a backup of your SD card (after customising it), use the lowest capacity you can get (e.g. 16GB or 32GB) _and_ a fast card. This will reduce the time to restore a backup to a (new) card.
+
+After the initial log-in, run the following command to set the 
+
+```
+$ sudo locale-gen UTF-8
+Generating locales (this might take a while)...
+  en_US.UTF-8... done
+Generation complete.
+```
+
+
 #### Update network configuration
 
 Original config:
@@ -109,7 +123,14 @@ Probably a good time to make a backup of what we have so far.
 
 ## Driving a NeoPixel 8-LED strip
 
-Download and build software for driving NeoPixels: [rpi_ws281x](https://github.com/jgarff/rpi_ws281x)
+Install build-tools (gcc, ...) & _swig_:
+
+```
+sudo apt install build-essential
+sudo apt-get install swig
+```
+
+__Download and build software__ (see instructions in README.md in the repo) for driving NeoPixels: [rpi_ws281x](https://github.com/jgarff/rpi_ws281x)
 
 Install JDK 8:
 
@@ -128,8 +149,11 @@ Nothing to configure.
 
 This tells us that `JAVA_HOME` is `/usr/lib/jvm/jdk-8-oracle-arm32-vfp-hflt`
 
+Download
+
 ```
 $ git clone git@github.com:jgarff/rpi_ws281x.git
+$ cd rpi_ws281x
 $ mkdir java
 $ cp python/*.i java
 $ cd java

@@ -13,7 +13,7 @@ package object neopixel {
 
   val Black = color(0, 0, 0)
   val Green = color(255, 0, 0)
-  val DarkGreen = color(100, 0, 0)
+  val DarkGreen = color(60, 0, 0)
   val Orange = color(255, 165, 0)
   val DarkOrange = color(255, 140, 0)
   val Red = color(0, 255, 0)

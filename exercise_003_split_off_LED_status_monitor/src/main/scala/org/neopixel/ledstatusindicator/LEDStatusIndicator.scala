@@ -44,20 +44,26 @@ class LEDStatusIndicator(pollingInterval: FiniteDuration,
 
   def running(pixel: Adafruit_NeoPixel.type, requestChannel: ActorRef): Receive = {
     case PollNode if pendingPolls >= 3 =>
-      resetAllLeds(pixel)
+      pixel.setPixelColor(0, LED_Red)
+      pixel.show()
+//      log.debug(s"No response for cluster status tracker")
       requestChannel ! "sendStatusUpdate"
 
     case PollNode =>
+      pixel.setPixelColor(0, LED_Green)
+      pixel.show()
       pendingPolls += 1
       requestChannel ! "sendStatusUpdate"
 
     case LedUpdate(ledUpdates) =>
+//      log.debug(s"Cluster status tracker is responsive")
       pendingPolls = 0
       ledUpdates.zipWithIndex.foreach {
         case (color, ledIndex) =>
           pixel.setPixelColor(ledIndex, color)
       }
-      pixel.show(log)
+      pixel.setPixelColor(0, LED_Green)
+      pixel.show()
   }
 
   override def preStart(): Unit = {

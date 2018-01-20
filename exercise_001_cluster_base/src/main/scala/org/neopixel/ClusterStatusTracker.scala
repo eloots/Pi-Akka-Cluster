@@ -3,7 +3,7 @@ package org.neopixel
 import akka.actor.{Actor, ActorLogging, ActorRef, Props}
 import akka.cluster.{Cluster, Member}
 import akka.cluster.ClusterEvent._
-import akka.cluster.MemberStatus.Up
+import akka.cluster.MemberStatus.{Up, WeaklyUp}
 import neopixel.{rpi_ws281xConstants => wsC}
 
 object ClusterStatusTracker {
@@ -13,7 +13,7 @@ object ClusterStatusTracker {
   val LED_PIN = 18 // GPIO pin connected to the pixels (must support PWM!).
   val LED_FREQ_HZ = 800000 // LED signal frequency in hertz (usually 800khz)
   val LED_DMA = 5 // DMA channel to use for generating signal (try 5)
-  val LED_BRIGHTNESS = 2.toShort // Set to 0 for darkest and 255 for brightest
+  val LED_BRIGHTNESS = 10.toShort // Set to 0 for darkest and 255 for brightest
   val LED_INVERT = false // True to invert the signal (when using NPN transistor level shift)
   val LED_CHANNEL = 0
   val LED_STRIP: Int = wsC.WS2811_STRIP_RGB
@@ -99,6 +99,10 @@ class ClusterStatusTracker extends Actor with ActorLogging with SettingsActor {
 
     case msg @ ReachableMember(member) if member.status == Up =>
       setPixelColorAndShow(strip, HostToLedMapping(member.address.host.get), nodeUpColor)
+      log.debug(s"$msg")
+
+    case msg @ ReachableMember(member) if member.status == WeaklyUp =>
+      setPixelColorAndShow(strip, HostToLedMapping(member.address.host.get), nodeWeaklyUpColor)
       log.debug(s"$msg")
 
     case msg @ UnreachableMember(member) =>
