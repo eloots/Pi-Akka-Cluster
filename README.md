@@ -149,22 +149,26 @@ Nothing to configure.
 
 This tells us that `JAVA_HOME` is `/usr/lib/jvm/jdk-8-oracle-arm32-vfp-hflt`
 
-Download
-
 ```
 $ git clone git@github.com:jgarff/rpi_ws281x.git
 $ cd rpi_ws281x
+$ rm -rf *.o
+$ scons
 $ mkdir java
 $ cp python/*.i java
 $ cd java
-$ swig -java rpi_ws281x.i
-$ gcc -Wl,--add-stdcall-alias -c *.c -I${JAVA_HOME}/include -I${JAVA_HOME}/include/linux
-$ gcc -Wl,--add-stdcall-alias -shared ../*.o rpi_ws281x_wrap.o -o librpi_ws281x.so
-
-$ sudo java -Djava.library.path=. -jar exercise_000_initial_state-assembly-1.3.0.jar com.neopixel.Main 5
+$ swig -package neopixel -java rpi_ws281x.i
+$ gcc -c *.c -I${JAVA_HOME}/include -I${JAVA_HOME}/include/linux
+$ gcc -shared -o librpi_ws281x.so ../*.o rpi_ws281x_wrap.o
+$ ls -l librpi_ws281x.so
+-rwxr-xr-x 1 pirate pirate 91480 Jan 20 13:42 librpi_ws281x.so
 ```
 
-Once the shared library has been built, it is the only thing to enable access via java/scala to the NeoPixel strip.
+Running a sample application:
+
+```
+$ sudo java -Djava.library.path=. -jar exercise_000_initial_state-assembly-1.3.0.jar com.neopixel.Main 5
+```
 
 ## Running base cluster with status LED indicators
 
@@ -202,6 +206,6 @@ sudo java -Djava.library.path=. -Dakka.remote.netty.tcp.port=2550 -Dakka.remote.
 ```
 etc...
 
-> Note: The introduction of a heartbeat indicator has shown that there is an issue, probably in the Adafruit Neopixel driver library, that intermittently produces spurious updates on LED strips. This needs to be investigated to find the root cause.
+> Note: The introduction of a heartbeat indicator has shown that there is an issue, probably in the Adafruit Neopixel driver library, that intermittently produces spurious updates on LED strips. This needs to be investigated to find the root cause. Most probably hardware related
 
 > Note: Install `tmux` on the cluster nodes (`apt-get install tmux`) and always (interactive sessions) in a `tmux` session. This prevents processes (eg. nodes) getting killed when the connectivity of a node and your computer is broken (for example, as part of some test scenario like a network partition).
