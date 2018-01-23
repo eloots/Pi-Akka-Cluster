@@ -16,7 +16,10 @@ object CommonSettings {
     parallelExecution in ThisBuild := false,
     parallelExecution in GlobalScope := false,
     fork in Test := true,
-    libraryDependencies ++= Dependencies.dependencies
+    libraryDependencies ++= Dependencies.dependencies,
+    credentials += Credentials(Path.userHome / ".lightbend" / "commercial.credentials"),
+    resolvers += "com-mvn" at "https://repo.lightbend.com/commercial-releases/",
+    resolvers += Resolver.url("com-ivy", url("https://repo.lightbend.com/commercial-releases/"))(Resolver.ivyStylePatterns)
   ) ++
     AdditionalSettings.initialCmdsConsole ++
     AdditionalSettings.initialCmdsTestConsole ++

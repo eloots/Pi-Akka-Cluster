@@ -5,6 +5,7 @@ object Version {
   val logbackVer      = "1.2.3"
   val scalaVer        = "2.12.4"
   val scalaParsersVer = "1.0.4"
+  val akkaSBRVer      = "1.1.0"
 }
 
 object Dependencies {
@@ -16,6 +17,7 @@ object Dependencies {
     "com.typesafe.akka"         %% "akka-cluster-sharding"      % Version.akkaVer,
     "com.typesafe.akka"         %% "akka-distributed-data"      % Version.akkaVer,
     "com.typesafe.akka"         %% "akka-persistence"           % Version.akkaVer,
+    "com.lightbend.akka"        %% "akka-split-brain-resolver"  % Version.akkaSBRVer,
     "com.typesafe.akka"         %% "akka-slf4j"                 % Version.akkaVer,
     "ch.qos.logback"            %  "logback-classic"            % Version.logbackVer,
     "ch.qos.logback"            %  "logback-classic"            % Version.logbackVer,
