@@ -1,8 +1,0 @@
-#!/bin/bash
-
-FATJAR=exercise_005_split_brain_resolver_static_quorum/target/scala-2.12/exercise_005_split_brain_resolver_static_quorum-assembly-1.3.0.jar
-
-for i in 0 1 2 3 4;do
-  scp $FATJAR pirate@node-${i}:/home/pirate
-done
-
