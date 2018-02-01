@@ -206,6 +206,6 @@ sudo java -Djava.library.path=. -Dakka.remote.netty.tcp.port=2550 -Dakka.remote.
 ```
 etc...
 
-> Note: The introduction of a heartbeat indicator has shown that there is an issue, probably in the Adafruit Neopixel driver library, that intermittently produces spurious updates on LED strips. This needs to be investigated to find the root cause. Most probably hardware related
+> Note: The LED strip is powered from the 5V pin on the Raspberry Pi board. However, the GPIO pin that drives the data input pin on the LED strip is a 3.3V logical signal. This causes intermittent flashes on the LED's. This problem can be solved easily by putting a diode (such as an 1N4001) between the 5V pin on the Pi and the power connection on the LED strip.
 
 > Note: Install `tmux` on the cluster nodes (`apt-get install tmux`) and always (interactive sessions) in a `tmux` session. This prevents processes (eg. nodes) getting killed when the connectivity of a node and your computer is broken (for example, as part of some test scenario like a network partition).

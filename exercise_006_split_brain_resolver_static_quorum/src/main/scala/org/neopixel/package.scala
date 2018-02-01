@@ -23,7 +23,7 @@ package object neopixel {
   val Yellow = color(255, 255, 0)
   val Cyan = color(255, 0, 255)
   val Magenta = color(0, 255, 255)
-  val White = color(255, 255, 0)
+  val White = color(255, 255, 255)
   val WhiteLow = color(100, 100, 100)
 
   val availableColorMap: Map[String, Long] =
