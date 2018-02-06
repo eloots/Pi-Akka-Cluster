@@ -24,6 +24,8 @@ class ConfigSettingsImpl(system: ExtendedActorSystem) extends Extension {
 
   private implicit val config: Config = system.settings.config
 
+  val ledBrightness: Byte = config.getInt("cluster-status-indicator.led-brightness").toByte
+
   val nodeUpColor: Long =
     validateColor("cluster-status-indicator.cluster-node-colors.cluster-node-up-color")
 

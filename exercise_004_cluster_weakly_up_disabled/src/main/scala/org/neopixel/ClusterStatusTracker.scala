@@ -175,7 +175,10 @@ class ClusterStatusTracker extends Actor with ActorLogging with SettingsActor wi
   }
 
   override def preStart(): Unit = {
-    val strip = Adafruit_NeoPixel(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS, LED_CHANNEL, LED_STRIP)
+
+    log.info(s"LED brightness = ${settings.ledBrightness}")
+
+    val strip = Adafruit_NeoPixel(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, settings.ledBrightness, LED_CHANNEL, LED_STRIP)
     strip.begin()
     resetAllLeds(strip)
 
