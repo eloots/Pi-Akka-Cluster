@@ -1,20 +1,9 @@
-cluster_LED_status_viewer_improved
+cluster_weakly_up_disabled
 
-# Exercise 2 > Basic cluster status tracking improved
+# Disable Weakly-up feature
 
-Indication of weakly-up members using fast blinking LED.
+In this set-up, we disable the so-called `Weakly-up` feature.
 
-When a node tries to join the cluster while on or more other nodes are already up but unreachable, the leader will not move the new node from JOINING to WEAKLY-UP instead of UP.
+If the `Weakly-up` feature is enabled (this is the default), new members who try to join an existing cluster, will move from the `Joining` state to the `Weakly-up` state. `Weakly-up` nodes can participate in offering cluster services, but will not be counted in any decisions of determining quorum (as performed by the Split Brain Resolver).
 
-The joining of a cluster in the WEAKLY-UP state can be disabled by setting `akka.cluster.allow-weakly-up-members=off`
-
-Green:      Node is UP
-Red:        Node is Down
-Cyan:       Node in Leaving
-Magenta:    Node is Exiting
-White:      Node is Unreachable
-Dark Green: Node is Weakly-Up - The LED is blinking at a high frequency
-
-LED number 6 indicates is Cyan when the node has a leader role
-LED number 7 is unused
-LED number 8 is the cluster liveliness indicator: when it blinks, we now that the cluster node software is actually running.
+When, as in this example, the `Weakly-up` feature is disabled, nodes will stay in the `Joining` state until the cluster leader detects cluster state convergence and moves these nodes to the (fully) `Up` state 

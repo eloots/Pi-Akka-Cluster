@@ -1,4 +1,4 @@
-split_off_led_status_indicator
+split_off_led_status_indicator_improved
 
-# Exercise > Split off LED Status Indicator
+# Split off LED Status Indicator - Improved
 
