@@ -4,7 +4,7 @@
 
 This code is used on a Raspberry-Pi based Akka Cluster to demonstrate cluster formation, split-brain occurrence and Split Brain Resolver in a visual manner.
 
-Each node is equipped with an 8-LED RGB strip where different LED's are used to show each node's state (UP, DOWN, JOINING, UNREACHABLE, LEAVING, EXITING). In addition, it shows if a node has a so-called _leader_ role and whether a node is running an Akka Cluster Singleton (if one is created on the cluster).
+Each node is equipped with an 8-LED RGB strip where different LED's are used to show each node's state (UP, WEAKLY-UP, DOWN, JOINING, UNREACHABLE, LEAVING, EXITING). In addition, it shows if a node has a so-called _leader_ role and whether a node is running an Akka Cluster Singleton (if one is created on the cluster).
 
 ## Maintainer(s)
 
