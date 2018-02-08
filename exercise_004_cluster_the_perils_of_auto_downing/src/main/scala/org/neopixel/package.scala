@@ -11,6 +11,7 @@ import scala.collection.mutable.ListBuffer
 
 package object neopixel {
 
+  // Colors are coded in GRB order
   val Black = color(0, 0, 0)
   val Green = color(255, 0, 0)
   val DarkGreen = color(60, 0, 0)
