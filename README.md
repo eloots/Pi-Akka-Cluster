@@ -164,11 +164,13 @@ Adding user `akkapi' to group `pirate' ...
 Adding user akkapi to group pirate
 Done.
 HypriotOS/armv7: pirate@node-0 in ~
+
 $ sudo adduser akkapi video
 Adding user `akkapi' to group `video' ...
 Adding user akkapi to group video
 Done.
 HypriotOS/armv7: pirate@node-0 in ~
+
 $ sudo adduser akkapi docker
 Adding user `akkapi' to group `docker' ...
 Adding user akkapi to group docker
@@ -181,8 +183,10 @@ We now switch to the _akkapi_ user to change a couple of things:
 $ su - akkapi
 Password:
 HypriotOS/armv7: akkapi@node-0 in ~
+
 $ groups
 akkapi video docker pirate
+
 $ cat > .profile.tmux <<EOF
 tnr() {
    tmux new -s run
@@ -224,7 +228,7 @@ Next, we set-up password-less login. We assume that we want to log in to account
 First, we need a pair of authentication keys on the laptop. If these keys have been generated already we can skip the generation of a new pair of authentication keys. If this isn't the case, generate them:
 
 ```
-ssh-keygen -t rsa
+$ ssh-keygen -t rsa
 Generating public/private rsa key pair.
 Enter file in which to save the key (/home/userxxx/.ssh/id_rsa): 
 Created directory '/home/userxxx/.ssh'.
@@ -245,6 +249,7 @@ Now, proceed by create a `.ssh` folder on the _akkapi_'s home folder on the Pi a
 ```
  [userxxx@Eric-Loots-MBP] $ ssh akkapi@node-0 mkdir .ssh
 akkapi@node-0's password:
+
  [userxxx@Eric-Loots-MBP] $ cat .ssh/id_rsa.pub | ssh akkapi@node-0 'cat >> .ssh/authorized_keys'
 akkapi@node-0's password:
 ```
@@ -256,8 +261,10 @@ As a final modification, we give account _akkapi_ sudo rights. First, log-in wit
 ```
  [ericloots@Eric-Loots-MBP] $ ssh pirate@node-0
 HypriotOS/armv7: pirate@node-0 in ~
+
 $ sudo vi /etc/sudoers.d/90-cloud-init-users
 HypriotOS/armv7: pirate@node-0 in ~
+
 $ sudo cat /etc/sudoers.d/90-cloud-init-users
 # Created by cloud-init v. 0.7.6 on Thu, 03 Jul 2014 18:46:34 +0000
 
