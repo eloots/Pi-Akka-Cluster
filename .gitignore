@@ -36,3 +36,6 @@ project/plugins/project/
 
 # OS specific
 .DS_Store
+
+# Other
+Preci*.pdf

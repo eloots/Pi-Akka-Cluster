@@ -1,0 +1,12 @@
+#!/bin/bash
+
+PI_USER=akkapi
+#EXERCISE_NR=`printf %03d $1`
+FATJAR=`ls exercises/target/scala-2.12/exercise*jar`
+echo "Using $FATJAR"
+
+for i in 0 1 2 3 4;do
+  echo "Copy $FATJAR to node-${i}"
+  scp $FATJAR ${PI_USER}@node-${i}:/home/${PI_USER}
+done
+
