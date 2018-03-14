@@ -21,7 +21,6 @@
 package org.neopixel
 
 import akka.actor.ActorSystem
-
 import com.typesafe.config.ConfigFactory
 
 object ClusterStatusTrackerMain {
@@ -31,9 +30,9 @@ object ClusterStatusTrackerMain {
     val config = ConfigFactory.load()
 
     val actorSystemName = s"pi-${config.getString("cluster-node-configuration.cluster-id")}-system"
-    println(s"~~~> Actorsystem name = $actorSystemName")
 
     val system = ActorSystem(actorSystemName, config)
+
     val clusterStatusTracker = system.actorOf(ClusterStatusTracker.props(), "cluster-status-tracker")
 
   }

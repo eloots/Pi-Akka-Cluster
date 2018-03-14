@@ -22,8 +22,8 @@ package org.neopixel
 
 import akka.actor.{Actor, ExtendedActorSystem, Extension, ExtensionId, ExtensionIdProvider}
 import com.typesafe.config.Config
-import scala.collection.JavaConverters._
 
+import scala.collection.JavaConverters._
 import scala.concurrent.duration.{Duration, FiniteDuration, MILLISECONDS => Millis}
 
 object ConfigSettingsExtension extends ExtensionId[ConfigSettingsImpl] with ExtensionIdProvider {
@@ -84,7 +84,6 @@ class ConfigSettingsImpl(system: ExtendedActorSystem) extends Extension {
 
   val heartbeatIndicatorInterval: FiniteDuration =
     Duration(system.settings.config.getDuration("cluster-status-indicator.cluster-heartbeat-indicator-interval", Millis), Millis)
-
 }
 
 trait SettingsActor {
