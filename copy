@@ -1,15 +1,21 @@
 #!/bin/bash
 
+# Set CLUSTER_NR to the number of the cluster you're working with
+CLUSTER_NR=0
+
+CLUSTER_BASE_NODE_NR=$(expr $CLUSTER_NR \* 5)
+
 PI_USER=akkapi
 EXERCISE_NR=`printf %03d $1`
 FATJAR=`ls exercise*${EXERCISE_NR}*/target/scala-2.12/exercise*${EXERCISE_NR}*jar`
-ALL_NODES="0 1 2 3 4 5"
+ALL_NODES="0 1 2 3 4"
 SELECTED_NODE=$2
 NODES=${SELECTED_NODE:-$ALL_NODES}
 echo "Using $FATJAR"
 
 for i in $NODES;do
-  echo "Copy $FATJAR to node-${i}"
-  scp $FATJAR ${PI_USER}@node-${i}:/home/${PI_USER}
+  node=$(expr $CLUSTER_BASE_NODE_NR + $i)
+  echo "Copy $FATJAR to node-${node}"
+  scp $FATJAR ${PI_USER}@node-${node}:/home/${PI_USER}
 done
 
