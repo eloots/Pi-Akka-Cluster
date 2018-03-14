@@ -22,6 +22,7 @@ package org.neopixel
 
 import akka.actor.{Actor, ExtendedActorSystem, Extension, ExtensionId, ExtensionIdProvider}
 import com.typesafe.config.Config
+import scala.collection.JavaConverters._
 
 import scala.concurrent.duration.{Duration, FiniteDuration, MILLISECONDS => Millis}
 
@@ -43,6 +44,16 @@ class ConfigSettingsImpl(system: ExtendedActorSystem) extends Extension {
   implicit val colorMap: Map[String, Long] = availableColorMap.map { case (x, y) => (x.toUpperCase, y)}
 
   private implicit val config: Config = system.settings.config
+
+  private val clusterNodeConfig = config.getConfig("cluster-node-configuration")
+
+  private val clusterId = clusterNodeConfig.getString("cluster-id")
+
+  private val clusterNodeToLedMapping = clusterNodeConfig.getConfig(s"cluster-node-to-led-mapping.$clusterId")
+
+  val HostToLedMapping: Map[String, Int] = (for {
+    mapping <- clusterNodeToLedMapping.entrySet().asScala
+  } yield (mapping.getKey, clusterNodeToLedMapping.getInt(mapping.getKey))).toMap
 
   val nodeUpColor: Long =
     validateColor("cluster-status-indicator.cluster-node-colors.cluster-node-up-color")
@@ -73,6 +84,7 @@ class ConfigSettingsImpl(system: ExtendedActorSystem) extends Extension {
 
   val heartbeatIndicatorInterval: FiniteDuration =
     Duration(system.settings.config.getDuration("cluster-status-indicator.cluster-heartbeat-indicator-interval", Millis), Millis)
+
 }
 
 trait SettingsActor {

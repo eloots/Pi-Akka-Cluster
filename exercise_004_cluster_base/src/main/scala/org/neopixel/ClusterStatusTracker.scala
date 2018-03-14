@@ -50,21 +50,6 @@ object ClusterStatusTracker {
     strip.show()
   }
 
-  val HostToLedMapping =
-    Map(
-      "kubernetes" -> 7,
-      "node-0" -> 7,
-      "192.168.0.101" -> 7,
-      "node-1" -> 6,
-      "192.168.0.102" -> 6,
-      "node-2" -> 5,
-      "192.168.0.103" -> 5,
-      "node-3" -> 4,
-      "192.168.0.104" -> 4,
-      "node-4" -> 3,
-      "192.168.0.105" -> 3
-    )
-
   case object Heartbeat
 
   def props(): Props = Props(new ClusterStatusTracker)
@@ -158,7 +143,6 @@ class ClusterStatusTracker extends Actor with ActorLogging with SettingsActor wi
         classOf[MemberEvent]
       )
     timers.startPeriodicTimer("heartbeat-timer", Heartbeat, heartbeatIndicatorInterval)
-    context.system.scheduler.schedule(0.millis, heartbeatIndicatorInterval, self, Heartbeat)
     context.become(running(strip, hearbeatLEDOn = false))
 
   }
