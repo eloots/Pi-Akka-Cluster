@@ -8,9 +8,15 @@ Each node is equipped with an 8-LED RGB strip where different LED's are used to 
 
 ## Maintainer(s)
 
-Eric Loots - eric.loots@lightbend.com
+Eric Loots    - eric.loots@lightbend.com
+Kikia Carter  - kikia.carter@lightbend.com
+Duncan Devore - duncan.devore@lightbend.com
 
 ## Changelog
+
+2018/03/14: Generalise code to allow for multiple clusters on a single network
+
+## Build instructions
 
 Start from standard _**Hypriot**_ [Raspberry Pi distro](http://blog.hypriot.com/getting-started-with-docker-on-your-arm-device/) (Version [1.7.1](http://blog.hypriot.com/downloads/))
 
@@ -337,34 +343,59 @@ $ sudo java -Djava.library.path=. -jar exercise_000_initial_state-assembly-1.3.0
 On your laptop, run sbt and build an uber-jar if not done already:
 
 ```
-$ sbt assembly
+$ sbt
+  <... elided>
+
+man [e] > mini-cluster > split_brain_resolver_static_quorum > projects
+[info] In file:/Users/ericloots/Trainingen/LightbendTraining/Pi-Akka-Cluster/
+[info] 	   common
+[info] 	   exercise_000_initial_state
+[info] 	   exercise_001_UDP_experiments
+[info] 	   exercise_002_split_off_LED_status_monitor
+[info] 	   exercise_003_cluster_state_monitor_improved
+[info] 	   exercise_004_cluster_base
+[info] 	   exercise_005_cluster_weakly_up
+[info] 	   exercise_006_cluster_cluster_singleton
+[info] 	   exercise_007_cluster_the_perils_of_auto_downing
+[info] 	   exercise_008_cluster_weakly_up_disabled
+[info] 	   exercise_009_split_brain_resolver_keep_majority
+[info] 	   exercise_010_split_brain_resolver_static_quorum
+[info] 	   exercise_011_split_brain_resolver_keep_referee
+[info] 	   exercise_012_split_brain_resolver_keep_oldest
+[info] 	 * exercise_013_split_brain_resolver_static_quorum_http_mamagement
+[info] 	   pi_cluster_master
+man [e] > mini-cluster > split_brain_resolver_static_quorum > project exercise_004_cluster_base
+[info] Set current project to exercise_004_cluster_base (in build file:/Users/ericloots/Trainingen/LightbendTraining/Pi-Akka-Cluster/)
+man [e] > mini-cluster > cluster_base > ;clean;assembly
+
+<... elided>
+
+[info] Packaging /Users/ericloots/Trainingen/LightbendTraining/Pi-Akka-Cluster/exercise_004_cluster_base/target/scala-2.12/exercise_004_cluster_base-assembly-1.3.0.jar ...
+[info] Done packaging.
+[success] Total time: 14 s, completed Mar 14, 2018 12:01:29 PM
+man [e] > mini-cluster > cluster_base >
 ```
 
-Copy the new jar file to the boards by running the following script:
+Copy the new jar file to the boards by running `copy` script. Pass the number of the exercise you want to copy, exercise 4 in this case, as a single argument:
 
 ```
-$ cat copy_001
-#!/bin/bash
-
-for i in 0 1 2 3 4;do
-  scp exercise_001_cluster_base/target/scala-2.12/exercise_001_cluster_base-assembly-1.3.0.jar pirate@node-${i}:/home/pirate
-done
+$ ./copy 4
+./copy 4
+Using exercise_004_cluster_base/target/scala-2.12/exercise_004_cluster_base-assembly-1.3.0.jar
+Copy exercise_004_cluster_base/target/scala-2.12/exercise_004_cluster_base-assembly-1.3.0.jar to node-0
+exercise_004_cluster_base-assembly-1.3.0.jar                                                                                            100%   31MB  11.2MB/s   00:02
+Copy exercise_004_cluster_base/target/scala-2.12/exercise_004_cluster_base-assembly-1.3.0.jar to node-1
+exercise_004_cluster_base-assembly-1.3.0.jar                                                                                            100%   31MB  10.5MB/s   00:02
+Copy exercise_004_cluster_base/target/scala-2.12/exercise_004_cluster_base-assembly-1.3.0.jar to node-2
+exercise_004_cluster_base-assembly-1.3.0.jar                                                                                            100%   31MB  11.2MB/s   00:02
+Copy exercise_004_cluster_base/target/scala-2.12/exercise_004_cluster_base-assembly-1.3.0.jar to node-3
+exercise_004_cluster_base-assembly-1.3.0.jar                                                                                            100%   31MB  10.5MB/s   00:02
+Copy exercise_004_cluster_base/target/scala-2.12/exercise_004_cluster_base-assembly-1.3.0.jar to node-4
+exercise_004_cluster_base-assembly-1.3.0.jar
 ```
 
-Start an ssh session on one of the boards and start-up the application.
+Log in on the different node (use a multi-session terminal like iTerm-2 on MacOS for efficiency) and run the exercise code using the `run` script (copy this script from the repo to all nodes). The `run` command takes a single argument which is the number of the exercise you want to run.
 
-On node-0:
-
-```
-sudo java -Djava.library.path=. -Dakka.remote.netty.tcp.port=2550 -Dakka.remote.netty.tcp.hostname=192.168.0.101 -jar exercise_001_cluster_base-assembly-1.3.0.jar com.neopixel.Main
-```
-
-On node-1:
-
-```
-sudo java -Djava.library.path=. -Dakka.remote.netty.tcp.port=2550 -Dakka.remote.netty.tcp.hostname=192.168.0.102 -jar exercise_001_cluster_base-assembly-1.3.0.jar com.neopixel.Main
-```
-etc...
 
 > Note: The LED strip is powered from the 5V pin on the Raspberry Pi board. However, the GPIO pin that drives the data input pin on the LED strip is a 3.3V logical signal. This causes intermittent flashes on the LED's. This problem can be solved easily by putting a diode (such as an 1N4001) between the 5V pin on the Pi and the power connection on the LED strip.
 

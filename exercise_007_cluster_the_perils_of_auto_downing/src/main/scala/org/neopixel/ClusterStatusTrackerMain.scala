@@ -21,12 +21,18 @@
 package org.neopixel
 
 import akka.actor.ActorSystem
+import com.typesafe.config.ConfigFactory
 
 object ClusterStatusTrackerMain {
   def main(args: Array[String]): Unit = {
     System.loadLibrary("rpi_ws281x")
 
-    val system = ActorSystem("pi-cluster-system")
+    val config = ConfigFactory.load()
+
+    val actorSystemName = s"pi-${config.getString("cluster-node-configuration.cluster-id")}-system"
+
+    val system = ActorSystem(actorSystemName, config)
+
     val clusterStatusTracker = system.actorOf(ClusterStatusTracker.props(), "cluster-status-tracker")
   }
 }

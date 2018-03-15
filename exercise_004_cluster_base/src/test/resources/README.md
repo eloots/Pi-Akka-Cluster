@@ -1,4 +1,4 @@
-cluster_LED_status_viewer
+cluster_base
 
 # Set-up LED cluster status
 

@@ -21,7 +21,6 @@
 package org.neopixel
 
 import akka.actor.{Actor, ActorLogging, Props}
-import org.neopixel.ClusterStatusTracker.HostToLedMapping
 
 object PiClusterSingleton {
 
