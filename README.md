@@ -9,7 +9,9 @@ Each node is equipped with an 8-LED RGB strip where different LED's are used to 
 ## Maintainer(s)
 
 Eric Loots    - eric.loots@lightbend.com
+
 Kikia Carter  - kikia.carter@lightbend.com
+
 Duncan Devore - duncan.devore@lightbend.com
 
 ## Changelog
