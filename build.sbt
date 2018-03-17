@@ -15,7 +15,8 @@ lazy val pi_cluster_master = (project in file("."))
     exercise_010_split_brain_resolver_static_quorum,
     exercise_011_split_brain_resolver_keep_referee,
     exercise_012_split_brain_resolver_keep_oldest,
-    exercise_013_split_brain_resolver_static_quorum_http_mamagement
+    exercise_013_split_brain_resolver_static_quorum_http_mamagement,
+    exercise_020_cluster_sharding
  ).settings(CommonSettings.commonSettings: _*)
 
 lazy val common = project.settings(CommonSettings.commonSettings: _*)
@@ -73,6 +74,10 @@ lazy val exercise_012_split_brain_resolver_keep_oldest = project
   .dependsOn(common % "test->test;compile->compile")
 
 lazy val exercise_013_split_brain_resolver_static_quorum_http_mamagement = project
+  .settings(CommonSettings.commonSettings: _*)
+  .dependsOn(common % "test->test;compile->compile")
+
+lazy val exercise_020_cluster_sharding = project
   .settings(CommonSettings.commonSettings: _*)
   .dependsOn(common % "test->test;compile->compile")
        

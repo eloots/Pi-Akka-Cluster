@@ -5,7 +5,7 @@ CLUSTER_NR=0
 
 CLUSTER_BASE_NODE_NR=$(expr $CLUSTER_NR \* 5)
 
-PI_USER=akkapi
+PI_USER=pirate
 EXERCISE_NR=`printf %03d $1`
 FATJAR=`ls exercise*${EXERCISE_NR}*/target/scala-2.12/exercise*${EXERCISE_NR}*jar`
 ALL_NODES="0 1 2 3 4"
