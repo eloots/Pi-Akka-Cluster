@@ -34,6 +34,7 @@ package object neopixel {
   // Colors are coded in GRB order
   val Black = color(0, 0, 0)
   val Green = color(255, 0, 0)
+  val MediumGreen = color(95, 0, 0)
   val DarkGreen = color(60, 0, 0)
   val Orange = color(255, 165, 0)
   val DarkOrange = color(255, 140, 0)
@@ -52,6 +53,7 @@ package object neopixel {
     Map(
       "Black" -> Black,
       "Green" -> Green,
+      "MediumGreen" -> MediumGreen,
       "DarkGreen" -> DarkGreen,
       "Orange" -> Orange,
       "DarkOrange" -> DarkOrange,

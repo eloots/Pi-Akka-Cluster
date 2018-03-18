@@ -89,6 +89,33 @@ class ConfigSettingsImpl(system: ExtendedActorSystem) extends Extension {
 
   val weaklyUpIndicatorInterval: FiniteDuration =
     Duration(system.settings.config.getDuration("cluster-status-indicator.cluster-weakly-up-indicator-interval", Millis), Millis)
+
+  object LedStripConfig {
+
+    val ledBrightness: Short =
+      config.getInt("cluster-status-indicator.led-brightness").toShort
+
+    val ledCount: Int =
+      config.getInt("cluster-status-indicator.led-count")
+
+    val highestLedIndex: Int = ledCount - 1
+
+    val ledPin: Int =
+      config.getInt("cluster-status-indicator.led-pin")
+
+    val ledFreqHz: Int =
+      config.getInt("cluster-status-indicator.led-freq-hz")
+
+    val ledDma: Int =
+      config.getInt("cluster-status-indicator.led-dma")
+
+    val ledInvert: Boolean =
+      config.getBoolean("cluster-status-indicator.led-invert")
+
+    val ledChannel: Int =
+      config.getInt("cluster-status-indicator.led-channel")
+  }
+
 }
 
 trait SettingsActor {
