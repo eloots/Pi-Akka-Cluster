@@ -20,28 +20,12 @@
 
 package org.neopixel
 
-import akka.actor.{Actor, ActorLogging, ActorRef, Props, Timers}
-import akka.cluster.{Cluster, Member}
+import akka.actor.{Actor, ActorLogging, Props, Timers}
+import akka.cluster.Cluster
 import akka.cluster.ClusterEvent._
 import akka.cluster.MemberStatus.{Up, WeaklyUp}
-import neopixel.{rpi_ws281xConstants => wsC}
 
 object ClusterStatusTracker {
-
-  // LED strip configuration:
-  val LED_COUNT = 8 // Number of LED pixels.
-  val LED_PIN = 18 // GPIO pin connected to the pixels (must support PWM!).
-  val LED_FREQ_HZ = 800000 // LED signal frequency in hertz (usually 800khz)
-  val LED_DMA = 5 // DMA channel to use for generating signal (try 5)
-  val LED_BRIGHTNESS = 10.toShort // Set to 0 for darkest and 255 for brightest
-  val LED_INVERT = false // True to invert the signal (when using NPN transistor level shift)
-  val LED_CHANNEL = 0
-  val LED_STRIP: Int = wsC.WS2811_STRIP_RGB
-
-  val HighestLedIndex = LED_COUNT - 1
-
-  val LeaderLedNumber = HighestLedIndex - 5
-  val HeartbeatLedNumber = HighestLedIndex - 7
 
   def resetAllLeds(strip: Adafruit_NeoPixel.type): Unit = {
     for {
@@ -52,31 +36,33 @@ object ClusterStatusTracker {
 
   case object Heartbeat
 
-  def props(): Props = Props(new ClusterStatusTracker)
+  def props(strip: Adafruit_NeoPixel.type): Props = Props(new ClusterStatusTracker(strip))
 }
 
-class ClusterStatusTracker extends Actor with ActorLogging with SettingsActor with Timers {
+class ClusterStatusTracker(strip: Adafruit_NeoPixel.type) extends Actor with ActorLogging with SettingsActor with Timers {
   import ClusterStatusTracker._
-  import scala.concurrent.ExecutionContext.Implicits.global
 
   private val thisHost = context.system.settings.config.getString("akka.remote.netty.tcp.hostname")
   log.debug(s"Starting ClusterStatus Actor on $thisHost")
 
-  import scala.concurrent.duration._
+  import settings.LedStripConfig._
   import settings._
+
+  private val LeaderLedNumber = highestLedIndex - 5
+  private val HeartbeatLedNumber = highestLedIndex - 7
 
   override def receive: Receive = idle
 
   def idle: Receive = akka.actor.Actor.emptyBehavior
 
-  def running(strip: Adafruit_NeoPixel.type, hearbeatLEDOn: Boolean): Receive = {
+  def running(hearbeatLEDOn: Boolean): Receive = {
     case Heartbeat if hearbeatLEDOn =>
       setPixelColorAndShow(strip, HeartbeatLedNumber, Black)
-      context.become(running(strip, hearbeatLEDOn = false))
+      context.become(running(hearbeatLEDOn = false))
 
     case Heartbeat =>
       setPixelColorAndShow(strip, HeartbeatLedNumber, heartbeartIndicatorColor)
-      context.become(running(strip, hearbeatLEDOn = true))
+      context.become(running(hearbeatLEDOn = true))
 
     case msg @ MemberUp(member) =>
       setPixelColorAndShow(strip, HostToLedMapping(member.address.host.get), nodeUpColor)
@@ -132,7 +118,6 @@ class ClusterStatusTracker extends Actor with ActorLogging with SettingsActor wi
   }
 
   override def preStart(): Unit = {
-    val strip = Adafruit_NeoPixel(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS, LED_CHANNEL, LED_STRIP)
     strip.begin()
     resetAllLeds(strip)
     Cluster(context.system)
@@ -143,11 +128,12 @@ class ClusterStatusTracker extends Actor with ActorLogging with SettingsActor wi
         classOf[MemberEvent]
       )
     timers.startPeriodicTimer("heartbeat-timer", Heartbeat, heartbeatIndicatorInterval)
-    context.become(running(strip, hearbeatLEDOn = false))
+    context.become(running(hearbeatLEDOn = false))
 
   }
 
   override def postStop(): Unit = {
+    resetAllLeds(strip)
     Cluster(context.system).unsubscribe(self)
   }
 
