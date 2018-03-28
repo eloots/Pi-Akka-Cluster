@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # Set CLUSTER_NR to the number of the cluster you're working with
-CLUSTER_NR=0
+CLUSTER_NR_SEL=${CLUSTER_NR:?Set environment variable CLUSTER_NR to your cluster number}
 
-CLUSTER_BASE_NODE_NR=$(expr $CLUSTER_NR \* 5)
+CLUSTER_BASE_NODE_NR=$(expr $CLUSTER_NR_SEL \* 5)
 
 PI_USER=akkapi
 EXERCISE_NR=`printf %03d $1`
@@ -14,7 +14,7 @@ NODES=${SELECTED_NODE:-$ALL_NODES}
 echo "Using $FATJAR"
 
 for i in $NODES;do
-  node=$(expr $CLUSTER_BASE_NODE_NR + $i)
+  node=$[ CLUSTER_BASE_NODE_NR + i ]
   echo "Copy $FATJAR to node-${node}"
   scp $FATJAR ${PI_USER}@node-${node}:/home/${PI_USER}
 done
