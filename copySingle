@@ -16,7 +16,7 @@ echo "Using $FATJAR"
 
 for i in 0 1 2 3 4;do
   node=$[ CLUSTER_BASE_NODE_NR + i ]
-  echo "Copy $FATJAR to node-${i}"
+  echo "Copy $FATJAR to node-${node}"
   scp $FATJAR ${PI_USER}@node-${node}:/home/${PI_USER}
 done
 
