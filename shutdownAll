@@ -1,5 +1,25 @@
-#!/bin/ksh
+#!/bin/bash
 
-for node in 0 1 2 3 4;do
-  ssh pirate@node-${node} "sudo /sbin/shutdown -h now &"
+######################################################################
+# Usage:
+#  shutdownAll
+#
+# Note: Set environment variable CLUSTER_NR to the number of your
+#       Akka Cluster
+######################################################################
+
+# Set CLUSTER_NR to the number of the cluster you're working with
+CLUSTER_NR_SEL=${CLUSTER_NR:?Set environment variable CLUSTER_NR to your cluster number}
+
+CLUSTER_BASE_NODE_NR=$(expr $CLUSTER_NR_SEL \* 5)
+
+PI_USER=akkapi
+
+ALL_NODES="0 1 2 3 4"
+NODES=$ALL_NODES
+
+for i in $NODES;do
+  node=$[ CLUSTER_BASE_NODE_NR + i ]
+  echo "Shutting down node-${node}"
+  ssh ${PI_USER}@node-${node} "sudo /sbin/shutdown -h now &"
 done
