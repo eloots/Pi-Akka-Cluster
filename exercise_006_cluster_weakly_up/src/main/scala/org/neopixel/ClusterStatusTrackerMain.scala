@@ -21,14 +21,18 @@
 package org.neopixel
 
 import akka.actor.ActorSystem
-import com.typesafe.config.ConfigFactory
+import com.typesafe.config.{ConfigFactory, ConfigValueFactory}
 import neopixel.{rpi_ws281xConstants => wsC}
 
 object ClusterStatusTrackerMain {
   def main(args: Array[String]): Unit = {
     System.loadLibrary("rpi_ws281x")
 
-    val config = ConfigFactory.load()
+    val baseConfig = ConfigFactory.load()
+
+    val nodeHostname = baseConfig.getString("cluster-node-configuration.node-hostname")
+
+    val config = baseConfig.withValue("akka.remote.artery.canonical.hostname", ConfigValueFactory.fromAnyRef(nodeHostname))
 
     val actorSystemName = s"pi-${config.getString("cluster-node-configuration.cluster-id")}-system"
 

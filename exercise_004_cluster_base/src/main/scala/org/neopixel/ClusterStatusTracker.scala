@@ -43,7 +43,7 @@ class ClusterStatusTracker(strip: Adafruit_NeoPixel.type) extends Actor with Act
   import ClusterStatusTracker._
 
   private val thisHost = context.system.settings.config.getString("akka.remote.netty.tcp.hostname")
-  log.debug(s"Starting ClusterStatus Actor on $thisHost")
+  log.debug(s"Starting ClusterStatus Actor on ${thisHost}:${context.system.settings.config.getString("akka.remote.netty.tcp.port")}")
 
   import settings.LedStripConfig._
   import settings._
