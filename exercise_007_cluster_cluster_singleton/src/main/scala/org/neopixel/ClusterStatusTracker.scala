@@ -20,10 +20,11 @@
 
 package org.neopixel
 
-import akka.actor.{Actor, ActorLogging, Props, Timers}
-import akka.cluster.Cluster
+import akka.actor.{Actor, ActorLogging, PoisonPill, Props, Timers}
 import akka.cluster.ClusterEvent._
 import akka.cluster.MemberStatus.{Up, WeaklyUp}
+import akka.cluster.singleton.{ClusterSingletonManager, ClusterSingletonManagerSettings}
+import akka.cluster.{Cluster, Member}
 
 object ClusterStatusTracker {
 
@@ -35,6 +36,7 @@ object ClusterStatusTracker {
   }
 
   case object Heartbeat
+  case object WeaklyUpBeat
 
   def props(strip: Adafruit_NeoPixel.type): Props = Props(new ClusterStatusTracker(strip))
 }
@@ -42,8 +44,8 @@ object ClusterStatusTracker {
 class ClusterStatusTracker(strip: Adafruit_NeoPixel.type) extends Actor with ActorLogging with SettingsActor with Timers {
   import ClusterStatusTracker._
 
-  private val thisHost = context.system.settings.config.getString("akka.remote.netty.tcp.hostname")
-  log.debug(s"Starting ClusterStatus Actor on ${thisHost}:${context.system.settings.config.getString("akka.remote.netty.tcp.port")}")
+  private val thisHost = context.system.settings.config.getString("akka.remote.artery.canonical.hostname")
+  log.debug(s"Starting ClusterStatus Actor on $thisHost")
 
   import settings.LedStripConfig._
   import settings._
@@ -55,71 +57,121 @@ class ClusterStatusTracker(strip: Adafruit_NeoPixel.type) extends Actor with Act
 
   def idle: Receive = akka.actor.Actor.emptyBehavior
 
-  def running(hearbeatLEDOn: Boolean): Receive = {
-    case Heartbeat if hearbeatLEDOn =>
+  def running(heartbeatLEDOn: Boolean, weaklyUpIndicatorOn: Boolean, weaklyUpMembers: Set[Member]): Receive = {
+    case Heartbeat if heartbeatLEDOn =>
       setPixelColorAndShow(strip, HeartbeatLedNumber, Black)
-      context.become(running(hearbeatLEDOn = false))
+
+      context.become(running(heartbeatLEDOn = false, weaklyUpIndicatorOn, weaklyUpMembers))
 
     case Heartbeat =>
       setPixelColorAndShow(strip, HeartbeatLedNumber, heartbeartIndicatorColor)
-      context.become(running(hearbeatLEDOn = true))
+
+      context.become(running(heartbeatLEDOn = true, weaklyUpIndicatorOn, weaklyUpMembers))
+
+    case WeaklyUpBeat if weaklyUpIndicatorOn =>
+      for {
+        weaklyUpMember <- weaklyUpMembers
+      } setPixelColorAndShow(strip, HostToLedMapping(weaklyUpMember.address.host.get), Black)
+
+      context.become(running(heartbeatLEDOn, ! weaklyUpIndicatorOn, weaklyUpMembers))
+
+    case WeaklyUpBeat =>
+      for {
+        weaklyUpMember <- weaklyUpMembers
+      } setPixelColorAndShow(strip, HostToLedMapping(weaklyUpMember.address.host.get), nodeWeaklyUpColor)
+
+      context.become(running(heartbeatLEDOn, ! weaklyUpIndicatorOn, weaklyUpMembers))
 
     case msg @ MemberUp(member) =>
       setPixelColorAndShow(strip, HostToLedMapping(member.address.host.get), nodeUpColor)
-      log.debug(s"$msg")
+
+      log.info(s"$msg\n${weaklyUpMembers - member}")
+
+      context.become(running(heartbeatLEDOn, weaklyUpIndicatorOn, weaklyUpMembers - member))
 
     case msg @ MemberLeft(member) =>
       setPixelColorAndShow(strip, HostToLedMapping(member.address.host.get), nodeLeftColor)
-      log.debug(s"$msg")
+
+      log.info(s"$msg\n${weaklyUpMembers - member}")
+
+      context.become(running(heartbeatLEDOn, weaklyUpIndicatorOn, weaklyUpMembers - member))
 
     case msg @ MemberExited(member) =>
       setPixelColorAndShow(strip, HostToLedMapping(member.address.host.get), nodeExitedColor)
-      log.debug(s"$msg")
+
+      log.info(s"$msg\n${weaklyUpMembers - member}")
+
+      context.become(running(heartbeatLEDOn, weaklyUpIndicatorOn, weaklyUpMembers - member))
 
     case msg @ MemberJoined(member) =>
       setPixelColorAndShow(strip, HostToLedMapping(member.address.host.get), nodeJoinedColor)
-      log.debug(s"$msg")
+
+      log.info(s"$msg\n${weaklyUpMembers - member}")
+
+      context.become(running(heartbeatLEDOn, weaklyUpIndicatorOn, weaklyUpMembers - member))
 
     case msg @ MemberRemoved(member, previousStatus) =>
       setPixelColorAndShow(strip, HostToLedMapping(member.address.host.get), nodeDownColor)
-      log.debug(s"$msg")
+
+      log.info(s"$msg\n${weaklyUpMembers - member}")
+
+      context.become(running(heartbeatLEDOn, weaklyUpIndicatorOn, weaklyUpMembers - member))
 
     case msg @ MemberWeaklyUp(member) =>
       setPixelColorAndShow(strip, HostToLedMapping(member.address.host.get), nodeWeaklyUpColor)
-      log.debug(s"$msg")
+
+      log.info(s"$msg\n${weaklyUpMembers + member}")
+
+      context.become(running(heartbeatLEDOn, weaklyUpIndicatorOn, weaklyUpMembers + member))
 
     case msg @ ReachableMember(member) if member.status == Up =>
       setPixelColorAndShow(strip, HostToLedMapping(member.address.host.get), nodeUpColor)
-      log.debug(s"$msg")
+
+      log.info(s"$msg\n${weaklyUpMembers - member}")
+
+      context.become(running(heartbeatLEDOn, weaklyUpIndicatorOn, weaklyUpMembers - member))
 
     case msg @ ReachableMember(member) if member.status == WeaklyUp =>
       setPixelColorAndShow(strip, HostToLedMapping(member.address.host.get), nodeWeaklyUpColor)
-      log.debug(s"$msg")
+
+      log.info(s"$msg\n${weaklyUpMembers + member }")
+
+      context.become(running(heartbeatLEDOn, weaklyUpIndicatorOn, weaklyUpMembers + member))
 
     case msg @ UnreachableMember(member) =>
       setPixelColorAndShow(strip, HostToLedMapping(member.address.host.get), nodeUnreachableColor)
-      log.debug(s"$msg")
+
+      log.info(s"$msg\n${weaklyUpMembers - member}")
+
+      context.become(running(heartbeatLEDOn, weaklyUpIndicatorOn, weaklyUpMembers - member))
 
     case msg @ LeaderChanged(Some(leader)) if leader.host.getOrElse("") == thisHost =>
       setPixelColorAndShow(strip, LeaderLedNumber, leaderIndicatorColor)
+
       log.debug(s"$msg")
 
     case msg @ LeaderChanged(Some(leader)) =>
       setPixelColorAndShow(strip, LeaderLedNumber, Black)
-      log.debug(s"$msg")
+
+      log.info(s"$msg")
 
     case msg @ LeaderChanged(None) =>
       setPixelColorAndShow(strip, LeaderLedNumber, Black)
-      log.debug(s"$msg")
+
+      log.info(s"$msg")
 
     case event =>
-      log.debug(s"~~~> UNHANDLED CLUSTER DOMAIN EVENT: $event")
+
+      log.info(s"~~~> UNHANDLED CLUSTER DOMAIN EVENT: $event")
 
   }
 
   override def preStart(): Unit = {
+
+    log.info(s"LED brightness = ${settings.ledBrightness}")
     strip.begin()
     resetAllLeds(strip)
+
     Cluster(context.system)
       .subscribe(self,
         InitialStateAsEvents,
@@ -127,9 +179,21 @@ class ClusterStatusTracker(strip: Adafruit_NeoPixel.type) extends Actor with Act
         classOf[ReachabilityEvent],
         classOf[MemberEvent]
       )
-    timers.startPeriodicTimer("heartbeat-timer", Heartbeat, heartbeatIndicatorInterval)
-    context.become(running(hearbeatLEDOn = false))
 
+    timers.startPeriodicTimer("heartbeat-timer", Heartbeat, heartbeatIndicatorInterval)
+    timers.startPeriodicTimer("weakly-up-beat", WeaklyUpBeat, weaklyUpIndicatorInterval)
+    context.become(running(heartbeatLEDOn = false, weaklyUpIndicatorOn = false, weaklyUpMembers = Set.empty[Member]))
+
+
+    val piClusterSingleton =
+      context.actorOf(
+        ClusterSingletonManager.props(
+          PiClusterSingleton.props(strip),
+          PoisonPill,
+          ClusterSingletonManagerSettings(context.system)
+        ),
+        "pi-cluster-singleton"
+      )
   }
 
   override def postStop(): Unit = {

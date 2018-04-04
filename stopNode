@@ -2,7 +2,10 @@
 
 ######################################################################
 # Usage:
-#  shutdownAll
+#  stopNode [node-nr] [signal-nr]
+#
+#   node-nr:   relative nr. of node (0 .. 4)
+#   signal-nr: defaults to 2 (SIGINT)
 #
 # Note: Set environment variable CLUSTER_NR to the number of your
 #       Akka Cluster
@@ -15,11 +18,15 @@ CLUSTER_BASE_NODE_NR=$(expr $CLUSTER_NR_SEL \* 5)
 
 PI_USER=akkapi
 
+SELECTED_SIGNAL=$2
+SIGNAL=${SELECTED_SIGNAL:-2}
+
 ALL_NODES="0 1 2 3 4"
-NODES=$ALL_NODES
+SELECTED_NODE=$1
+NODES=${SELECTED_NODE:-$ALL_NODES}
 
 for i in $NODES;do
   node=$[ CLUSTER_BASE_NODE_NR + i ]
-  echo "Shutting down node-${node}"
-  ssh ${PI_USER}@node-${node} "sudo /sbin/shutdown -h now &"
+  echo "Stopping node-${node}"
+  ssh ${PI_USER}@node-${node} "sudo pkill -${SIGNAL} -f .\*_[0-9][0-9][0-9]_.\*"
 done

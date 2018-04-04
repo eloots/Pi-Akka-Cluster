@@ -32,7 +32,7 @@ object ClusterStatusTrackerMain {
 
     val nodeHostname = baseConfig.getString("cluster-node-configuration.node-hostname")
 
-    val config = baseConfig.withValue("akka.remote.netty.tcp.hostname", ConfigValueFactory.fromAnyRef(nodeHostname))
+    val config = baseConfig.withValue("akka.remote.artery.canonical.hostname", ConfigValueFactory.fromAnyRef(nodeHostname))
 
     val actorSystemName = s"pi-${config.getString("cluster-node-configuration.cluster-id")}-system"
 
