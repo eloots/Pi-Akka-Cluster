@@ -18,7 +18,7 @@ Duncan Devore - duncan.devore@lightbend.com
 
 2018/03/14: Generalise code to allow for multiple clusters on a single network
 
-## Build instructions
+## Software build instructions
 
 Start from standard _**Hypriot**_ [Raspberry Pi distro](http://blog.hypriot.com/getting-started-with-docker-on-your-arm-device/) (Version [1.7.1](http://blog.hypriot.com/downloads/))
 
@@ -402,3 +402,10 @@ Log in on the different node (use a multi-session terminal like iTerm-2 on MacOS
 > Note: The LED strip is powered from the 5V pin on the Raspberry Pi board. However, the GPIO pin that drives the data input pin on the LED strip is a 3.3V logical signal. This causes intermittent flashes on the LED's. This problem can be solved easily by putting a diode (such as an 1N4001) between the 5V pin on the Pi and the power connection on the LED strip.
 
 > Note: Install `tmux` on the cluster nodes (`apt-get install tmux`) and always (interactive sessions) in a `tmux` session. This prevents processes (eg. nodes) getting killed when the connectivity of a node and your computer is broken (for example, as part of some test scenario like a network partition).
+
+## Hardware build instructions
+
+- Instructions on how to assemble the LED status strip can be found [here](LED-status-indicator-assembly-instructions.md)
+
+- Assembling the Pi's to form a physical cluster is relatively straightforward. See diagram [Cluster set-up schema](images/Cluster-set-up-schema.pdf) to see how it all connects together
+ 
