@@ -1,0 +1,18 @@
+<h3 class="page-heading">Cinnamon Prometheus</h3>
+
+<div ng-show="!ctrl.isDatasourceCreated">
+  <p>Configure the Prometheus data source for the Cinnamon dashboards:</p>
+  <div class="gf-form">
+    <span class="gf-form-label">Prometheus</span>
+    <input type="text" class="gf-form-input" placeholder="http://prometheus:9090" ng-model="ctrl.appModel.jsonData.prometheusUrl">
+    <span ng-if="!ctrl.validation.prometheusUrlValid" class="gf-form-label width-12 text-error">Prometheus URL is required.</span>
+  </div>
+</div>
+
+<div ng-show="ctrl.isDatasourceCreated">
+  <p>
+    Data source "<em>{{ctrl.datasourceName}}</em>" is configured.
+    Edit the data source if you need to set any further information.
+    Import dashboards under the <em>Dashboards</em> tab.
+  </p>
+</div>

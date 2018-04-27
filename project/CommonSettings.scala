@@ -18,8 +18,11 @@
   * limitations under the License.
   */
 
+import com.lightbend.cinnamon.sbt.Cinnamon
+import com.lightbend.sbt.javaagent.JavaAgent.JavaAgentKeys
 import sbt.Keys._
 import sbt._
+import sbtassembly.AssemblyKeys
 import sbtstudent.AdditionalSettings
 
 object CommonSettings {
@@ -44,4 +47,21 @@ object CommonSettings {
     AdditionalSettings.initialCmdsConsole ++
     AdditionalSettings.initialCmdsTestConsole ++
     AdditionalSettings.cmdAliases
+
+  lazy val configure: Project => Project = (proj: Project) => {
+    proj
+    .enablePlugins(Cinnamon)
+    .settings(CommonSettings.commonSettings: _*)
+    .settings(
+      libraryDependencies += Cinnamon.library.cinnamonPrometheus,
+      libraryDependencies += Cinnamon.library.cinnamonPrometheusHttpServer,
+      libraryDependencies += Cinnamon.library.cinnamonAkka,
+      AssemblyKeys.assembly := (Def.task {
+        JavaAgentKeys.resolvedJavaAgents.value.filter(_.agent.name == "Cinnamon").foreach { agent =>
+          sbt.IO.copyFile(agent.artifact, target.value / "cinnamon-agent.jar")
+        }
+        AssemblyKeys.assembly.value
+      }).value
+    )
+  }
 }
