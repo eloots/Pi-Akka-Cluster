@@ -17,7 +17,9 @@ lazy val pi_cluster_master = (project in file("."))
     exercise_012_split_brain_resolver_keep_referee,
     exercise_013_split_brain_resolver_keep_oldest,
     exercise_014_split_brain_resolver_static_quorum_http_mamagement,
-    exercise_015_non_clustered_sudoku_solver
+    exercise_015_clustered_sudoku_solver,
+    exercise_016_add_cluster_client,
+    exercise_017_clustered_sudoku_solver_cluster_client_enabled
  ).settings(CommonSettings.commonSettings: _*)
 
 lazy val common = project.settings(CommonSettings.commonSettings: _*)
@@ -82,7 +84,15 @@ lazy val exercise_014_split_brain_resolver_static_quorum_http_mamagement = proje
   .configure(CommonSettings.configure)
   .dependsOn(common % "test->test;compile->compile")
 
-lazy val exercise_015_non_clustered_sudoku_solver = project
+lazy val exercise_015_clustered_sudoku_solver = project
+  .configure(CommonSettings.configure)
+  .dependsOn(common % "test->test;compile->compile")
+
+lazy val exercise_016_add_cluster_client = project
+  .configure(CommonSettings.configure)
+  .dependsOn(common % "test->test;compile->compile")
+
+lazy val exercise_017_clustered_sudoku_solver_cluster_client_enabled = project
   .configure(CommonSettings.configure)
   .dependsOn(common % "test->test;compile->compile")
        

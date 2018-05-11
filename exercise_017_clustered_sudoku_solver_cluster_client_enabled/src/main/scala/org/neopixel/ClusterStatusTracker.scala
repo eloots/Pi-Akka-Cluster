@@ -41,8 +41,7 @@ object ClusterStatusTracker {
   def props(strip: Adafruit_NeoPixel.type): Props = Props(new ClusterStatusTracker(strip))
 }
 
-class ClusterStatusTracker(strip: Adafruit_NeoPixel.type)
-  extends Actor with ActorLogging with SettingsActor with Timers {
+class ClusterStatusTracker(strip: Adafruit_NeoPixel.type) extends Actor with ActorLogging with SettingsActor with Timers {
   import ClusterStatusTracker._
 
   private val thisHost = context.system.settings.config.getString("akka.remote.artery.canonical.hostname")
@@ -184,7 +183,6 @@ class ClusterStatusTracker(strip: Adafruit_NeoPixel.type)
     timers.startPeriodicTimer("heartbeat-timer", Heartbeat, heartbeatIndicatorInterval)
     timers.startPeriodicTimer("weakly-up-beat", WeaklyUpBeat, weaklyUpIndicatorInterval)
     context.become(running(heartbeatLEDOn = false, weaklyUpIndicatorOn = false, weaklyUpMembers = Set.empty[Member]))
-
 
     val piClusterSingleton =
       context.actorOf(
