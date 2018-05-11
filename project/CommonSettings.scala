@@ -32,7 +32,7 @@ object CommonSettings {
     scalaVersion := Version.scalaVer,
     scalacOptions ++= CompileOptions.compileOptions,
     unmanagedSourceDirectories in Compile := List((scalaSource in Compile).value, (javaSource in Compile).value),
-    unmanagedSourceDirectories in Test := List((scalaSource in Compile).value, (javaSource in Compile).value),
+    unmanagedSourceDirectories in Test := List((scalaSource in Test).value, (javaSource in Test).value),
     testOptions += Tests.Argument(TestFrameworks.JUnit, "-v"),
     parallelExecution in Test := false,
     logBuffered in Test := false,
