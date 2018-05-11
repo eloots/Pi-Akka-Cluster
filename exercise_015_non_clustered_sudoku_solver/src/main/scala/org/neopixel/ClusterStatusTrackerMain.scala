@@ -21,14 +21,31 @@
 package org.neopixel
 
 import akka.actor.ActorSystem
+import com.typesafe.config.{ConfigFactory, ConfigValueFactory}
+import akka.management.AkkaManagement
 import neopixel.{rpi_ws281xConstants => wsC}
 
 object ClusterStatusTrackerMain {
 //  def main(args: Array[String]): Unit = {
 //    System.loadLibrary("rpi_ws281x")
 //
-//    val system = ActorSystem("pi-cluster-system")
-//    val clusterStatusTracker = system.actorOf(ClusterStatusTracker.props())
+//    val baseConfig = ConfigFactory.load()
 //
+//    val nodeHostname = baseConfig.getString("cluster-node-configuration.node-hostname")
+//
+//    val config = baseConfig.withValue("akka.remote.artery.canonical.hostname", ConfigValueFactory.fromAnyRef(nodeHostname))
+//
+//    val actorSystemName = s"pi-${config.getString("cluster-node-configuration.cluster-id")}-system"
+//
+//    val system = ActorSystem(actorSystemName, config)
+//
+//    val settings = ConfigSettingsExtension(system)
+//
+//    import settings.LedStripConfig._
+//
+//    val strip = Adafruit_NeoPixel(ledCount, ledPin, ledFreqHz, ledDma, ledInvert, ledBrightness, ledChannel, wsC.WS2811_STRIP_RGB)
+//
+//    val clusterStatusTracker = system.actorOf(ClusterStatusTracker.props(strip), "cluster-status-tracker")
+//    AkkaManagement(system).start
 //  }
 }

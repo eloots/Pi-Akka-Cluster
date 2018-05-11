@@ -27,6 +27,7 @@ object Version {
   val scalaParsersVer = "1.0.4"
   val akkaSBRVer      = "1.1.0"
   val akkaManagementVer = "0.9.0"
+  val scalaTestVer    = "3.0.4"
 }
 
 object Dependencies {
@@ -44,6 +45,7 @@ object Dependencies {
     "ch.qos.logback"                 %  "logback-classic"             % Version.logbackVer,
     "com.lightbend.akka.management" %% "akka-management"              % Version.akkaManagementVer,
     "com.lightbend.akka.management" %% "akka-management-cluster-http" % Version.akkaManagementVer,
-    "com.typesafe.akka"             %% "akka-testkit"                 % Version.akkaVer            % Test
+    "com.typesafe.akka"             %% "akka-testkit"                 % Version.akkaVer              % Test,
+    "org.scalatest"                 %% "scalatest"                    % Version.scalaTestVer         % Test
   )
 }
