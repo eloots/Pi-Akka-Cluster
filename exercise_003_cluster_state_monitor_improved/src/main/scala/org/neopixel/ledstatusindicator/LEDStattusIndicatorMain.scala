@@ -24,7 +24,7 @@ import java.net.InetSocketAddress
 
 import akka.actor.ActorSystem
 
-//object Main {
+object Main {
 //  def main(args: Array[String]): Unit = {
 //    System.loadLibrary("rpi_ws281x")
 //
@@ -37,4 +37,4 @@ import akka.actor.ActorSystem
 //    val lEDStatusIndicator =
 //      system.actorOf(LEDStatusIndicator.props(100.milliseconds, clusterNodeAddress, ledStatusIndicatorAddress), "led-status-indicator")
 //  }
-//}
+}
