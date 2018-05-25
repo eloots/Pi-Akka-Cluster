@@ -21,13 +21,14 @@
 import sbt._
 
 object Version {
-  val akkaVer         = "2.5.12"
-  val logbackVer      = "1.2.3"
-  val scalaVer        = "2.12.6"
-  val scalaParsersVer = "1.0.4"
-  val akkaSBRVer      = "1.1.0"
+  val akkaVer           = "2.5.12"
+  val akkaHttpVer       = "10.1.1"
+  val logbackVer        = "1.2.3"
+  val scalaVer          = "2.12.6"
+  val scalaParsersVer   = "1.0.4"
+  val akkaSBRVer        = "1.1.0"
   val akkaManagementVer = "0.9.0"
-  val scalaTestVer    = "3.0.4"
+  val scalaTestVer      = "3.0.4"
 }
 
 object Dependencies {
@@ -41,6 +42,9 @@ object Dependencies {
     "com.typesafe.akka"             %% "akka-persistence"             % Version.akkaVer,
     "com.lightbend.akka"            %% "akka-split-brain-resolver"    % Version.akkaSBRVer,
     "com.typesafe.akka"             %% "akka-slf4j"                   % Version.akkaVer,
+    "com.typesafe.akka"             %% "akka-http"                    % Version.akkaHttpVer,
+    "com.typesafe.akka"             %% "akka-http-spray-json"         % Version.akkaHttpVer,
+    "com.typesafe.akka"             %% "akka-stream"                  % Version.akkaVer,
     "ch.qos.logback"                 %  "logback-classic"             % Version.logbackVer,
     "ch.qos.logback"                 %  "logback-classic"             % Version.logbackVer,
     "com.lightbend.akka.management" %% "akka-management"              % Version.akkaManagementVer,
