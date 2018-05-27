@@ -11,7 +11,9 @@ import akka.stream.ActorMaterializer
 import akka.util.Timeout
 import com.typesafe.config.ConfigFactory
 import spray.json.DefaultJsonProtocol
+import akka.pattern.AskTimeoutException
 
+import scala.concurrent.{Future, Promise}
 import scala.concurrent.duration._
 import scala.io.StdIn
 import scala.util.{Failure, Success}
@@ -31,24 +33,24 @@ trait JsonSupport extends SprayJsonSupport with DefaultJsonProtocol {
   *
   * Example JSON format:
   * {"values": [
-  *   [9,0,0,0,0,4,0,8,0],
-  *   [0,0,5,0,7,0,0,0,0],
-  *   [0,7,1,0,5,2,0,6,0],
-  *   [0,8,0,0,0,0,0,0,3],
-  *   [0,5,0,9,6,0,0,0,0],
-  *   [0,0,9,7,0,0,4,0,5],
-  *   [0,0,0,5,0,0,0,0,2],
-  *   [0,0,0,0,0,0,0,0,0],
-  *   [0,0,2,0,0,3,0,5,4]
+  *   [0,6,0,0,2,0,9,0,7],
+  *   [0,0,0,3,6,9,0,0,0],
+  *   [0,0,1,0,4,0,0,0,0],
+  *   [0,9,8,0,0,5,0,0,0],
+  *   [0,2,0,6,0,0,3,0,0],
+  *   [0,0,0,0,0,0,0,0,9],
+  *   [0,0,2,8,0,0,0,0,1],
+  *   [0,0,0,0,0,7,0,6,0],
+  *   [0,5,0,0,0,0,0,0,0]
   * ]}
   *
   * Example curl command:
-  * curl --header "Content-Type: application/json" --request POST --data '{ "values": [[9,0,0,0,0,4,0,8,0],[0,0,5,0,7,0,0,0,0],[0,7,1,0,5,2,0,6,0],[0,8,0,0,0,0,0,0,3],[0,5,0,9,6,0,0,0,0],[0,0,9,7,0,0,4,0,5],[0,0,0,5,0,0,0,0,2],[0,0,0,0,0,0,0,0,0],[0,0,2,0,0,3,0,5,4]]}' localhost:8080/sudoku
+  * curl --header "Content-Type: application/json" --request POST --data '{ "values": [[0,6,0,0,2,0,9,0,7], [0,0,0,3,6,9,0,0,0], [0,0,1,0,4,0,0,0,0], [0,9,8,0,0,5,0,0,0], [0,2,0,6,0,0,3,0,0], [0,0,0,0,0,0,0,0,9], [0,0,2,8,0,0,0,0,1], [0,0,0,0,0,7,0,6,0], [0,5,0,0,0,0,0,0,0]]}' localhost:8080/sudoku
   *
   */
 object AkkaHttpServer extends Directives with JsonSupport {
   def main(args: Array[String]): Unit = {
-    implicit val askTimeout: Timeout = 5.seconds
+    implicit val askTimeout: Timeout = 5000.millis
 
     val conf = ConfigFactory.load("sudokuclient")
 
@@ -63,8 +65,7 @@ object AkkaHttpServer extends Directives with JsonSupport {
         post {
           entity(as[SudokuMessage]) { sudokuMessage =>
             val sudokuInitialUpdate =  createSudokuMessage(sudokuMessage)
-            println(s"Hahaha: $sudokuInitialUpdate")
-            onComplete((clusterClient ? sudokuInitialUpdate).mapTo[SudokuSolver.Result]) {
+            onComplete(askClusterClient(clusterClient, sudokuInitialUpdate).mapTo[SudokuSolver.Result]) {
               case Success(solution) => complete(solution.toString) // FIXME: Improved formatting of response would be nice.
               case Failure(ex) => complete("Could not solve Sudoku.")
             }
@@ -79,6 +80,30 @@ object AkkaHttpServer extends Directives with JsonSupport {
     bindingFuture
       .flatMap(_.unbind()) // trigger unbinding from the port
       .onComplete(_ => system.terminate()) // and shutdown when done
+  }
+
+  def askClusterClient(clusterClient: ActorRef, msg: Any)(implicit system: ActorSystem, askTimeout: Timeout): Future[SudokuSolver.Result] = {
+    val resultPromise = Promise[SudokuSolver.Result]()
+
+    case object TimeoutReached
+    system.actorOf(Props(new Actor with ActorLogging with Timers {
+
+      clusterClient ! ClusterClient.Send("/user/sudoku-solver", msg, localAffinity = false)
+
+      timers.startSingleTimer("request-timeout", TimeoutReached, askTimeout.duration)
+
+      override def receive: Receive = {
+        case result: SudokuSolver.Result =>
+          resultPromise.complete(Success(result))
+          context.stop(self)
+
+        case TimeoutReached =>
+          resultPromise.failure(new AskTimeoutException("request timed out"))
+          context.stop(self)
+      }
+    }))
+
+    resultPromise.future
   }
 
   def initiateClusterClient(system: ActorSystem): ActorRef = {
