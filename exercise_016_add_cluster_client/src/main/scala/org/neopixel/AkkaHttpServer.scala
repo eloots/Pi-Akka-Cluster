@@ -43,13 +43,16 @@ trait JsonSupport extends SprayJsonSupport with DefaultJsonProtocol {
   * ]}
   *
   * Example curl command:
-  * curl --header "Content-Type: application/json" --request POST --data '{ "values": [[9,0,0,0,0,4,0,8,0],[0,0,5,0,7,0,0,0,0],[0,7,1,0,5,2,0,6,0],[0,8,0,0,0,0,0,0,3],[0,5,0,9,6,0,0,0,0],[0,0,9,7,0,0,4,0,5],[2],[0,0,0,0,0,0,0,0,0],[0,0,2,0,0,3,0,5,4]]}' localhost:8080/sudoku
+  * curl --header "Content-Type: application/json" --request POST --data '{ "values": [[9,0,0,0,0,4,0,8,0],[0,0,5,0,7,0,0,0,0],[0,7,1,0,5,2,0,6,0],[0,8,0,0,0,0,0,0,3],[0,5,0,9,6,0,0,0,0],[0,0,9,7,0,0,4,0,5],[0,0,0,5,0,0,0,0,2],[0,0,0,0,0,0,0,0,0],[0,0,2,0,0,3,0,5,4]]}' localhost:8080/sudoku
   *
   */
 object AkkaHttpServer extends Directives with JsonSupport {
   def main(args: Array[String]): Unit = {
     implicit val askTimeout: Timeout = 5.seconds
-    implicit val system = ActorSystem("sudoku-solver-system")
+
+    val conf = ConfigFactory.load("sudokuclient")
+
+    implicit val system = ActorSystem("sudoku-solver-system", conf)
     implicit val materializer = ActorMaterializer()
     implicit val executionContext = system.dispatcher
 
@@ -59,7 +62,9 @@ object AkkaHttpServer extends Directives with JsonSupport {
       path("sudoku") {
         post {
           entity(as[SudokuMessage]) { sudokuMessage =>
-            onComplete((clusterClient ? createSudokuMessage(sudokuMessage)).mapTo[SudokuSolver.Result]) {
+            val sudokuInitialUpdate =  createSudokuMessage(sudokuMessage)
+            println(s"Hahaha: $sudokuInitialUpdate")
+            onComplete((clusterClient ? sudokuInitialUpdate).mapTo[SudokuSolver.Result]) {
               case Success(solution) => complete(solution.toString) // FIXME: Improved formatting of response would be nice.
               case Failure(ex) => complete("Could not solve Sudoku.")
             }
@@ -77,9 +82,8 @@ object AkkaHttpServer extends Directives with JsonSupport {
   }
 
   def initiateClusterClient(system: ActorSystem): ActorRef = {
-    val conf = ConfigFactory.load("sudokuclient")
 
-    val initialContacts = immutableSeq(conf.getStringList("contact-points")).map {
+    val initialContacts = immutableSeq(system.settings.config.getStringList("contact-points")).map {
       case AddressFromURIString(addr) => RootActorPath(addr) / "system" / "receptionist"
     }.toSet
 
