@@ -56,6 +56,7 @@ object CommonSettings {
       libraryDependencies += Cinnamon.library.cinnamonPrometheus,
       libraryDependencies += Cinnamon.library.cinnamonPrometheusHttpServer,
       libraryDependencies += Cinnamon.library.cinnamonAkka,
+      libraryDependencies += Cinnamon.library.cinnamonAkkaHttp,
       AssemblyKeys.assembly := (Def.task {
         JavaAgentKeys.resolvedJavaAgents.value.filter(_.agent.name == "Cinnamon").foreach { agent =>
           sbt.IO.copyFile(agent.artifact, target.value / "cinnamon-agent.jar")

@@ -47,16 +47,7 @@ object SudokuIO {
       "{Lines of " + file.getAbsolutePath + "}"
   }
 
-  def readSudokuFromFile(sudokuInputFile: java.io.File): Seq[(Int, CellUpdates)] = {
-    val dataLines = new FileLineTraversable(sudokuInputFile).toList
-    val cellsIn =
-      dataLines
-        .map { inputLine => """\|""".r replaceAllIn(inputLine, "")}     // Remove 3x3 separator character
-        .filter (_ != "---+---+---")              // Remove 3x3 line separator
-        .map ("""^[1-9 ]{9}$""".r findFirstIn(_)) // Input data should only contain values 1-9 or ' '
-        .collect { case Some(x) => x}
-        .zipWithIndex
-    var modCells = Seq.empty[(Int,Int)]
+  def convertFromCellsToComplete(cellsIn: List[(String, Int)]): Seq[(Int, CellUpdates)] =
     for {
       (rowCells, row) <- cellsIn
       updates = (rowCells.zipWithIndex foldLeft cellUpdatesEmpty) {
@@ -66,5 +57,18 @@ object SudokuIO {
       }
 
     } yield (row, updates)
+
+
+  def readSudokuFromFile(sudokuInputFile: java.io.File): Seq[(Int, CellUpdates)] = {
+    val dataLines = new FileLineTraversable(sudokuInputFile).toList
+    val cellsIn =
+      dataLines
+        .map { inputLine => """\|""".r replaceAllIn(inputLine, "")}     // Remove 3x3 separator character
+        .filter (_ != "---+---+---")              // Remove 3x3 line separator
+        .map ("""^[1-9 ]{9}$""".r findFirstIn(_)) // Input data should only contain values 1-9 or ' '
+        .collect { case Some(x) => x}
+        .zipWithIndex
+
+    convertFromCellsToComplete(cellsIn)
   }
 }
