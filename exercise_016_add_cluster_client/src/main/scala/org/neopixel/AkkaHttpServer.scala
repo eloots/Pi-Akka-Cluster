@@ -1,7 +1,6 @@
 package org.neopixel
 
 import akka.actor._
-import akka.pattern.ask
 import akka.cluster.client.{ClusterClient, ClusterClientSettings}
 import akka.http.scaladsl.server.{Directives, Route}
 import akka.http.scaladsl.Http
