@@ -19,8 +19,11 @@ import scala.util.{Failure, Success}
 
 case class SudokuMessage(values: Seq[Seq[Int]])
 
+case class SudokuSolution(solution: Sudoku)
+
 trait JsonSupport extends SprayJsonSupport with DefaultJsonProtocol {
   implicit val sudokuMessageFormat = jsonFormat1(SudokuMessage)
+  implicit val sudokuSolutionFormat = jsonFormat1(SudokuSolution)
 }
 
 /**
@@ -65,7 +68,7 @@ object AkkaHttpServer extends Directives with JsonSupport {
           entity(as[SudokuMessage]) { sudokuMessage =>
             val sudokuInitialUpdate =  createSudokuMessage(sudokuMessage)
             onComplete(askClusterClient(clusterClient, sudokuInitialUpdate).mapTo[SudokuSolver.Result]) {
-              case Success(solution) => complete(solution.toString) // FIXME: Improved formatting of response would be nice.
+              case Success(solution) => complete(solution.sudoku)
               case Failure(ex) => complete("Could not solve Sudoku.")
             }
           }
