@@ -55,7 +55,7 @@
             {
               "expr": "akka_dispatcher_queue_time_ns{host=~\"$Servers\", application=~\"$Applications\", actor_system=~\"$ActorSystems\", dispatcher=~\"$Dispatchers\", quantile=~\"$MetricType\"}",
               "format": "time_series",
-              "legendFormat": "{{host}} / {{actor_system}} / {{dispatcher}}"
+              "legendFormat": "{{host}} / {{actor_system}} / {{dispatcher}} / {{quantile}}"
             }
           ],
           "timeFrom": null,
@@ -131,7 +131,7 @@
             {
               "expr": "akka_dispatcher_processing_time_ns{host=~\"$Servers\", application=~\"$Applications\", actor_system=~\"$ActorSystems\", dispatcher=~\"$Dispatchers\", quantile=~\"$MetricType\"}",
               "format": "time_series",
-              "legendFormat": "{{host}} / {{actor_system}} / {{dispatcher}}"
+              "legendFormat": "{{host}} / {{actor_system}} / {{dispatcher}} / {{quantile}}"
             }
           ],
           "timeFrom": null,

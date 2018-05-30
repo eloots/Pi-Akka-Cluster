@@ -55,7 +55,7 @@
             {
               "expr": "stopwatch_stopwatch_time_ns{host=~\"$Servers\", application=~\"$Applications\", stopwatch=~\"$StopwatchIdentifiers\", quantile=~\"$MetricType\"}",
               "format": "time_series",
-              "legendFormat": "{{host}} / {{application}}"
+              "legendFormat": "{{host}} / {{application}} / {{quantile}}"
             }
           ],
           "timeFrom": null,
