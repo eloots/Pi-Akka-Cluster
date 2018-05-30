@@ -11,9 +11,11 @@ object SudokuSolver {
   case class Result(sudoku: Sudoku)
 
   def genDetailProcessors[A <: SudokoDetailType : UpdateSender](context: ActorContext): Map[Int, ActorRef] = {
+
     cellIndexesVector.map {
       index =>
-        val detailProcessor = context.actorOf(SudokuDetailProcessor.props[A](index))
+        val detailProcessorName = implicitly[UpdateSender[A]].processorName(index)
+        val detailProcessor = context.actorOf(SudokuDetailProcessor.props[A](index), detailProcessorName)
         (index, detailProcessor)
     }.toMap
   }
