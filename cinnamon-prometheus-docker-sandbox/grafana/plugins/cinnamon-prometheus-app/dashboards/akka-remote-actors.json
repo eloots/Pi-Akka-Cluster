@@ -215,7 +215,7 @@
             {
               "expr": "akka_actor_remote_sent_message_size{host=~\"$Servers\", application=~\"$Applications\", actor_system=~\"$ActorSystems\", dispatcher=~\"$Dispatchers\", actor=~\"$RemoteActors\", quantile=~\"$MetricType\"}",
               "format": "time_series",
-              "legendFormat": "{{host}} / {{dispatcher}} / {{actor}}"
+              "legendFormat": "{{host}} / {{dispatcher}} / {{actor}} / {{quantile}}"
             }
           ],
           "timeFrom": null,
@@ -291,7 +291,7 @@
             {
               "expr": "akka_actor_remote_received_message_size{host=~\"$Servers\", application=~\"$Applications\", actor_system=~\"$ActorSystems\", dispatcher=~\"$Dispatchers\", actor=~\"$RemoteActors\", quantile=~\"$MetricType\"}",
               "format": "time_series",
-              "legendFormat": "{{host}} / {{dispatcher}} / {{actor}}"
+              "legendFormat": "{{host}} / {{dispatcher}} / {{actor}} / {{quantile}}"
             }
           ],
           "timeFrom": null,
@@ -375,7 +375,7 @@
             {
               "expr": "akka_actor_remote_serialization_time_ns{host=~\"$Servers\", application=~\"$Applications\", actor_system=~\"$ActorSystems\", dispatcher=~\"$Dispatchers\", actor=~\"$RemoteActors\", quantile=~\"$MetricType\"}",
               "format": "time_series",
-              "legendFormat": "{{host}} / {{dispatcher}} / {{actor}}"
+              "legendFormat": "{{host}} / {{dispatcher}} / {{actor}} / {{quantile}}"
             }
           ],
           "timeFrom": null,
@@ -451,7 +451,7 @@
             {
               "expr": "akka_actor_remote_deserialization_time_ns{host=~\"$Servers\", application=~\"$Applications\", actor_system=~\"$ActorSystems\", dispatcher=~\"$Dispatchers\", actor=~\"$RemoteActors\", quantile=~\"$MetricType\"}",
               "format": "time_series",
-              "legendFormat": "{{host}} / {{dispatcher}} / {{actor}}"
+              "legendFormat": "{{host}} / {{dispatcher}} / {{actor}} / {{quantile}}"
             }
           ],
           "timeFrom": null,

@@ -131,7 +131,7 @@
             {
               "expr": "akka_router_router_processing_time_ns{host=~\"$Servers\", application=~\"$Applications\", actor_system=~\"$ActorSystems\", dispatcher=~\"$Dispatchers\", router=~\"$Routers\", quantile=~\"$MetricType\"}",
               "format": "time_series",
-              "legendFormat": "{{host}} / {{dispatcher}} / {{router}}"
+              "legendFormat": "{{host}} / {{dispatcher}} / {{router}} / {{quantile}}"
             }
           ],
           "timeFrom": null,

@@ -55,7 +55,7 @@
             {
               "expr": "akka_actor_mailbox_size{host=~\"$Servers\", application=~\"$Applications\", actor_system=~\"$ActorSystems\", dispatcher=~\"$Dispatchers\", actor=~\"$Actors\", quantile=~\"$MetricType\"}",
               "format": "time_series",
-              "legendFormat": "{{host}} / {{dispatcher}} / {{actor}}"
+              "legendFormat": "{{host}} / {{dispatcher}} / {{actor}} / {{quantile}}"
             }
           ],
           "timeFrom": null,
@@ -215,7 +215,7 @@
             {
               "expr": "akka_actor_mailbox_time_ns{host=~\"$Servers\", application=~\"$Applications\", actor_system=~\"$ActorSystems\", dispatcher=~\"$Dispatchers\", actor=~\"$Actors\", quantile=~\"$MetricType\"}",
               "format": "time_series",
-              "legendFormat": "{{host}} / {{dispatcher}} / {{actor}}"
+              "legendFormat": "{{host}} / {{dispatcher}} / {{actor}} / {{quantile}}"
             }
           ],
           "timeFrom": null,
@@ -291,7 +291,7 @@
             {
               "expr": "akka_actor_processing_time_ns{host=~\"$Servers\", application=~\"$Applications\", actor_system=~\"$ActorSystems\", dispatcher=~\"$Dispatchers\", actor=~\"$Actors\", quantile=~\"$MetricType\"}",
               "format": "time_series",
-              "legendFormat": "{{host}} / {{dispatcher}} / {{actor}}"
+              "legendFormat": "{{host}} / {{dispatcher}} / {{actor}} / {{quantile}}"
             }
           ],
           "timeFrom": null,
@@ -375,7 +375,7 @@
             {
               "expr": "akka_actor_stash_size{host=~\"$Servers\", application=~\"$Applications\", actor_system=~\"$ActorSystems\", dispatcher=~\"$Dispatchers\", actor=~\"$Actors\", quantile=~\"$MetricType\"}",
               "format": "time_series",
-              "legendFormat": "{{host}} / {{dispatcher}} / {{actor}}"
+              "legendFormat": "{{host}} / {{dispatcher}} / {{actor}} / {{quantile}}"
             }
           ],
           "timeFrom": null,
