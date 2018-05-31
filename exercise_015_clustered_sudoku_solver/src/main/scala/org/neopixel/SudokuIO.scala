@@ -22,6 +22,31 @@ object SudokuIO {
 
   }
 
+  private def sudokuCellRepresentation(content: CellContent): String = {
+    content.toList match {
+      case Nil => "x"
+      case singleValue +: Nil => singleValue.toString
+      case _ => " "
+    }
+  }
+
+  private def sudokuRowPrinter(threeRows: Vector[ReductionSet]): String = {
+    val rowSubBlocks = for {
+      row <- threeRows
+      rowSubBlock <- row.map(el => sudokuCellRepresentation(el)).sliding(3,3)
+      rPres = rowSubBlock.mkString
+
+    } yield rPres
+    rowSubBlocks.sliding(3,3).map(_.mkString("", "|", "")).mkString("|", "|\n|", "|\n")
+  }
+
+  def sudokuPrinter(result: SudokuSolver.Result): String = {
+    result.sudoku
+      .sliding(3,3)
+      .map(sudokuRowPrinter)
+      .mkString("+---+---+---+\n", "+---+---+---+\n", "+---+---+---+")
+  }
+
   /*
    * FileLineTraversable code taken from "Scala in Depth" by Joshua Suereth
    */
@@ -47,16 +72,7 @@ object SudokuIO {
       "{Lines of " + file.getAbsolutePath + "}"
   }
 
-  def readSudokuFromFile(sudokuInputFile: java.io.File): Seq[(Int, CellUpdates)] = {
-    val dataLines = new FileLineTraversable(sudokuInputFile).toList
-    val cellsIn =
-      dataLines
-        .map { inputLine => """\|""".r replaceAllIn(inputLine, "")}     // Remove 3x3 separator character
-        .filter (_ != "---+---+---")              // Remove 3x3 line separator
-        .map ("""^[1-9 ]{9}$""".r findFirstIn(_)) // Input data should only contain values 1-9 or ' '
-        .collect { case Some(x) => x}
-        .zipWithIndex
-    var modCells = Seq.empty[(Int,Int)]
+  def convertFromCellsToComplete(cellsIn: List[(String, Int)]): Seq[(Int, CellUpdates)] =
     for {
       (rowCells, row) <- cellsIn
       updates = (rowCells.zipWithIndex foldLeft cellUpdatesEmpty) {
@@ -66,5 +82,18 @@ object SudokuIO {
       }
 
     } yield (row, updates)
+
+
+  def readSudokuFromFile(sudokuInputFile: java.io.File): Seq[(Int, CellUpdates)] = {
+    val dataLines = new FileLineTraversable(sudokuInputFile).toList
+    val cellsIn =
+      dataLines
+        .map { inputLine => """\|""".r replaceAllIn(inputLine, "")}     // Remove 3x3 separator character
+        .filter (_ != "---+---+---")              // Remove 3x3 line separator
+        .map ("""^[1-9 ]{9}$""".r findFirstIn(_)) // Input data should only contain values 1-9 or ' '
+        .collect { case Some(x) => x}
+        .zipWithIndex
+
+    convertFromCellsToComplete(cellsIn)
   }
 }

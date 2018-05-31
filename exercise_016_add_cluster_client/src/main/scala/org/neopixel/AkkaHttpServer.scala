@@ -2,25 +2,29 @@ package org.neopixel
 
 import akka.actor._
 import akka.cluster.client.{ClusterClient, ClusterClientSettings}
-import akka.http.scaladsl.server.{Directives, Route}
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
+import akka.http.scaladsl.marshalling.ToResponseMarshaller
+import akka.http.scaladsl.server.{Directives, Route}
 import akka.japi.Util.immutableSeq
+import akka.pattern.AskTimeoutException
 import akka.stream.ActorMaterializer
 import akka.util.Timeout
 import com.typesafe.config.ConfigFactory
 import spray.json.DefaultJsonProtocol
-import akka.pattern.AskTimeoutException
 
-import scala.concurrent.{Future, Promise}
 import scala.concurrent.duration._
+import scala.concurrent.{Future, Promise}
 import scala.io.StdIn
 import scala.util.{Failure, Success}
 
 case class SudokuMessage(values: Seq[Seq[Int]])
 
+case class SudokuSolution(solution: Sudoku)
+
 trait JsonSupport extends SprayJsonSupport with DefaultJsonProtocol {
   implicit val sudokuMessageFormat = jsonFormat1(SudokuMessage)
+  implicit val sudokuSolutionFormat = jsonFormat1(SudokuSolution)
 }
 
 /**
@@ -59,17 +63,22 @@ object AkkaHttpServer extends Directives with JsonSupport {
 
     val clusterClient = initiateClusterClient(system)
 
-    val routes =
-      path("sudoku") {
-        post {
-          entity(as[SudokuMessage]) { sudokuMessage =>
-            val sudokuInitialUpdate =  createSudokuMessage(sudokuMessage)
-            onComplete(askClusterClient(clusterClient, sudokuInitialUpdate).mapTo[SudokuSolver.Result]) {
-              case Success(solution) => complete(solution.toString) // FIXME: Improved formatting of response would be nice.
-              case Failure(ex) => complete("Could not solve Sudoku.")
-            }
+    def sudokuRouteWithFormatter[A : ToResponseMarshaller](formatter: SudokuSolver.Result => A): Route =
+      post {
+        entity(as[SudokuMessage]) { sudokuMessage =>
+          val sudokuInitialUpdate =  createSudokuMessage(sudokuMessage)
+          onComplete(askClusterClient(clusterClient, sudokuInitialUpdate).mapTo[SudokuSolver.Result]) {
+            case Success(solution) => complete(formatter(solution))
+            case Failure(ex) => complete("Could not solve Sudoku.")
           }
         }
+      }
+
+    val routes =
+      path("sudoku") {
+        sudokuRouteWithFormatter[String](SudokuIO.sudokuPrinter)
+      } ~ pathPrefix("sudoku" / "asJSON") {
+        sudokuRouteWithFormatter[Sudoku]{ solution: SudokuSolver.Result => solution.sudoku }
       }
 
     val bindingFuture = Http().bindAndHandle(routes, "localhost", 8080)
