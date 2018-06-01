@@ -24,6 +24,7 @@ import sbt.Keys._
 import sbt._
 import sbtassembly._
 import sbtstudent.AdditionalSettings
+import AssemblyKeys.{assemblyMergeStrategy, assembly}
 
 object CommonSettings {
   lazy val commonSettings = Seq(
@@ -63,10 +64,11 @@ object CommonSettings {
         }
         AssemblyKeys.assembly.value
       }.value,
-      AssemblyKeys.assemblyMergeStrategy in AssemblyKeys.assembly := {
-        case PathList("reference.conf", _ @ _*) => MergeStrategy.discard
-        case PathList("META-INF", _ @ _*) => MergeStrategy.discard
-        case _ => MergeStrategy.first
+      assemblyMergeStrategy in assembly := {
+        case "cinnamon-reference.conf" => MergeStrategy.concat
+        case x =>
+          val oldStrategy = (assemblyMergeStrategy in assembly).value
+          oldStrategy(x)
       }
     )
   }
