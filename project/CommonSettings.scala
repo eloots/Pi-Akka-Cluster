@@ -22,7 +22,7 @@ import com.lightbend.cinnamon.sbt.Cinnamon
 import com.lightbend.sbt.javaagent.JavaAgent.JavaAgentKeys
 import sbt.Keys._
 import sbt._
-import sbtassembly.AssemblyKeys
+import sbtassembly._
 import sbtstudent.AdditionalSettings
 
 object CommonSettings {
@@ -55,14 +55,19 @@ object CommonSettings {
     .settings(
       libraryDependencies += Cinnamon.library.cinnamonPrometheus,
       libraryDependencies += Cinnamon.library.cinnamonPrometheusHttpServer,
-      libraryDependencies += Cinnamon.library.cinnamonAkka,
       libraryDependencies += Cinnamon.library.cinnamonAkkaHttp,
-      AssemblyKeys.assembly := (Def.task {
+      libraryDependencies += Cinnamon.library.cinnamonOpenTracingZipkin,
+      AssemblyKeys.assembly := Def.task {
         JavaAgentKeys.resolvedJavaAgents.value.filter(_.agent.name == "Cinnamon").foreach { agent =>
           sbt.IO.copyFile(agent.artifact, target.value / "cinnamon-agent.jar")
         }
         AssemblyKeys.assembly.value
-      }).value
+      }.value,
+      AssemblyKeys.assemblyMergeStrategy in AssemblyKeys.assembly := {
+        case PathList("reference.conf", _ @ _*) => MergeStrategy.discard
+        case PathList("META-INF", _ @ _*) => MergeStrategy.discard
+        case _ => MergeStrategy.first
+      }
     )
   }
 }
