@@ -22,8 +22,9 @@ import com.lightbend.cinnamon.sbt.Cinnamon
 import com.lightbend.sbt.javaagent.JavaAgent.JavaAgentKeys
 import sbt.Keys._
 import sbt._
-import sbtassembly.AssemblyKeys
+import sbtassembly._
 import sbtstudent.AdditionalSettings
+import AssemblyKeys.{assemblyMergeStrategy, assembly}
 
 object CommonSettings {
   lazy val commonSettings = Seq(
@@ -55,14 +56,20 @@ object CommonSettings {
     .settings(
       libraryDependencies += Cinnamon.library.cinnamonPrometheus,
       libraryDependencies += Cinnamon.library.cinnamonPrometheusHttpServer,
-      libraryDependencies += Cinnamon.library.cinnamonAkka,
       libraryDependencies += Cinnamon.library.cinnamonAkkaHttp,
-      AssemblyKeys.assembly := (Def.task {
+      libraryDependencies += Cinnamon.library.cinnamonOpenTracingZipkin,
+      AssemblyKeys.assembly := Def.task {
         JavaAgentKeys.resolvedJavaAgents.value.filter(_.agent.name == "Cinnamon").foreach { agent =>
           sbt.IO.copyFile(agent.artifact, target.value / "cinnamon-agent.jar")
         }
         AssemblyKeys.assembly.value
-      }).value
+      }.value,
+      assemblyMergeStrategy in assembly := {
+        case "cinnamon-reference.conf" => MergeStrategy.concat
+        case x =>
+          val oldStrategy = (assemblyMergeStrategy in assembly).value
+          oldStrategy(x)
+      }
     )
   }
 }

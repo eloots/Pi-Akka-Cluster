@@ -4,18 +4,26 @@ services:
 
   prometheus:
     image: prom/prometheus:v2.0.0
+    container_name: prometheus
     volumes: ["./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml"]
     ports: ["9090:9090"]
     networks: ["sandbox"]
 
   grafana:
     image: grafana/grafana:5.1.0
+    container_name: grafana
     volumes: ["./grafana/plugins/cinnamon-prometheus-app:/var/lib/grafana/plugins/cinnamon-prometheus-app"]
     ports: ["3000:3000"]
     networks: ["sandbox"]
     depends_on: ["prometheus"]
 
-networks:
+  zipkin:
+    image: openzipkin/zipkin
+    container_name: zipkin
+    ports: ["9411:9411"]
+    networks: ["sandbox"]
+    depends_on: ["prometheus"]
 
+networks:
   sandbox:
     driver: bridge
