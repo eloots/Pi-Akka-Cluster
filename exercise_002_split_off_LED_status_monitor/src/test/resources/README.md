@@ -2,6 +2,12 @@ split_off_led_status_indicator
 
 # Split off LED Status Indicator
 
+```scala
+################################################################
+# THIS IS WORK IN PROGRESS - SKIP TO exercise_004_cluster_base #
+################################################################
+```
+
 In this stage, the LED status monitor is split-off in a separate process.
 
 As the separated LED status monitor is implemented in Akka, communication with the Akka Cluster process could be done using Akka Remote. This comes with some risk though: the LED status indicator may get quarantined, a situation that might necessitate a restart of the LED status indicator.

@@ -2,6 +2,12 @@ UDP_experiments
 
 # Experiments with UDP
 
+```scala
+################################################################
+# THIS IS WORK IN PROGRESS - SKIP TO exercise_004_cluster_base #
+################################################################
+```
+
 In a later stage, the driving of the LED status strip is moved into a separate process.
 
 The reason for doing so is that, when the cluster node's actor system dies, is killed or is simply suspended, the LEDs continue to display the state of the last update. This is confusing to say the least. Ideally, in such cases all LEDs should be turned off after some amount of time.
