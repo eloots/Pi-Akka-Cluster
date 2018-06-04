@@ -115,3 +115,5 @@ This assembly
     - [Ali-express parts link](https://nl.aliexpress.com/item/8-channel-WS2812-5050-RGB-LED-lights-development-board-for-Arduino/32769045926.html?spm=a2g0s.9042311.0.0.Mwyjuo)
 - 20-pin Female header:
     - [Ali-express parts link](https://nl.aliexpress.com/item/50pcs-2x10P-20-poles-2-54mm-Female-PCB-Pin-Header-Right-Angle-Single-row-Through-Hole/32734093247.html?spm=a2g0s.9042311.0.0.5de84c4dhC6yLS)
+
+As reported by @raboof, there's this [6-pin, single row, female header](https://www.pololu.com/product/2706) that fits the bill perfectly for this assembly.
