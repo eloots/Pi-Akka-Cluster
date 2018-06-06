@@ -46,6 +46,8 @@ object ClusterStatusTrackerMain {
     val strip = Adafruit_NeoPixel(ledCount, ledPin, ledFreqHz, ledDma, ledInvert, ledBrightness, ledChannel, wsC.WS2811_STRIP_RGB)
 
     val clusterStatusTracker = system.actorOf(ClusterStatusTracker.props(strip), "cluster-status-tracker")
+
+    // Start Akka HTTP Management extension
     AkkaManagement(system).start
   }
 }
