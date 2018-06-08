@@ -3,3 +3,32 @@ split_brain_resolver_keep_referee
 # Split brain resolver with Keep Referee strategy
 
 The split brain resolver is added and configured with a `Keep Referee` strategy.
+
+In case of partitioning of the cluster, the partition that has the `referee` node in it will "survive". All nodes in any other partition will be downed.
+
+# Instructions
+
+- Build & transfer the application
+- Start up the application on all nodes and wait for the cluster to converge
+- Partition the network in two by removing the white cable between the two
+  switches
+  - Observe what happens and try to explain it
+
+- Restore the network and restart all the nodes that were stopped by the `SBR`
+- Use `Akka HTTP Management` to stop the `Referee` node
+  - Observe what happens and try to explain it
+
+# LED Legend
+
+- LEDs 1 to 5 show the status of each node as seen by a node
+    - Green:      Node is Up
+    - Red:        Node is Down
+    - Cyan:       Node in Leaving
+    - Magenta:    Node is Exiting
+    - White:      Node is Unreachable
+    - Dark Green: Node is WeaklyUp - The LED is blinking
+
+- LED number 6: Cyan when the node has a leader role
+- LED number 7: Dark Blue when the node is running the Cluster Singleton actor
+- LED number 8: Cluster liveliness indicator: when it blinks, we know
+                that the cluster node software is actually running

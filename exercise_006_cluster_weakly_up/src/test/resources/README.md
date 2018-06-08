@@ -1,22 +1,36 @@
-cluster_LED_status_viewer_improved
+cluster_weakly_up_members
 
-# Basic cluster status tracking improved
+# Demonstrate Akka Cluster Weakly-Up members
 
-Indication of weakly-up members using fast blinking LED.
+When a node tries to join the cluster while one or more other nodes are already
+up but unreachable, the leader will move the new node from `Joining` to `WeaklyUp`
+instead of `Up`.
 
-When a node tries to join the cluster while on or more other nodes are already up but unreachable, the leader will not move the new node from JOINING to WEAKLY-UP instead of UP.
+The joining of a cluster in the `WeaklyUp` state can be disabled by setting 
+`akka.cluster.allow-weakly-up-members` to `off`
 
-The joining of a cluster in the WEAKLY-UP state can be disabled by setting `akka.cluster.allow-weakly-up-members=off`
+# Instructions
 
-- Green:      Node is UP
-- Red:        Node is Down
-- Cyan:       Node in Leaving
-- Magenta:    Node is Exiting
-- White:      Node is Unreachable
-- Dark Green: Node is Weakly-Up - The LED is blinking at a high frequency
+- Build and transfer the new version of the code to the nodes
+- Start a cluster on node-0, node-1 and node-2
+- Wait until the cluster is in a converged state before proceeding with
+  the next step
+- Start the application on the remaining nodes (3 & 4) and disconnect one
+  of the first three nodes
+- Observe and explain what happens
+- Next, reconnect the unplugged node and observe what happens. `Be patient`
 
-LED number 6 indicates is Cyan when the node has a leader role
+# LED Legend
 
-LED number 7 is unused
+- LEDs 1 to 5 show the status of each node as seen by a node
+    - Green:      Node is Up
+    - Red:        Node is Down
+    - Cyan:       Node in Leaving
+    - Magenta:    Node is Exiting
+    - White:      Node is Unreachable
+    - Dark Green: Node is WeaklyUp - The LED is blinking
 
-LED number 8 is the cluster liveliness indicator: when it blinks, we now that the cluster node software is actually running.
+- LED number 6 indicates is Cyan when the node has a leader role
+- LED number 7 is unused
+- LED number 8 is the cluster liveliness indicator: when it blinks, we know
+that the cluster node software is actually running
