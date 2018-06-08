@@ -35,3 +35,9 @@ Duncan Devore - duncan.devore@lightbend.com
 
 Detailed instructions on how to customise the Hypriot OS can be found [here](Hypriot-OS-Customisation-Instructions.md).
 
+## Travel router configuration
+
+In some cases it can be handy to use a so-called travel router which allows you to connect to a Wifi network on location, and still get access to a physical network with a fixed IP network address. This is because, currently, all nodes have statically configured IP addresses.
+
+Details on how to configure such a (TP-Link TL-WR802N) router can be found [here](Configuring-TP-Link-Travel-Router-for-class-room-environment.md).
+
