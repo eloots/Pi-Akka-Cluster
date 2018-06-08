@@ -1,22 +1,39 @@
 cluster_base
 
-# Set-up LED cluster status
+# Explore base Akka Cluster formation
 
-In this set-up, we show the status of the cluster nodes on an 8-LED strip.
+In this exercise, we will explore the formation of an Akka Cluster with up-to
+5 nodes.
 
-The first 5 LED's (counting from the left) show the status of node-0 through node-4 as seen from the node on which the LED-strip is connected.
+# Instructions
 
-The following color codes are used:
+- Build the fat-jar for this exercise and transfer it to all the nodes using
+  the `copy` command
+- Run different scenarios and observe what happens
+- Here's a sample scenario:
+    - Start-up nodes individually
+        - Start up `node-0` and wait until the heart-beat LED starts blinking
+        - Wait for some time - what happens (or doesn't happen)
+        - Start up `node-1`
+        - Observe...
+        - Start up the remaining nodes  
+    - Hit `Ctrl-C` in `node-1`'s terminal
+    - Observe...
+    - Hit `Ctrl-C` in `node-0`'s terminal
+    - Observe...
+    - Hit `Ctrl-C` in remaining node terminal sessions  
 
-- Green:      Node is UP
-- Red:        Node is Down
-- Cyan:       Node in Leaving
-- Magenta:    Node is Exiting
-- White:      Node is Unreachable
-- Dark Green: Node is Weakly-Up
+# LED Legend
 
-LED number 6 indicates is Cyan when the node has a leader role
+- LEDs 1 to 5 show the status of each node as seen by a node
+    - Green:      Node is Up
+    - Red:        Node is Down
+    - Cyan:       Node in Leaving
+    - Magenta:    Node is Exiting
+    - White:      Node is Unreachable
+    - Dark Green: Node is WeaklyUp - The LED is blinking
 
-LED number 7 is unused
-
-LED number 8 is the cluster liveliness indicator: when it blinks, we now that the cluster node software is actually running.
+- LED number 6: Cyan when the node has a leader role
+- LED number 7: Not used in this exercise
+- LED number 8: Cluster liveliness indicator: when it blinks, we know
+                that the cluster node software is actually running

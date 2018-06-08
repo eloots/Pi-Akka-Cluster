@@ -48,13 +48,11 @@ object ClusterStatusTrackerMain {
 
     val clusterStatusTracker = system.actorOf(ClusterStatusTracker.props(strip), "cluster-status-tracker")
 
-    AkkaManagement(system).start
-
-    println(s"Running solver for ${args(0).split(" ").toList.tail}")
-
     val sudokuSolver = system.actorOf(SudokuSolver.props(), "sudoku-solver")
 
     ClusterClientReceptionist(system).registerService(sudokuSolver)
 
+    // Start Akka HTTP Management extension
+    AkkaManagement(system).start
   }
 }
