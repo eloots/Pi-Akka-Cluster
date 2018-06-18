@@ -17,4 +17,8 @@ echo "Running $FATJAR on $NODE"
 
 sudo pkill -SIGKILL -f "exercise.*_[0-9][0-9][0-9]_.*"
 
-sudo java -javaagent:$CINNAMON -Djava.library.path=.  -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=9010 -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dcluster-node-configuration.node-hostname=$NODE -jar $FATJAR com.neopixel.ClusterStatusTrackerMain
+shift
+
+echo "$@"
+
+sudo java -javaagent:$CINNAMON -Djava.library.path=.  -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=9010 -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dcluster-node-configuration.node-hostname=$NODE -jar $FATJAR "com.neopixel.ClusterStatusTrackerMain $@"
