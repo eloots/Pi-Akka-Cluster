@@ -24,3 +24,8 @@ Steps
    `ClusterClientReceptionist(system).registerService(sudokuSolver)`
    
    The `ClusterClientReceptionist` provides methods for registration of actors that should be reachable from the client. Messages are wrapped in `ClusterClient.Send`, `ClusterClient.SendToAll` or `ClusterClient.Publish`.
+3. Run `sbt assembly` to create the assembly file 
+4. Copy the file to each node in the cluster. Use the script `copy` with exercise number 17. (`./copy 17`)
+5. Run the example on the cluster by using the `run` command with exercise number 17. (`./run 17`)
+6. Now try posting a sudoku problem to your Akka HTTP server. 
+7. Observe sudoku solver in action!
