@@ -40,6 +40,7 @@ object CommonSettings {
     parallelExecution in GlobalScope := false,
     parallelExecution in ThisBuild := false,
     fork in Test := false,
+    test in assembly := {},
     libraryDependencies ++= Dependencies.dependencies,
     credentials += Credentials(Path.userHome / ".lightbend" / "commercial.credentials"),
     resolvers += "com-mvn" at "https://repo.lightbend.com/commercial-releases/",

@@ -16,3 +16,87 @@ Here's an example of posting a puzzle using `curl`:
 The sudoku solver will be adapted in the next exercise to serve
 requests sent via the Akka Cluster Client
 
+## Steps
+
+1. Notice in the project folder, there's an additional configuration 
+file as well as some changes to the
+original file. Let's start with the original file. 
+    
+    Open up the file `src/main/resources/application.conf`
+    
+    Check out the additional configuration for both telemetry and 
+    the cluster client:
+    
+    ```
+      akka.actors {
+        "/user/*" {
+          report-by = instance
+          traceable = on
+          excludes = ["akka.http.*", "akka.stream.*"]
+        }
+      }
+    
+      akka.http {
+        servers {
+          "*:*" {
+            paths {
+              "*" {
+                metrics = on
+                traceable = on
+              }
+            }
+          }
+        }
+    
+        clients {
+          "*:*" {
+            paths {
+              "*" {
+                metrics = on
+                traceable = on
+              }
+            }
+          }
+        }
+      }
+    
+      opentracing {
+        # Const sampler trace only for demo purposes -> never in production!
+        tracer {
+          sampler = const-sampler
+          const-sampler {
+            decision = true
+          }
+        }
+    
+        akka.trace-system-messages = yes
+    
+        zipkin {
+          url-connection {
+            # FIXME : THE IP NEEDS TO POINT TO THE MACHINE WHERE ZIPKIN IS RUNNING
+            endpoint = "http://192.168.0.28:9411/api/v1/spans"
+          }
+        }
+      }
+    ```
+2a. Change the IP address of zipkin to match your laptop's IP address. 
+3. There's also a new file in the resources folder 
+`src/main/resources/sudokuclient.conf`
+    - This file is contains configuration for the Akka http server that will be running on your local laptop to connect 
+    to the pi-cluster. 
+    
+4. Notice the old main `src/main/scala/org/neopixel/ClusterStatusTrackerMain` is completely commented out. 
+This is because we will be using the file 'AkkaHttpServer' as the main now. 
+
+5. Run this project on your laptop
+   
+   - Run `sbt run`
+   
+6. You can try to post a problem to the http server now
+and notice the type of response you will see
+
+    Remember you can do this by trying to post to your 
+    localhost while it's running by using 
+    ```
+    curl --header "Content-Type: application/json" --request POST --data '{ "values": [[0,6,0,0,2,0,9,0,7], [0,0,0,3,6,9,0,0,0], [0,0,1,0,4,0,0,0,0], [0,9,8,0,0,5,0,0,0], [0,2,0,6,0,0,3,0,0], [0,0,0,0,0,0,0,0,9], [0,0,2,8,0,0,0,0,1], [0,0,0,0,0,7,0,6,0], [0,5,0,0,0,0,0,0,0]]}' localhost:8080/sudoku`
+    ```
