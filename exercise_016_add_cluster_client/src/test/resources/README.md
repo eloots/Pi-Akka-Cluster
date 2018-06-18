@@ -18,7 +18,8 @@ requests sent via the Akka Cluster Client
 
 ## Steps
 
-1. Notice in the project folder, there's an additional configuration file as well as some changes to the
+1. Notice in the project folder, there's an additional configuration 
+file as well as some changes to the
 original file. Let's start with the original file. 
     
     Open up the file `src/main/resources/application.conf`
@@ -78,32 +79,19 @@ original file. Let's start with the original file.
         }
       }
     ```
+2a. Change the IP address of zipkin to match your laptop's IP address. 
 3. There's also a new file in the resources folder 
 `src/main/resources/sudokuclient.conf`
     - This file is contains configuration for the Akka http server that will be running on your local laptop to connect 
     to the pi-cluster. 
     
-4. The hostname information in the artery configuration 
-    needs to be changed. 
-    
-    ```
-    # TODO the hostname should be changed to the 
-    hostname of your laptop
-    canonical {
-            hostname = "192.168.0.28"
-            port = 4000
-    }
-    ```
-5. Notice the old main `src/main/scala/org/neopixel/ClusterStatusTrackerMain` is completely commented out. 
+4. Notice the old main `src/main/scala/org/neopixel/ClusterStatusTrackerMain` is completely commented out. 
 This is because we will be using the file 'AkkaHttpServer' as the main now. 
-Look at the Akka Http Server file and make the following changes:
 
-    *TODO in case we have time for students to modify the file*
-5. Assemble and run this file on your laptop
+5. Run this project on your laptop
    
-   - Run `sbt assemble`
-   - alternately, you can simply run on your machine with 
-   `sbt run`
+   - Run `sbt run`
+   
 6. You can try to post a problem to the http server now
 and notice the type of response you will see
 
