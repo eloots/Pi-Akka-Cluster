@@ -70,8 +70,7 @@ object CommonSettings {
         case x =>
           val oldStrategy = (assemblyMergeStrategy in assembly).value
           oldStrategy(x)
-      },
-      mainClass in assembly := Some(System.getProperty("assembly.main", mainClass.value.get))
+      }
     )
   }
 }
