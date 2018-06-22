@@ -2,6 +2,8 @@
 *.log
 .bookmark
 hypriot.img
+collectedLogs/
+collectedLogs.zip
 
 # sbt specific
 .cache/
