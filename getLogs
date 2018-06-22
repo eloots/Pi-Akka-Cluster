@@ -1,11 +1,5 @@
 #!/bin/bash
 
-######################################################################
-#
-# Clear all log files on all nodes
-#
-######################################################################
-
 # Set CLUSTER_NR to the number of the cluster you're working with
 CLUSTER_NR_SEL=${CLUSTER_NR:?Set environment variable CLUSTER_NR to your cluster number}
 
@@ -18,6 +12,6 @@ NODES=${SELECTED_NODE:-$ALL_NODES}
 
 for i in $NODES;do
   node=$[ CLUSTER_BASE_NODE_NR + i ]
-  echo "Clearing logs on node-${node}"
-  ssh ${PI_USER}@node-${node} "sudo cp /dev/null neopixel.log"
+  echo "getting logs from node-${node}"
+  scp ${PI_USER}@node-${node}:/home/${PI_USER}/neopixel.log collectedLogs/node-${node}.log
 done

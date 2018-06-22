@@ -2,7 +2,7 @@
 
 ######################################################################
 #
-# Clear all log files on all nodes
+# Remove all assembled jars on all nodes
 #
 ######################################################################
 
@@ -18,6 +18,6 @@ NODES=${SELECTED_NODE:-$ALL_NODES}
 
 for i in $NODES;do
   node=$[ CLUSTER_BASE_NODE_NR + i ]
-  echo "Clearing logs on node-${node}"
-  ssh ${PI_USER}@node-${node} "sudo cp /dev/null neopixel.log"
+  echo "Clearing jars on node-${node}"
+  ssh ${PI_USER}@node-${node} "sudo rm *.jar"
 done
