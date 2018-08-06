@@ -18,9 +18,12 @@ Duncan Devore - duncan.devore@lightbend.com
 
 ## Changelog
 
-2018/06/08: Add detailed exercise instructions
-2018/06/08: Move Hypriot OS customisation instructions to a separate file
-2018/03/14: Generalise code to allow for multiple clusters on a single network
+| Date      | Change                                |
+|:---------:|:--------------------------------------|
+|2018/08/06 | Add Bill of Material |
+|2018/06/08 | Add detailed exercise instructions |
+|2018/06/08 | Move Hypriot OS customisation instructions to a separate file |
+|2018/03/14 | Generalise code to allow for multiple clusters on a single network |
 
 ## Instructions
 
@@ -28,8 +31,11 @@ Duncan Devore - duncan.devore@lightbend.com
     - Java 8 SDK
     - Some terminal (iTerm-2 on Mac, Terminator on Linux style OS-es, Powershell or ConEmu on Windows
     - curl
-    - 
 - Clone the project on your laptop
+
+## Building your own 5-node Raspberry-Pi based Akka Cluster
+
+If you want to build your own physical cluster, you may want to have a look at the BOM [here](images/BOM.md).
 
 ## Pi-Hypriot customisation instructions
 
