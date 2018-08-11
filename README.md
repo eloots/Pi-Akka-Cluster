@@ -37,9 +37,14 @@ Duncan Devore - duncan.devore@lightbend.com
 
 If you want to build your own physical cluster, you may want to have a look at the BOM [here](images/BOM.md).
 
+
+## Download & flash a fully customised Hypriot OS
+
+Instructions on where to get a fully configured OS can be found [here](Akka-Pi-OS-install-instructions.md).
+
 ## Pi-Hypriot customisation instructions
 
-Detailed instructions on how to customise the Hypriot OS can be found [here](Hypriot-OS-Customisation-Instructions.md).
+If you want to do the full customisation of the Hypriot distribution for this project yourself: detailed instructions on how to customise the Hypriot OS can be found [here](Hypriot-OS-Customisation-Instructions.md).
 
 ## Travel router configuration
 
