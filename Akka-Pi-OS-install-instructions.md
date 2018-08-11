@@ -11,7 +11,15 @@
 192.168.0.105 node-4
 ```
 
-- Download zip OS image
+- Download zip OS image from Bintray
+    - [https://bintray.com/lightbend/generic/Pi-Akka-Cluster-OS-images](https://bintray.com/lightbend/generic/Pi-Akka-Cluster-OS-images)
+    - Select the latest version, select the **Files** tab
+    - Download the files `node-0-yyyymmdd.img.zip.a` and `node-0-yyyymmdd.img.zip.b` where `yyyymmdd` will be the version number
+    - concatenate the files:
+
+```
+       cat node-0-yyyymmdd.img.zip.a node-0-yyyymmdd.img.zip.b > node-0.img.zip`
+```
 - Uncompress it
 - Follow [these instructions](https://blog.hypriot.com/getting-started-with-docker-and-mac-on-the-raspberry-pi/) on how to flash this image to an SD card
 - Insert card into node-4 (the top node in your stack of Pi's) and power-on
