@@ -8,18 +8,20 @@ Each node is equipped with an 8-LED RGB strip where different LED's are used to 
 
 In the last series of exercises, we deploy an actor based application (a Sudoku Solver) on the cluster and add monitoring (`Cinnamon`/`Prometheus`/`Grafana`) and tracing to the set-up (`Open-tracing`/`Zipkin`).
 
-## Maintainer(s)
+## Maintainers
 
-Eric Loots    - eric.loots@lightbend.com
-
-Kikia Carter  - kikia.carter@lightbend.com
-
-Duncan Devore - duncan.devore@lightbend.com
+| Name               | Email address                           |
+|-------------------:|:----------------------------------------|
+| Eric Loots         | eric.loots@lightbend.com                |
+| Kikia Carter       | kikia.carter@lightbend.com              |
+| Henrik Engström    | henrik.engstrom@lightbend.com           |
+| Duncan Devore      | duncan.devore@lightbend.com             |
 
 ## Changelog
 
 | Date      | Change                                |
 |:---------:|:--------------------------------------|
+|2018/08/15 | Updated docs for _cloud-init_ based install + updated LED driver library for Raspberry Pi 3 Model B+|
 |2018/08/06 | Add Bill of Material |
 |2018/06/08 | Add detailed exercise instructions |
 |2018/06/08 | Move Hypriot OS customisation instructions to a separate file |
