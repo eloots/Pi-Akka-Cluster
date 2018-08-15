@@ -1,93 +1,43 @@
 ## Pi-Hypriot OS customisation instructions
 
-Start from standard _**Hypriot**_ [Raspberry Pi distro](http://blog.hypriot.com/getting-started-with-docker-on-your-arm-device/) (Version [1.7.1](http://blog.hypriot.com/downloads/))
+> With support for `cloud-init` being present in the [Hypriot OS](http://blog.hypriot.com) distribution, we switch to using this tool instead starting from a standard installation and then going through a lengthy manual install
 
-Follow [instructions](http://blog.hypriot.com/getting-started-with-docker-and-mac-on-the-raspberry-pi/) on how to flash OS image to a micro SD card.
+The installation is now relatively simple:
 
-> __Important__: Note the remark in the instructions that the first boot takes some time as it resizes the file system (allow for up to 3 minutes).
+Download and install the Hypriot _**flash**_ tool by following the instructions in the **Quick start** section [on this page](https://blog.hypriot.com/post/releasing-HypriotOS-1-8/).
 
-> __Tip:__ In case you want to take a backup of your SD card (after customising it), use the lowest capacity you can get (e.g. 16GB or 32GB) _and_ a fast card. This will reduce the time to restore a backup to a (new) card.
+Using the `akka-pi-os.yml` file in this repo, a 16GB micro SD card and an appropriate flash card reader/writer, you are now set to flash an SD card. You will probably customise at least one parameter in the `.yml`: the IP-address of the node (current value is _192.168.0.102_).
 
-After the initial log-in, run the following command to set the 
-
-```
-$ sudo locale-gen UTF-8
-Generating locales (this might take a while)...
-  en_US.UTF-8... done
-Generation complete.
-```
-
-
-#### Update network configuration
-
-Original config:
+The command to flash the card is:
 
 ```
-$ more /etc/network/interfaces.d/eth0
-allow-hotplug eth0
-iface eth0 inet dhcp
+flash -n node-1 -u static.yml https://github.com/hypriot/image-builder-rpi/releases/download/v1.9.0/hypriotos-rpi-v1.9.0.img.zip
 ```
 
-Change this to:
+`-n node-1` specifies the host name for the host. Set it to a name of the host this card is destined for (`node-0` through `node-4`)
+
+We're also using the latest version of Hypriot at the time of writing. For a complete list if available versions, see the [downloads page](https://blog.hypriot.com/downloads/).
+
+Insert the card into the micro SD slot on your Raspberry Pi (should work on Raspberry Pi 2 and 3 - Model B and B+), power-up the Pi and log-in as user _akkapi_ using ssh (password is also _akkapi_).
+
+Install Java:
 
 ```
-$ more /etc/network/interfaces.d/eth0
-allow-hotplug eth0
-iface eth0 inet static
-    address 192.168.0.101
-    netmask 255.255.255.0
-    broadcast 10.0.0.255
-    gateway 192.168.0.1
+$ sudo apt-get install oracle-java8-installer
 ```
 
-#### Update the network configuration to not update `/etc/hosts`: comment-out the line containing `update_etc_hosts` in file `/etc/cloud/cloud.cfg`:
+On your Laptop, copy the `librpi_ws281x.so` shared library from the repo to the _akkapi_ home directory on the Pi and copy the `run*` scripts to the Pi:
 
 ```
-# The modules that run in the 'init' stage
-cloud_init_modules:
- - migrator
- - bootcmd
- - write-files
- - resizefs
- - set_hostname
- - update_hostname
-# - update_etc_hosts
- - ca-certs
- - rsyslog
- - users-groups
- - ssh
+Pi-Akka-Cluster git:(master) ✗ scp -r rpi_ws281x akkapi@node-1:/home/akkapi
+Pi-Akka-Cluster git:(master) ✗ CLUSTER_NR=0 ./updatePiScripts
 ```
 
-- Set the hostname:
-
-```
-$ more /etc/hostname
-node-0
-```
-
-#### Update /etc/hosts to add ip-addresses of other nodes
-
-```
-$ more /etc/hosts
-127.0.1.1 black-pearl
-127.0.0.1 localhost
-
-192.168.0.101 node-0 kubernetes
-192.168.0.102 node-1
-192.168.0.103 node-2
-192.168.0.104 node-3
-192.168.0.105 node-4
-
-# The following lines are desirable for IPv6 capable hosts
-::1 ip6-localhost ip6-loopback
-fe00::0 ip6-localnet
-ff00::0 ip6-mcastprefix
-ff02::1 ip6-allnodes
-ff02::2 ip6-allrouters
-ff02::3 ip6-allhosts
-```
+You should be all set and ready to run the exercises in the repo!
 
 #### Repeat process for nodes 1 through 4
+
+> Note: the instructions below (installing k8s and tmux) still have to be integrated into the _cloud-init_ based install. Stay tuned for that...
 
 #### Notes on differences between this setup and the one in the book
 
@@ -114,56 +64,6 @@ $ sudo apt-get install -y kubelet kubeadm kubectl kubernetes-cni
 ```
 
 Execute the above step on all nodes.
-
-### Add a new user for regular logins
-
-Out of the gate, the system has a user named _pirate_ with sudo rights. It is advised to change the default password of this account and keep this account as-is for recovery purposes.
-
-For normal use, a new user named _akkapi_ is created on the system, it is given sudo rights, added to the appropriate groups, an adapted bash profile and password-less ssh login is enabled from a given account on a remote system.
-
-First we create the new user:
-
-```
-$ sudo adduser akkapi
-Adding user `akkapi' ...
-Adding new group `akkapi' (1001) ...
-Adding new user `akkapi' (1001) with group `akkapi' ...
-Creating home directory `/home/akkapi' ...
-Copying files from `/etc/skel' ...
-Enter new UNIX password:
-Retype new UNIX password:
-passwd: password updated successfully
-Changing the user information for akkapi
-Enter the new value, or press ENTER for the default
-	Full Name []: Akka Pi
-	Room Number []:
-	Work Phone []:
-	Home Phone []:
-	Other []:
-Is the information correct? [Y/n] y
-HypriotOS/armv7: pirate@node-0 in ~
-```
-
-Next, we add user _akkapi_ to groups _pirate_, _video_ and _docker_:
-
-```
-$ sudo adduser akkapi pirate
-Adding user `akkapi' to group `pirate' ...
-Adding user akkapi to group pirate
-Done.
-HypriotOS/armv7: pirate@node-0 in ~
-
-$ sudo adduser akkapi video
-Adding user `akkapi' to group `video' ...
-Adding user akkapi to group video
-Done.
-HypriotOS/armv7: pirate@node-0 in ~
-
-$ sudo adduser akkapi docker
-Adding user `akkapi' to group `docker' ...
-Adding user akkapi to group docker
-Done.
-```
 
 We now switch to the _akkapi_ user to change a couple of things:
 
@@ -276,6 +176,7 @@ Install build-tools (gcc, ...) & _swig_:
 ```
 sudo apt install build-essential
 sudo apt-get install swig
+sudo apt-get install scons
 ```
 
 __Download and build software__ (see instructions in README.md in the repo) for driving NeoPixels: [rpi_ws281x](https://github.com/jgarff/rpi_ws281x)
@@ -291,13 +192,18 @@ Set `JAVA_HOME`
 
 ```
 $ sudo update-alternatives --config java
-There is only one alternative in link group java (providing /usr/bin/java): /usr/lib/jvm/jdk-8-oracle-arm32-vfp-hflt/jre/bin/java
-Nothing to configure.
+There is 1 choice for the alternative java (providing /usr/bin/java).
+
+  Selection    Path                                     Priority   Status
+------------------------------------------------------------
+  0            /usr/lib/jvm/java-8-oracle/jre/bin/java   1081      auto mode
+* 1            /usr/lib/jvm/java-8-oracle/jre/bin/java   1081      manual mode
 ```
 
-This tells us that `JAVA_HOME` is `/usr/lib/jvm/jdk-8-oracle-arm32-vfp-hflt`
+This tells us that `JAVA_HOME` is `/usr/lib/jvm/java-8-oracle`
 
 ```
+$ export JAVA_HOME=/usr/lib/jvm/java-8-oracle
 $ git clone git@github.com:jgarff/rpi_ws281x.git
 $ cd rpi_ws281x
 $ rm -rf *.o
@@ -309,13 +215,13 @@ $ swig -package neopixel -java rpi_ws281x.i
 $ gcc -c *.c -I${JAVA_HOME}/include -I${JAVA_HOME}/include/linux
 $ gcc -shared -o librpi_ws281x.so ../*.o rpi_ws281x_wrap.o
 $ ls -l librpi_ws281x.so
--rwxr-xr-x 1 pirate pirate 91480 Jan 20 13:42 librpi_ws281x.so
+-rwxr-xr-x 1 akkapi akkapi 94444 Aug 15 13:18 librpi_ws281x.so
 ```
 
-Running a sample application:
+Running sample application `exercise_000_initial_state`:
 
 ```
-$ sudo java -Djava.library.path=. -jar exercise_000_initial_state-assembly-1.3.0.jar com.neopixel.Main 5
+$ ./run 0
 ```
 
 ## Running base cluster with status LED indicators

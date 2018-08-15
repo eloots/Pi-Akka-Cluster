@@ -1,0 +1,90 @@
+#cloud-config
+# vim: syntax=yaml
+#
+
+# Set your hostname here, the manage_etc_hosts will update the hosts file entries as well
+hostname: static
+manage_etc_hosts: false
+# don't write debian.org into apt mirrors
+apt_preserve_sources_list: true
+
+# You could modify this for your own user information
+users:
+  - name: pirate
+    gecos: "Hypriot Pirate"
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    shell: /bin/bash
+    groups: users,docker,video
+    plain_text_passwd: hypriot
+    lock_passwd: false
+    ssh_pwauth: true
+    chpasswd: { expire: false }
+  - name: akkapi
+    gecos: "Akka Cluster Pi User"
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    shell: /bin/bash
+    groups: users,docker,video
+    plain_text_passwd: akkapi
+    lock_passwd: false
+    ssh_pwauth: true
+    chpasswd: { expire: false }
+
+package_upgrade: false
+
+# Static IP address
+write_files:
+  - content: |
+      persistent
+      # Generate Stable Private IPv6 Addresses instead of hardware based ones
+      slaac private
+
+      # static IP configuration:
+      interface eth0
+      static ip_address=192.168.0.102/24
+      # static ip6_address=fd51:42f8:caae:d92e::ff/64
+      static routers=192.168.0.1
+      static domain_name_servers=192.168.0.1 8.8.8.8
+    path: /etc/dhcpcd.conf
+
+  - content: |
+      # Cluster #0
+      192.168.0.101 node-0
+      192.168.0.102 node-1
+      192.168.0.103 node-2
+      192.168.0.104 node-3
+      192.168.0.105 node-4
+    path: /etc/cluster-hosts
+
+  - content: |
+      -----BEGIN PGP PUBLIC KEY BLOCK-----
+      Version: SKS 1.1.5
+      Comment: Hostname: keyserver.ubuntu.com
+      
+      mI0ES9/P3AEEAPbI+9BwCbJucuC78iUeOPKl/HjAXGV49FGat0PcwfDd69MVp6zUtIMbLgkU
+      OxIlhiEkDmlYkwWVS8qy276hNg9YKZP37ut5+GPObuS6ZWLpwwNus5PhLvqeGawVJ/obu7d7
+      gM8mBWTgvk0ErnZDaqaU2OZtHataxbdeW8qH/9FJABEBAAG0DUxhdW5jaHBhZCBWTEOImwQQ
+      AQIABgUCVsN4HQAKCRAEC6TrO3+B2tJkA/jM3b7OysTwptY7P75sOnIu+nXLPlzvja7qH7Wn
+      A23itdSker6JmyJrlQeQZu7b9x2nFeskNYlnhCp9mUGu/kbAKOx246pBtlaipkZdGmL4qXBi
+      +bi6+5Rw2AGgKndhXdEjMxx6aDPq3dftFXS68HyBM3HFSJlf7SmMeJCkhNRwiLYEEwECACAF
+      Akvfz9wCGwMGCwkIBwMCBBUCCAMEFgIDAQIeAQIXgAAKCRDCUYJI7qFIhucGBADQnY4V1xKT
+      1Gz+3ERly+nBb61BSqRx6KUgvTSEPasSVZVCtjY5MwghYU8T0h1PCx2qSir4nt3vpZL1luW2
+      xTdyLkFCrbbIAZEHtmjXRgQu3VUcSkgHMdn46j/7N9qtZUcXQ0TOsZUJRANY/eHsBvUg1cBm
+      3RnCeN4C8QZrir1CeA==
+      =CziK
+      -----END PGP PUBLIC KEY BLOCK-----
+    path: /tmp/key.txt
+
+# These commands will be ran once on first boot only
+runcmd:
+  # Add cluster hosts to /etc/hosts
+  - 'cat /etc/cluster-hosts >> /etc/hosts'
+  - 'rm /etc/cluster-hosts'
+  # Pickup the hostname changes
+  - 'systemctl restart avahi-daemon'
+  # Add key for java webupd8team update
+  - 'apt-key add /tmp/key.txt'
+  - 'echo "deb http://ppa.launchpad.net/webupd8team/java/ubuntu xenial main" | tee /etc/apt/sources.list.d/webupd8team-java.list'
+  - 'echo "deb-src http://ppa.launchpad.net/webupd8team/java/ubuntu xenial main" | tee -a /etc/apt/sources.list.d/webupd8team-java.list'
+
+  # Activate WiFi interface
+#  - 'ifup wlan0'
