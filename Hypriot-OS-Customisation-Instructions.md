@@ -11,7 +11,7 @@ Using the `akka-pi-os.yml` file in this repo, a 16GB micro SD card and an approp
 The command to flash the card is:
 
 ```
-flash -n node-1 -u static.yml https://github.com/hypriot/image-builder-rpi/releases/download/v1.9.0/hypriotos-rpi-v1.9.0.img.zip
+flash -n node-1 -u akka-pi-os.yml https://github.com/hypriot/image-builder-rpi/releases/download/v1.9.0/hypriotos-rpi-v1.9.0.img.zip
 ```
 
 `-n node-1` specifies the host name for the host. Set it to a name of the host this card is destined for (`node-0` through `node-4`)
