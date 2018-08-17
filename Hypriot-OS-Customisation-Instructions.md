@@ -6,25 +6,33 @@ The installation is now relatively simple:
 
 Download and install the Hypriot _**flash**_ tool by following the instructions in the **Quick start** section [on this page](https://blog.hypriot.com/post/releasing-HypriotOS-1-8/).
 
-Using the `akka-pi-os.yml` file in this repo, a 16GB micro SD card and an appropriate flash card reader/writer, you are now set to flash an SD card. You will probably customise at least one parameter in the `.yml`: the IP-address of the node (current value is _192.168.0.102_).
+Using the `akka-pi-os.yml` file in this repo, a 16GB micro SD card and a flash card reader/writer, you are now set to flash an SD card. You will probably customise at least one parameter in the `.yml`: the IP-address of the node (current value is _192.168.0.101_).
 
 The command to flash the card is:
 
 ```
-flash -n node-1 -u akka-pi-os.yml https://github.com/hypriot/image-builder-rpi/releases/download/v1.9.0/hypriotos-rpi-v1.9.0.img.zip
+flash -n node-0 -u akka-pi-os.yml https://github.com/hypriot/image-builder-rpi/releases/download/v1.9.0/hypriotos-rpi-v1.9.0.img.zip
 ```
 
-`-n node-1` specifies the host name for the host. Set it to a name of the host this card is destined for (`node-0` through `node-4`)
+`-n node-0` specifies the host name for the host. For other nodes, set it to a name of the host this card is destined for (`node-0` through `node-4`)
 
-We're also using the latest version of Hypriot at the time of writing. For a complete list if available versions, see the [downloads page](https://blog.hypriot.com/downloads/).
+We're also using the latest version of Hypriot (1.9.0 at the time of writing). For a complete list if available versions, see the [downloads page](https://blog.hypriot.com/downloads/).
 
 Insert the card into the micro SD slot on your Raspberry Pi (should work on Raspberry Pi 2 and 3 - Model B and B+), power-up the Pi and log-in as user _akkapi_ using ssh (password is also _akkapi_).
 
-Install Java:
+#### Repeat process for nodes 1 through 4
 
-```
-$ sudo apt-get install oracle-java8-installer
-```
+The installation of the OS as described in the previous section should be repeated for the remaining nodes. Make sure to pass the correct hostname (`node-1` ... `node-4`) to the `flash` script and to set the corresponding IP address in the `akka-pi-os.yml` file.
+
+#### Finish by installing java & kubernetes
+
+The installation can now be finished by running a number of commands on each node. When using iTerm2 on a Mac, this can effectively be done in parallel using the simultaneous input on 5 terminal sessions, one for each node.
+
+##### Install Java
+
+Run the `install-java` command on each node. This will install the latest version of Java 8.
+
+##### Copy the LED driver shared library and install Pi-scripts
 
 On your Laptop, copy the `librpi_ws281x.so` shared library from the repo to the _akkapi_ home directory on the Pi and copy the `run*` scripts to the Pi:
 
@@ -33,48 +41,9 @@ Pi-Akka-Cluster git:(master) ✗ scp -r rpi_ws281x akkapi@node-1:/home/akkapi
 Pi-Akka-Cluster git:(master) ✗ CLUSTER_NR=0 ./updatePiScripts
 ```
 
-You should be all set and ready to run the exercises in the repo!
-
-#### Repeat process for nodes 1 through 4
-
-> Note: the instructions below (installing k8s and tmux) still have to be integrated into the _cloud-init_ based install. Stay tuned for that...
-
-#### Notes on differences between this setup and the one in the book
-
-- I decided to use local IP-addresses in a reserved range on my local LAN (192.168.0.X with X >= 100)
-- I didn't add IP-forwarding on the kubernetes node, so the instructions to edit `/etc/sysctl.conf` and tuning of `/etc/rc.local` weren't executed.
-
-#### Install Kubernetes
-
-Slightly adapted instructions I used:
-
-Add encryption keys for the packages:
+Login on each node with the _akkapi_ account to change a couple of things (the password for the _akkapi_ user is _akkapi_):
 
 ```
-$ curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
-```
-
-```
-$ sudo vi /etc/apt/sources.list.d/kubernetes.list
-$ more /etc/apt/sources.list.d/kubernetes.list
-deb http://apt.kubernetes.io/ kubernetes-xenial main
-$ sudo apt-get update
-$ sudo apt-get upgrade
-$ sudo apt-get install -y kubelet kubeadm kubectl kubernetes-cni
-```
-
-Execute the above step on all nodes.
-
-We now switch to the _akkapi_ user to change a couple of things:
-
-```
-$ su - akkapi
-Password:
-HypriotOS/armv7: akkapi@node-0 in ~
-
-$ groups
-akkapi video docker pirate
-
 $ cat > .profile.tmux <<EOF
 tnr() {
    tmux new -s run
@@ -111,7 +80,13 @@ mesg n
 HypriotOS/armv7: akkapi@node-0 in ~
 ```
 
-Next, we set-up password-less login. We assume that we want to log in to account _akkapi_ on a pi from an account (_userxxx_) on your laptop named _A_.
+#### [Optional] Install Kubernetes
+
+Run the `install-kubernetes` command on each node.
+
+#### Configure password-less login
+
+Next, we set-up password-less login. We assume that we want to log in to account _akkapi_ on a pi from an account (_userxxx_) on your laptop.
 
 First, we need a pair of authentication keys on the laptop. If these keys have been generated already we can skip the generation of a new pair of authentication keys. If this isn't the case, generate them:
 
@@ -142,36 +117,15 @@ akkapi@node-0's password:
 akkapi@node-0's password:
 ```
 
-With this, you should now be able to log into the _akkapi_ on _node-0_ from the _userxxx_ account on laptop _A_ without having to enter a password.
+With this, you should now be able to log into the _akkapi_ on _node-0_ from the _userxxx_ account on laptop without having to enter a password.
 
-As a final modification, we give account _akkapi_ sudo rights. First, log-in with the _pirate_ account on the pi and add two lines to file `/etc/sudoers.d/90-cloud-init-users`:
+## Addendum
 
-```
- [ericloots@Eric-Loots-MBP] $ ssh pirate@node-0
-HypriotOS/armv7: pirate@node-0 in ~
+### Driving a NeoPixel 8-LED strip
 
-$ sudo vi /etc/sudoers.d/90-cloud-init-users
-HypriotOS/armv7: pirate@node-0 in ~
+This section explains how to build the LED driver shared library on a Pi.
 
-$ sudo cat /etc/sudoers.d/90-cloud-init-users
-# Created by cloud-init v. 0.7.6 on Thu, 03 Jul 2014 18:46:34 +0000
-
-# User rules for pirate
-pirate ALL=(ALL) NOPASSWD:ALL
-# User rules for akkapi
-akkapi ALL=(ALL) NOPASSWD:ALL
-HypriotOS/armv7: pirate@node-0 in ~
-```
-
-> Note: as file `/etc/sudoers.d/90-cloud-init-users` has read-only file protections set, you must force-write the file (enter the `w!` instead of `w` in vi).
-
-### Intermediate stage backup
-
-_Probably a good time to make a backup of what we have so far._
-
-## Driving a NeoPixel 8-LED strip
-
-Install build-tools (gcc, ...) & _swig_:
+Install build-tools (gcc, ...), _swig_ and _scons_:
 
 ```
 sudo apt install build-essential
@@ -181,7 +135,7 @@ sudo apt-get install scons
 
 __Download and build software__ (see instructions in README.md in the repo) for driving NeoPixels: [rpi_ws281x](https://github.com/jgarff/rpi_ws281x)
 
-Install JDK 8:
+Install JDK 8 (if not already installed):
 
 ```
 $ sudo apt-get install oracle-java8-jdk

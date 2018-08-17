@@ -42,11 +42,13 @@ If you want to build your own physical cluster, you may want to have a look at t
 
 ## Download & flash a fully customised Hypriot OS
 
+> _**The recommended way to flash a customised OS image is documented in the next paragraph.**_
+
 Instructions on where to get a fully configured OS can be found [here](Akka-Pi-OS-install-instructions.md).
 
 ## Pi-Hypriot customisation instructions
 
-If you want to do the full customisation of the Hypriot distribution for this project yourself: detailed instructions on how to customise the Hypriot OS can be found [here](Hypriot-OS-Customisation-Instructions.md).
+The easiest and _fastest_ way to flash a Hypriot OS instance that is ready to use for the Akka Cluster software can be found [here](Hypriot-OS-Customisation-Instructions.md).
 
 ## Travel router configuration
 

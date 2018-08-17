@@ -8,6 +8,10 @@ manage_etc_hosts: false
 # don't write debian.org into apt mirrors
 apt_preserve_sources_list: true
 
+packages:
+  - tmux
+  - jq
+
 # You could modify this for your own user information
 users:
   - name: pirate
@@ -73,6 +77,26 @@ write_files:
       =CziK
       -----END PGP PUBLIC KEY BLOCK-----
     path: /tmp/key.txt
+
+  - content: |
+      deb http://apt.kubernetes.io/ kubernetes-xenial main
+    path: /etc/apt/sources.list.d/kubernetes.list
+
+  - content: |
+      curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+      sudo apt-get update
+      sudo apt-get -y upgrade
+      sudo apt-get install -y kubelet kubeadm kubectl kubernetes-cni
+    owner: root:staff
+    permissions: '0755'
+    path: /usr/local/bin/install-kubernetes
+
+  - content: |
+      sudo apt-get update
+      sudo apt-get install -y oracle-java8-installer
+    owner: root:staff
+    permissions: '0755'
+    path: /usr/local/bin/install-java
 
 # These commands will be ran once on first boot only
 runcmd:
