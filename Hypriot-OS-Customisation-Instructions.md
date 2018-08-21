@@ -1,5 +1,16 @@
 ## Pi-Hypriot OS customisation instructions
 
+- On your Mac, add the following entries to your /etc/hosts file:
+
+```
+# Cluster #0
+192.168.0.101 node-0
+192.168.0.102 node-1
+192.168.0.103 node-2
+192.168.0.104 node-3
+192.168.0.105 node-4
+```
+
 > With support for `cloud-init` being present in the [Hypriot OS](http://blog.hypriot.com) distribution, we switch to using this tool instead starting from a standard installation and then going through a lengthy manual install
 
 The installation is now relatively simple:
@@ -7,6 +18,27 @@ The installation is now relatively simple:
 Download and install the Hypriot _**flash**_ tool by following the instructions in the **Quick start** section [on this page](https://blog.hypriot.com/post/releasing-HypriotOS-1-8/).
 
 Using the `akka-pi-os.yml` file in this repo, a 16GB micro SD card and a flash card reader/writer, you are now set to flash an SD card. You will probably customise at least one parameter in the `.yml`: the IP-address of the node (current value is _192.168.0.101_).
+
+> NOTE: Edit `akka-pi-os.yml` #yaml to change line: `static ip_address=192.168.0.102/24` for each node ...101 - 104
+```aidl
+
+
+# Static IP address
+write_files:
+  - content: |
+      persistent
+      # Generate Stable Private IPv6 Addresses instead of hardware based ones
+      slaac private
+
+      # static IP configuration:
+      interface eth0
+      static ip_address=192.168.0.102/24
+      # static ip6_address=fd51:42f8:caae:d92e::ff/64
+      static routers=192.168.0.1
+      static domain_name_servers=192.168.0.1 8.8.8.8
+    path: /etc/dhcpcd.conf
+
+```
 
 The command to flash the card is:
 
@@ -113,7 +145,7 @@ Now, proceed by create a `.ssh` folder on the _akkapi_'s home folder on the Pi a
  [userxxx@Eric-Loots-MBP] $ ssh akkapi@node-0 mkdir .ssh
 akkapi@node-0's password:
 
- [userxxx@Eric-Loots-MBP] $ cat .ssh/id_rsa.pub | ssh akkapi@node-0 'cat >> .ssh/authorized_keys'
+ [userxxx@Eric-Loots-MBP] $ cat ~/.ssh/id_rsa.pub | ssh akkapi@node-0 'cat >> .ssh/authorized_keys'
 akkapi@node-0's password:
 ```
 
