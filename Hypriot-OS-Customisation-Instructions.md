@@ -86,10 +86,13 @@ Login on each node with the _akkapi_ account to change a couple of things (the p
 
 ```
 $ for node in 0 1 2 3 4; do cat .profile.tmux | ssh akkapi@node-${node} 'cat >> .profile.tmux'; done
+```
 
 Next, edit the _.profile_ file to add `. .profile.tmux` at the end of the file. 
 
+```
 $ for node in 0 1 2 3 4; do echo ". .profile.tmux" | ssh akkapi@node-${node} 'cat >> .profile'; done
+```
 
 The end of that file now looks like:
 
