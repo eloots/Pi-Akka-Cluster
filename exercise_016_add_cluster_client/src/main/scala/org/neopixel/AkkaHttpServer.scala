@@ -81,8 +81,8 @@ object AkkaHttpServer extends Directives with JsonSupport {
         sudokuRouteWithFormatter[Sudoku]{ solution: SudokuSolver.Result => solution.sudoku }
       }
 
-    val bindingFuture = Http().bindAndHandle(routes, "localhost", 8080)
-    println(s"Server online at http://localhost:8080/\nPress RETURN to stop...")
+    val bindingFuture = Http().bindAndHandle(routes, "localhost", 8084)
+    println(s"Server online at http://localhost:8084/\nPress RETURN to stop...")
 
     StdIn.readLine() // let it run until user presses return
     bindingFuture
