@@ -20,7 +20,7 @@ lazy val pi_cluster_master = (project in file("."))
     exercise_015_clustered_sudoku_solver,
     exercise_016_add_cluster_client,
     exercise_017_clustered_sudoku_solver_cluster_client_enabled,
-    exercise_018_es_viszeral,
+    exercise_018_es_vizceral,
     exercise_019_es_opentracing,
     exercise_020_es_classic_console
  ).settings(CommonSettings.commonSettings: _*)
@@ -99,7 +99,7 @@ lazy val exercise_017_clustered_sudoku_solver_cluster_client_enabled = project
   .configure(CommonSettings.configure)
   .dependsOn(common % "test->test;compile->compile")
 
-lazy val exercise_018_es_viszeral = project
+lazy val exercise_018_es_vizceral = project
   .configure(CommonSettings.configure)
   .dependsOn(common % "test->test;compile->compile")
 
