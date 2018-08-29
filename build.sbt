@@ -110,4 +110,3 @@ lazy val exercise_019_es_opentracing = project
 lazy val exercise_020_es_classic_console = project
   .configure(CommonSettings.configure)
   .dependsOn(common % "test->test;compile->compile")
-       
