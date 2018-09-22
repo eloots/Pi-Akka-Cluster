@@ -16,4 +16,4 @@ SUDOKU_JSON=`cat sudokus/json/${SUDOKU_NR}.sudoku.json`
 echo "Sending sudoku problem:"
 cat sudokus/${SUDOKU_NR}.sudoku
 echo ""
-curl --header 'Content-Type: application/json' --request POST --data "$SUDOKU_JSON" localhost:8080/sudoku
+curl --header 'Content-Type: application/json' --request POST --data "$SUDOKU_JSON" localhost:8084/sudoku

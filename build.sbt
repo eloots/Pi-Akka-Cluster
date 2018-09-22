@@ -20,13 +20,12 @@ lazy val pi_cluster_master = (project in file("."))
     exercise_015_clustered_sudoku_solver,
     exercise_016_add_cluster_client,
     exercise_017_clustered_sudoku_solver_cluster_client_enabled,
-    exercise_018_create_azure_iot_hub,
-    exercise_019_create_azure_iot_device,
-    exercise_020_send_telemetry_data_to_iot_hub,
-    exercise_021_work_with_Akka_Stream_library_for_Azure_IoT_Hub
+    exercise_018_es_vizceral,
+    exercise_019_es_opentracing,
+    exercise_020_es_classic_console
  ).settings(CommonSettings.commonSettings: _*)
 
-lazy val common = project.settings(CommonSettings.commonSettings: _*)
+lazy val common = project.settings(CommonSettings.commonSettings: _* )
 
 lazy val exercise_000_initial_state = project
   .configure(CommonSettings.configure)
@@ -100,19 +99,14 @@ lazy val exercise_017_clustered_sudoku_solver_cluster_client_enabled = project
   .configure(CommonSettings.configure)
   .dependsOn(common % "test->test;compile->compile")
 
-lazy val exercise_018_create_azure_iot_hub = project
+lazy val exercise_018_es_vizceral = project
   .configure(CommonSettings.configure)
   .dependsOn(common % "test->test;compile->compile")
 
-lazy val exercise_019_create_azure_iot_device = project
+lazy val exercise_019_es_opentracing = project
   .configure(CommonSettings.configure)
   .dependsOn(common % "test->test;compile->compile")
 
-lazy val exercise_020_send_telemetry_data_to_iot_hub = project
+lazy val exercise_020_es_classic_console = project
   .configure(CommonSettings.configure)
   .dependsOn(common % "test->test;compile->compile")
-
-lazy val exercise_021_work_with_Akka_Stream_library_for_Azure_IoT_Hub = project
-  .configure(CommonSettings.configure)
-  .dependsOn(common % "test->test;compile->compile")
-
