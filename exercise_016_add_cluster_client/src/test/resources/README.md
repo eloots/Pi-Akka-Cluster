@@ -101,7 +101,9 @@ original file. Let's start with the original file.
 
 5. Run this project on your laptop
    
-   - Run `sbt run`
+   - Assemble `sbt exercise_016_add_cluster_client/assembly`
+               
+   - Run      `java -jar exercise_016_add_cluster_client/target/scala-2.12/exercise_016_add_cluster_client-assembly-1.3.0.jar`
    
 6. You can try to post a problem to the http server now
 and notice the type of response you will see
