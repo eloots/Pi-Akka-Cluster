@@ -21,6 +21,7 @@ In the last series of exercises, we deploy an actor based application (a Sudoku 
 
 | Date      | Change                                |
 |:---------:|:--------------------------------------|
+|2018/11/01 | Update docs - Add LED strip schematic & Link BOM |
 |2018/08/15 | Updated docs for _cloud-init_ based install + updated LED driver library for Raspberry Pi 3 Model B+|
 |2018/08/06 | Add Bill of Material |
 |2018/06/08 | Add detailed exercise instructions |
@@ -55,4 +56,9 @@ The easiest and _fastest_ way to flash a Hypriot OS instance that is ready to us
 In some cases it can be handy to use a so-called travel router which allows you to connect to a Wifi network on location, and still get access to a physical network with a fixed IP network address. This is because, currently, all nodes have statically configured IP addresses.
 
 Details on how to configure such a (TP-Link TL-WR802N) router can be found [here](Configuring-TP-Link-Travel-Router-for-class-room-environment.md).
+
+## Build your own Akka-Cluster on Raspberry Pi
+
+- A bill of material can be found [here](images/BOM.md)
+- A schematic of the LED strip can be found [here](images/Schema_LED_Strip.pdf)
 
