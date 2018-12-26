@@ -21,35 +21,62 @@
 import sbt._
 
 object Version {
-  val akkaVer           = "2.5.14"
-  val akkaHttpVer       = "10.1.3"
+  val akkaVer           = "2.5.19"
+  val akkaHttpVer       = "10.1.6"
   val logbackVer        = "1.2.3"
-  val scalaVer          = "2.12.6"
-  val scalaParsersVer   = "1.0.4"
-  val akkaSBRVer        = "1.1.2"
-  val akkaManagementVer = "0.17.0"
-  val scalaTestVer      = "3.0.4"
+  val scalaVer          = "2.12.8"
+  val akkaSBRVer        = "1.1.6"
+  val akkaManagementVer = "0.20.0"
+  val scalaTestVer      = "3.0.5"
 }
 
 object Dependencies {
-  val dependencies = Seq(
-    "com.typesafe.akka"             %% "akka-actor"                   % Version.akkaVer,
-    "com.typesafe.akka"             %% "akka-slf4j"                   % Version.akkaVer,
-    "com.typesafe.akka"             %% "akka-cluster-tools"           % Version.akkaVer,
-    "com.typesafe.akka"             %% "akka-cluster"                 % Version.akkaVer,
-    "com.typesafe.akka"             %% "akka-cluster-sharding"        % Version.akkaVer,
-    "com.typesafe.akka"             %% "akka-distributed-data"        % Version.akkaVer,
-    "com.typesafe.akka"             %% "akka-persistence"             % Version.akkaVer,
-    "com.lightbend.akka"            %% "akka-split-brain-resolver"    % Version.akkaSBRVer,
-    "com.typesafe.akka"             %% "akka-slf4j"                   % Version.akkaVer,
-    "com.typesafe.akka"             %% "akka-http"                    % Version.akkaHttpVer,
-    "com.typesafe.akka"             %% "akka-http-spray-json"         % Version.akkaHttpVer,
-    "com.typesafe.akka"             %% "akka-stream"                  % Version.akkaVer,
-    "ch.qos.logback"                 %  "logback-classic"             % Version.logbackVer,
-    "ch.qos.logback"                 %  "logback-classic"             % Version.logbackVer,
-    "com.lightbend.akka.management" %% "akka-management"              % Version.akkaManagementVer,
-    "com.lightbend.akka.management" %% "akka-management-cluster-http" % Version.akkaManagementVer,
-    "com.typesafe.akka"             %% "akka-testkit"                 % Version.akkaVer              % Test,
-    "org.scalatest"                 %% "scalatest"                    % Version.scalaTestVer         % Test
+  
+  private val akkaDeps = Seq(
+    "com.typesafe.akka"             %% "akka-actor",
+    "com.typesafe.akka"             %% "akka-slf4j",
+    "com.typesafe.akka"             %% "akka-cluster-tools",
+    "com.typesafe.akka"             %% "akka-cluster",
+    "com.typesafe.akka"             %% "akka-cluster-sharding",
+    "com.typesafe.akka"             %% "akka-distributed-data",
+    "com.typesafe.akka"             %% "akka-persistence",
+    "com.typesafe.akka"             %% "akka-slf4j",
+    "com.typesafe.akka"             %% "akka-stream"
+  ).map (_ % Version.akkaVer)
+  
+  private val logbackDeps = Seq (
+    "ch.qos.logback"                 %  "logback-classic",
+    "ch.qos.logback"                 %  "logback-classic",
+  ).map (_ % Version.logbackVer)
+  
+  private val commercialModulesDeps = Seq(
+    "com.lightbend.akka"            %% "akka-split-brain-resolver",
+  ).map (_ % Version.akkaSBRVer)
+  
+  private val akkaHttpDeps = Seq(
+    "com.typesafe.akka"             %% "akka-http",
+    "com.typesafe.akka"             %% "akka-http-spray-json",
+  ).map (_ % Version.akkaHttpVer)
+  
+  private val akkaManagementDeps = Seq(
+    "com.lightbend.akka.management" %% "akka-management",
+    "com.lightbend.akka.management" %% "akka-management-cluster-http",
+  ).map (_ % Version.akkaManagementVer)
+  
+  private val scalaTestDeps = Seq(
+    "org.scalatest"                 %% "scalatest" % Version.scalaTestVer % Test
   )
+  
+  private val akkaTestkitDeps = Seq(
+    "com.typesafe.akka"             %% "akka-testkit" % Version.akkaVer % Test
+  )
+
+  val dependencies: Seq[ModuleID] =
+    akkaDeps ++
+    logbackDeps ++
+    commercialModulesDeps ++
+    akkaHttpDeps ++
+    akkaManagementDeps ++ 
+    scalaTestDeps ++ 
+    akkaTestkitDeps
 }
