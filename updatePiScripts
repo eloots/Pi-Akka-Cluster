@@ -1,19 +1,21 @@
 #!/bin/bash
 
 # Set CLUSTER_NR to the number of the cluster you're working with
-CLUSTER_NR_SEL=${CLUSTER_NR:?Set environment variable CLUSTER_NR to your cluster number}
+CLUSTER_NR_SEL=${CLUSTER_NR:-0}
 
 CLUSTER_BASE_NODE_NR=$(expr $CLUSTER_NR_SEL \* 5)
 
 PI_USER=akkapi
 ALL_NODES="0 1 2 3 4"
-SELECTED_NODE=$2
+SELECTED_NODE=$1
 NODES=${SELECTED_NODE:-$ALL_NODES}
 
-for script in run runSingle;do
+FILES_TO_UPDATE="run librpi_ws281x.so"
+
+#for script in run runSingle librpi_ws281x.so;do
   for i in $NODES;do
     node=$[ CLUSTER_BASE_NODE_NR + i ]
     echo "Copy $CINNAMON to node-${node}"
-    scp $script ${PI_USER}@node-${node}:/home/${PI_USER}
+    scp $FILES_TO_UPDATE ${PI_USER}@node-${node}:/home/${PI_USER}
   done
-done
+#done

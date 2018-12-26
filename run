@@ -1,12 +1,11 @@
 #!/bin/bash
 
-##################################################
-# Run this script on a PI node with the exercise
-# number as a single argument
+######################################################################
+# Run this script on a PI node with the exercise number as a single argument
 #
 # Example: ./run 7
 #
-##################################################
+######################################################################
 
 EXERCISE_NR=`printf %03d $1`
 FATJAR=`ls exercise*${EXERCISE_NR}*jar`
