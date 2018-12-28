@@ -21,6 +21,10 @@ In the last series of exercises, we deploy an actor based application (a Sudoku 
 
 | Date      | Change                                |
 |:---------:|:--------------------------------------|
+|2018/12/28 | Clean-up of various scripts |
+|           | Update travel-router set-up instructions |
+|           | Modularise project dependencies |
+|           | Remove unnecessary files |
 |2018/11/01 | Update docs - Add LED strip schematic & Link BOM |
 |2018/08/15 | Updated docs for _cloud-init_ based install + updated LED driver library for Raspberry Pi 3 Model B+|
 |2018/08/06 | Add Bill of Material |
