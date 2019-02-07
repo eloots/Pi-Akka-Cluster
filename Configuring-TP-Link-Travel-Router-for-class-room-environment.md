@@ -2,45 +2,34 @@
 
 ## TP-Link 300Mbps Wireless N Nano Router
 
-This is the "travel router" we will use: its the TP-Link model `TL-WR802N`
+This is the _"Travel Router"_ we will use: it's the [TP-Link model TL-WR802N](https://www.tp-link.com/us/products/details/cat-9_TL-WR802N.html)
+
+![](https://static.tp-link.com/res/images/products/gallery/TL-WR802N-03.jpg)
 
 ### Reset the router & connect to router via Wifi
 
-- Power the router via USB
-- Press the reset button on the side of the router for at least 5 seconds and release
-- Connect to the router via Wifi
-    - The SSID of the router is noted on the back of the router
-    - You may need to enter a password - it also can be found in the same place as the SSID
+- Power the router via USB.
+- Press and hold the reset button on the side of the router for at least 5 seconds (until the router's green LED stops blinking) and release.
+- Connect your laptop to the router's WiFi network.
+    - The SSID and WiFi password of the router are noted on the back of the router.
+- Surf to [http://tplinkwifi.net](http://tplinkwifi.net). If asked, log-in using _admin/admin_ credentials.
+- After logging in on the router, you will be asked to run *Quick Setup*. Press `Next` to start the process.
+    - The next screen allows you  to change the router's default login password. Just press `Next`.
+    - In the *Quick Setup - Operation Mode* screen, select `Hotspot Router` and press `Next`.
+    - In the *Quick Setup - WAN Connection Type* screen, just press `Next`.
+    - Next, the router will perform a scan to find WiFi access points. In the *Access Point List* screen, select the desired WiFi network by pressing the `Connect` link on the corresponding entry in the list.
+    - In the *Quick Setup - Wireless* screen, enter the WiFi password and press `Next`.
+    - Finish the set-up by pressing `Finish` and wait for about a minute for the router to reboot.
 
-### Set the IP network of the LAN port on the router
+> Note that the green LED on the router will switch from blinking to continuously on when it successfully connects to the WiFi network.
 
-- Surf to [http://tplinkwifi.net](http://tplinkwifi.net)
-- If asked, Log-in using admin/admin credentials
-- Click on `Network` in the menu on the left side
-- More options become available. Click on `LAN`
-- Enter the desired IP address & netmask of the LAN port
-    - For example: 192.168.34.1, 255.255.255.0
-- Push the `Save` button. The router will now reboot
+- After the router has rebooted, reconnect to it by connecting back to its SSID and surf to  [http://tplinkwifi.net](http://tplinkwifi.net).
+    - If prompted, log-in using _admin/admin_ credentials.
+    - Click on *Network* menu in the menu on the left. Select the _LAN_ sub-menu item [(see note below)](#note).
+    - In the _IP Address:_ input field, change the IP address to `192.168.200.1` and leave the Subnet Mask unchanged (`255.255.255.0`). Click the `Save` button.
+    - The router will prompt you saying that it will have to reboot to make this change effective.  Press `Ok` to proceed.
+    - After a few seconds, your router should be ready again handing out IP addresses in the `192.168.200.xxx` range.
+- This completes the configuration of the router!
 
-- Re-connect via Wifi to the route. Your IP address will be the IP address entered above...
-- Surf to [http://tplinkwifi.net](http://tplinkwifi.net)
-- If asked, Log-in using admin/admin credentials
-- Select `Quick Setup` in the menu on the left side
-    - Click `Next`
-    - Select `Hotspot Router` and click `Next`
-    - Select `Dynamic IP` and click `Next`
-    - The router perform a scan for Wifi networks. Click on `Connect` for the network you want to connect to.
-        - Enter the password and click `Next`
-    - Click `Finish`
-    - The router will reboot
-
-
-- Disable the Wifi network on your laptop
-- Connect your laptop to the router via a UTP cable
-- Surf to [http://tplinkwifi.net](http://tplinkwifi.net)
-- Log-in if prompted
-- Click on `DHCP` in the menu on the left side
-    - Change the `Start IP Address`, for example, to 192.168.34.5
-    - Change the ` End IP Address`, for example, to 192.168.34.99
-    - Click `Save`
-- Renew the DHCP license on your laptop. You should be all set...
+#### Note
+The reconfiguration of the LAN IP address of the router from whatever it is set to by default to `192.168.200.1` may not work when connected to the router's WiFi network. In that case, disconnect from the router's WiFi network and connect the router to your laptop via a physical connection.

@@ -4,11 +4,11 @@ On your Mac, add the following entries to your _/etc/hosts_ file:
 
 ```
 # Cluster #0
-192.168.0.101 node-0
-192.168.0.102 node-1
-192.168.0.103 node-2
-192.168.0.104 node-3
-192.168.0.105 node-4
+192.168.200.10 node-0
+192.168.200.11 node-1
+192.168.200.12 node-2
+192.168.200.13 node-3
+192.168.200.14 node-4
 ```
 
 > With support for `cloud-init` being present in the [Hypriot OS](http://blog.hypriot.com) distribution, we switch to using this tool instead starting from a standard installation and then going through a lengthy manual install
@@ -17,9 +17,9 @@ The installation is now relatively simple:
 
 Download and install the Hypriot _**flash**_ tool by following the instructions in the **Quick start** section [on this page](https://blog.hypriot.com/post/releasing-HypriotOS-1-8/).
 
-Using the `akka-pi-os.yml` file in this repo, a 16GB micro SD card and a flash card reader/writer, you are now set to flash an SD card. You will probably customise at least one parameter in the `.yml`: the IP-address of the node (current value is _192.168.0.101_).
+Using the `akka-pi-os.yml` file in this repo, a 16GB micro SD card and a flash card reader/writer, you are now set to flash an SD card. You will probably customise at least one parameter in the `.yml`: the IP-address of the node (current value is _192.168.200.10_).
 
-> NOTE: Edit `akka-pi-os.yml` to change line: `static ip_address=192.168.0.102/24` for each node.
+> NOTE: Edit `akka-pi-os.yml` to change line: `static ip_address=192.168.200.10/24` for each node.
 
 The command to flash the card is:
 
@@ -74,7 +74,7 @@ Pi-Akka-Cluster git:(master) ✗ for node in 0 1 2 3 4;do cat ~/.ssh/id_rsa.pub 
 akkapi@node-0's password:
 ```
 
-With this, you should now be able to log into the _akkapi_ on _node-0_ from the _userxxx_ account on laptop without having to enter a password.
+With this, you should now be able to log into the _akkapi_ on all nodes from the _userxxx_ account on your laptop without having to enter a password.
 
 ##### Copy the LED driver shared library and install Pi-scripts
 
