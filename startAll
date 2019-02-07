@@ -1,5 +1,0 @@
-#!/bin/ksh
-
-for node in 0 1 2 3 4;do
-  ssh pirate@node-${node} "sudo nohup ./run > run.out 2>&1 < /dev/null & " 
-done

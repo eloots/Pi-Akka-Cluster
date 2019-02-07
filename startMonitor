@@ -1,5 +1,0 @@
-#!/bin/bash
-
-sudo pkill -f .\*exercise_003.\*
-
-sudo java -Djava.library.path=. -Dakka.remote.netty.tcp.port=2560 -Dakka.remote.netty.tcp.hostname=192.168.0.102 -jar exercise_003_split_off_LED_status_monitor-assembly-1.3.0.jar com.neopixel.ledstatusindicator.Main &

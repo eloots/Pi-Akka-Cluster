@@ -12,7 +12,7 @@
 ######################################################################
 
 # Set CLUSTER_NR to the number of the cluster you're working with
-CLUSTER_NR_SEL=${CLUSTER_NR:?Set environment variable CLUSTER_NR to your cluster number}
+CLUSTER_NR_SEL=${CLUSTER_NR:-0}
 
 CLUSTER_BASE_NODE_NR=$(expr $CLUSTER_NR_SEL \* 5)
 

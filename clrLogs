@@ -2,18 +2,23 @@
 
 ######################################################################
 #
-# Clear all log files on all nodes
+# Clear all log files on all nodes or a selected node
 #
+# Usage:
+#   ./clrLogs [node-nr]
+#
+# Set CLUSTER_NR to the number of the cluster you're working with
+# Default value of CLUSTER_NR is 0
 ######################################################################
 
 # Set CLUSTER_NR to the number of the cluster you're working with
-CLUSTER_NR_SEL=${CLUSTER_NR:?Set environment variable CLUSTER_NR to your cluster number}
+CLUSTER_NR_SEL=${CLUSTER_NR:-0}
 
 CLUSTER_BASE_NODE_NR=$(expr $CLUSTER_NR_SEL \* 5)
 
 PI_USER=akkapi
 ALL_NODES="0 1 2 3 4"
-SELECTED_NODE=$2
+SELECTED_NODE=$1
 NODES=${SELECTED_NODE:-$ALL_NODES}
 
 for i in $NODES;do
