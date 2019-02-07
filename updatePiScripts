@@ -12,10 +12,8 @@ NODES=${SELECTED_NODE:-$ALL_NODES}
 
 FILES_TO_UPDATE="run librpi_ws281x.so"
 
-#for script in run runSingle librpi_ws281x.so;do
-  for i in $NODES;do
-    node=$[ CLUSTER_BASE_NODE_NR + i ]
-    echo "Copy $CINNAMON to node-${node}"
-    scp $FILES_TO_UPDATE ${PI_USER}@node-${node}:/home/${PI_USER}
-  done
-#done
+for i in $NODES;do
+  node=$[ CLUSTER_BASE_NODE_NR + i ]
+  echo "Copy $CINNAMON to node-${node}"
+  scp $FILES_TO_UPDATE ${PI_USER}@node-${node}:/home/${PI_USER}
+done
