@@ -8,25 +8,9 @@ Each node is equipped with an 8-LED RGB strip where different LED's are used to 
 
 In the last series of exercises, we deploy an actor based application (a Sudoku Solver) on the cluster and add monitoring (`Cinnamon`/`Prometheus`/`Grafana`) and tracing to the set-up (`Open-tracing`/`Zipkin`).
 
-## Maintainers
+## Maintainers & Changelog
 
-| Name               | Email address                           |
-|-------------------:|:----------------------------------------|
-| Eric Loots         | eric.loots@lightbend.com                |
-| Kikia Carter       | kikia.carter@lightbend.com              |
-| Henrik Engström    | henrik.engstrom@lightbend.com           |
-| Duncan Devore      | duncan.devore@lightbend.com             |
-
-## Changelog
-
-| Date      | Change                                |
-|:---------:|:--------------------------------------|
-|2018/11/01 | Update docs - Add LED strip schematic & Link BOM |
-|2018/08/15 | Updated docs for _cloud-init_ based install + updated LED driver library for Raspberry Pi 3 Model B+|
-|2018/08/06 | Add Bill of Material |
-|2018/06/08 | Add detailed exercise instructions |
-|2018/06/08 | Move Hypriot OS customisation instructions to a separate file |
-|2018/03/14 | Generalise code to allow for multiple clusters on a single network |
+Removed the changelog & list of maintainers. Git history contains this information.
 
 ## Instructions
 
