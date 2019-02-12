@@ -21,12 +21,12 @@
 import sbt._
 
 object Version {
-  val akkaVer           = "2.5.19"
-  val akkaHttpVer       = "10.1.6"
+  val akkaVer           = "2.5.20"
+  val akkaHttpVer       = "10.1.7"
   val logbackVer        = "1.2.3"
   val scalaVer          = "2.12.8"
-  val akkaSBRVer        = "1.1.6"
-  val akkaManagementVer = "0.20.0"
+  val akkaSBRVer        = "1.1.7"
+  val akkaManagementVer = "1.0.0-RC2"
   val scalaTestVer      = "3.0.5"
 }
 
@@ -60,6 +60,7 @@ object Dependencies {
   
   private val akkaManagementDeps = Seq(
     "com.lightbend.akka.management" %% "akka-management",
+    "com.lightbend.akka.management" %% "akka-management-cluster-bootstrap",
     "com.lightbend.akka.management" %% "akka-management-cluster-http",
   ).map (_ % Version.akkaManagementVer)
   
