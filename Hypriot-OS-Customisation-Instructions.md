@@ -82,7 +82,7 @@ On your Laptop, copy the `librpi_ws281x.so` shared library from the repo to the 
 
 ```
 Pi-Akka-Cluster git:(master) ✗ for node in 0 1 2 3 4;do scp -r librpi_ws281x.so akkapi@node-${node}:/home/akkapi; done
-Pi-Akka-Cluster git:(master) ✗ CLUSTER_NR=0 ./updatePiScripts
+Pi-Akka-Cluster git:(master) ✗ ./updatePiScripts
 ```
 
 Login on each node with the _akkapi_ account to change a couple of things (the password for the _akkapi_ user is _akkapi_):
@@ -238,3 +238,4 @@ Log in on the different node (use a multi-session terminal like iTerm-2 on MacOS
 - Instructions on how to assemble the LED status strip can be found [here](LED-status-indicator-assembly-instructions.md)
 
 - Assembling the Pi's to form a physical cluster is relatively straightforward. See diagram [Cluster set-up schema](images/Cluster-set-up-schema.pdf) to see how it all connects together
+1. 
