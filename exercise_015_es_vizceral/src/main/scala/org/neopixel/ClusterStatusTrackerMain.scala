@@ -23,7 +23,7 @@ package org.neopixel
 import akka.actor.ActorSystem
 import akka.cluster.client.ClusterClientReceptionist
 import com.typesafe.config.{ConfigFactory, ConfigValueFactory}
-import akka.management.AkkaManagement
+import akka.management.scaladsl.AkkaManagement
 import neopixel.{rpi_ws281xConstants => wsC}
 
 object ClusterStatusTrackerMain {
