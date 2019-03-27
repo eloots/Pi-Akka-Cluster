@@ -93,8 +93,6 @@ class ConfigSettingsImpl(system: ExtendedActorSystem) extends Extension {
     val ledCount: Int =
       config.getInt("cluster-status-indicator.led-count")
 
-    val highestLedIndex: Int = ledCount - 1
-
     val ledPin: Int =
       config.getInt("cluster-status-indicator.led-pin")
 

@@ -46,7 +46,21 @@ object ClusterStatusTrackerMain {
 
     val strip = Adafruit_NeoPixel(ledCount, ledPin, ledFreqHz, ledDma, ledInvert, ledBrightness, ledChannel, wsC.WS2811_STRIP_RGB)
 
-    val clusterStatusTracker = system.actorOf(ClusterStatusTracker.props(strip), "cluster-status-tracker")
+    val ledStripType = config.getString("cluster-status-indicator.led-strip-type")
+
+    val logicalToPhysicalLEDMapping: Int => Int = ledStripType match {
+      case "eight-led-reversed-order" =>
+        (n: Int) => scala.math.abs(n - 7) % 8
+      case "ten-led-non-reversed-order" =>
+        identity
+      case _ =>
+        system.terminate()
+        println(s"Unknown LED strip type: $ledStripType")
+        System.exit(-1)
+        identity
+    }
+
+    val clusterStatusTracker = system.actorOf(ClusterStatusTracker.props(strip, logicalToPhysicalLEDMapping), "cluster-status-tracker")
 
     val sudokuSolver = system.actorOf(SudokuSolver.props(), "sudoku-solver")
 

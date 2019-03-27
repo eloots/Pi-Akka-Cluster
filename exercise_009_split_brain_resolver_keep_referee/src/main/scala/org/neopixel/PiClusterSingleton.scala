@@ -24,22 +24,23 @@ import akka.actor.{Actor, ActorLogging, Props}
 
 object PiClusterSingleton {
 
-  def props(strip: Adafruit_NeoPixel.type): Props = Props(new PiClusterSingleton(strip))
+  def props(strip: Adafruit_NeoPixel.type,logicalToPhysicalLEDMapping: Int => Int): Props =
+    Props(new PiClusterSingleton(strip, logicalToPhysicalLEDMapping))
 }
 
-class PiClusterSingleton(strip: Adafruit_NeoPixel.type) extends Actor with ActorLogging {
+class PiClusterSingleton(strip: Adafruit_NeoPixel.type, logicalToPhysicalLEDMapping: Int => Int) extends Actor with ActorLogging {
 
   override def receive: Receive = akka.actor.Actor.emptyBehavior
 
   override def preStart(): Unit = {
     log.info(s"ClusterSingleton started")
-    setPixelColorAndShow(strip, 1, LightBlue)
+    setPixelColorAndShow(strip, logicalToPhysicalLEDMapping(6), LightBlue)
     super.preStart()
   }
 
   override def postStop(): Unit = {
     log.info(s"ClusterSingleton stopped")
-    setPixelColorAndShow(strip, 1, Black)
+    setPixelColorAndShow(strip, logicalToPhysicalLEDMapping(6), Black)
     super.postStop()
   }
 
