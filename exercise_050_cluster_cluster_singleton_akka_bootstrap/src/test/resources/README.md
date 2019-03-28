@@ -13,10 +13,9 @@ contact points.
 
 ```
 management.cluster.bootstrap.contact-point-discovery {
-       service-name = "local-cluster"
-       discovery-method = config
-     }
-     
+   service-name = "local-cluster"
+   discovery-method = config
+ }
 ```
 For this exercise, we will be using the config discovery method. 
 > note: There are other 
