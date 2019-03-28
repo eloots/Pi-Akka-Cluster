@@ -22,6 +22,7 @@ package org.neopixel
 
 import akka.actor.ActorSystem
 import akka.management.scaladsl.AkkaManagement
+import akka.management.cluster.bootstrap.ClusterBootstrap
 import com.typesafe.config.{ConfigFactory, ConfigValueFactory}
 import neopixel.{rpi_ws281xConstants => wsC}
 
@@ -61,8 +62,8 @@ object ClusterStatusTrackerMain {
 
     val clusterStatusTracker = system.actorOf(ClusterStatusTracker.props(strip, logicalToPhysicalLEDMapping), "cluster-status-tracker")
 
-
     // Start Akka HTTP Management extension
     AkkaManagement(system).start
+    ClusterBootstrap(system).start()
   }
 }
