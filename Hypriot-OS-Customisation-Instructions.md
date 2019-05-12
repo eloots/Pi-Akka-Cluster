@@ -27,7 +27,7 @@ The command to flash the card is:
 Pi-Akka-Cluster git:(master) ✗ flash -n node-0 -u akka-pi-os.yml https://github.com/hypriot/image-builder-rpi/releases/download/v1.10.0/hypriotos-rpi-v1.10.0.img.zip
 ```
 
-`-n node-0` specifies the host name for the host. For other nodes, set it to a name of the host this card is destined for (`node-0` through `node-4`)
+`-n node-0` specifies the host name for the node. For other nodes, set it to a name of the host this card is destined for (`node-0` through `node-4`)
 
 We're also using the latest version of Hypriot (1.10.0 at the time of writing). For a complete list of available versions, see the [downloads page](https://blog.hypriot.com/downloads/).
 
@@ -37,7 +37,7 @@ Insert the card into the micro SD slot on your Raspberry Pi (should work on Rasp
 >
 > - Resizing of file system to utilise the full capacity of the flashed micro SD card.
 > - Install a number of packages (see `.yaml` file for details.
-> - Install Java 8 (OpenJDK)
+> - Install Java 8 (OpenJDK).
 > 
 > This process takes about 5 minutes to complete. Check `/var/log/cloud-init-output.log` for progress.
 > 
@@ -55,9 +55,9 @@ The installation of the OS as described in the previous section should be repeat
 
 ### Configure password-less login
 
-Next, we set-up password-less login. We assume that we want to log in to account _akkapi_ on a pi from an account (_userxxx_) on your laptop.
+Next, we set-up password-less login. We assume that we want to log in to account _akkapi_ on a pi from an account (_userxxx_) on your laptop. In order to set-up password-less login, you need a so-called public/private key pair. If you're unfamiliar with this concept, or don't have such a key pair, first read the paragraph titled _Generating a public/private key pair_ in the Addendum.
 
-Now, proceed by create a `.ssh` folder on the _akkapi_'s home folder on the Pi and copy the public key (`id_rsa.pub`) to a file named `authorized_keys` in the `.ssh` folder. You will have to supply the password for the _akkapi_ account for the two commands launched.
+Now, proceed by create a `.ssh` folder on the _akkapi_'s home folder on the Pi and copy the public key (`id_rsa.pub`) to a file named `authorized_keys` in the `.ssh` folder. You will have to supply the password for the _akkapi_ account for the two commands launched. On your laptop:
 
 ```
 [Pi-Akka-Cluster git:(master) ✗ for node in 0 1 2 3 4;do ssh akkapi@node-${node} mkdir .ssh; done
@@ -101,7 +101,7 @@ librpi_ws281x.so                                                                
 setLedType
 ```
 
-> Note: the `updateScripts` command can take a single argument: a node number (0-4). Passing a node number as argument will update the script only on that node with that number.
+> Note: the `updateScripts` command can take a single argument: a node number (0-4). Passing a node number as argument will update the script only on the node with that number.
 
 ### Finish the installation
 
@@ -241,13 +241,11 @@ Log in on the different node (use a multi-session terminal like iTerm-2 on MacOS
 
 ## Hardware build instructions
 
-- Instructions on how to assemble the LED status strip can be found [here](LED-status-indicator-assembly-instructions.md)
+- If you want to assemble the LED status strip yourself, detailed instructions can be found [here](LED-status-indicator-assembly-instructions.md)
 
 - Assembling the Pi's to form a physical cluster is relatively straightforward. See diagram [Cluster set-up schema](images/Cluster-set-up-schema.pdf) to see how it all connects together
 
-## Appendix
-
-### Generating a public/private key pair
+## Generating a public/private key pair
 
 We assume that we want to log in to account _akkapi_ on a pi from an account (_userxxx_) on your laptop.
 
