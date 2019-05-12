@@ -11,6 +11,8 @@ apt_preserve_sources_list: true
 packages:
   - tmux
   - jq
+  - dnsutils
+  - apt-transport-https
 
 # You could modify this for your own user information
 users:
@@ -60,43 +62,57 @@ write_files:
     path: /etc/cluster-hosts
 
   - content: |
-      -----BEGIN PGP PUBLIC KEY BLOCK-----
-      Version: SKS 1.1.5
-      Comment: Hostname: keyserver.ubuntu.com
-      
-      mI0ES9/P3AEEAPbI+9BwCbJucuC78iUeOPKl/HjAXGV49FGat0PcwfDd69MVp6zUtIMbLgkU
-      OxIlhiEkDmlYkwWVS8qy276hNg9YKZP37ut5+GPObuS6ZWLpwwNus5PhLvqeGawVJ/obu7d7
-      gM8mBWTgvk0ErnZDaqaU2OZtHataxbdeW8qH/9FJABEBAAG0DUxhdW5jaHBhZCBWTEOImwQQ
-      AQIABgUCVsN4HQAKCRAEC6TrO3+B2tJkA/jM3b7OysTwptY7P75sOnIu+nXLPlzvja7qH7Wn
-      A23itdSker6JmyJrlQeQZu7b9x2nFeskNYlnhCp9mUGu/kbAKOx246pBtlaipkZdGmL4qXBi
-      +bi6+5Rw2AGgKndhXdEjMxx6aDPq3dftFXS68HyBM3HFSJlf7SmMeJCkhNRwiLYEEwECACAF
-      Akvfz9wCGwMGCwkIBwMCBBUCCAMEFgIDAQIeAQIXgAAKCRDCUYJI7qFIhucGBADQnY4V1xKT
-      1Gz+3ERly+nBb61BSqRx6KUgvTSEPasSVZVCtjY5MwghYU8T0h1PCx2qSir4nt3vpZL1luW2
-      xTdyLkFCrbbIAZEHtmjXRgQu3VUcSkgHMdn46j/7N9qtZUcXQ0TOsZUJRANY/eHsBvUg1cBm
-      3RnCeN4C8QZrir1CeA==
-      =CziK
-      -----END PGP PUBLIC KEY BLOCK-----
-    path: /tmp/key.txt
-
-  - content: |
-      deb http://apt.kubernetes.io/ kubernetes-xenial main
-    path: /etc/apt/sources.list.d/kubernetes.list
-
-  - content: |
       curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
       sudo apt-get update
       sudo apt-get -y upgrade
-      sudo apt-get install -y kubelet kubeadm kubectl kubernetes-cni
+      echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+      sudo apt-get update
+      sudo apt-get install -qy kubelet kubeadm kubectl kubernetes-cni
     owner: root:staff
     permissions: '0755'
     path: /usr/local/bin/install-kubernetes
 
   - content: |
       sudo apt-get update
-      sudo apt-get install -y oracle-java8-installer
+      sudo apt-get install -y galternatives openjdk-8-jdk
     owner: root:staff
     permissions: '0755'
     path: /usr/local/bin/install-java
+
+  - content: |
+      #!/bin/bash -e
+      
+      cat > /home/akkapi/.profile-tmux <<EOF
+      tnr() {
+         tmux new -s run
+      }
+      
+      tr() {
+         tmux attach -t run
+      }
+      
+      tnl() {
+         tmux new -s log
+      }
+      
+      tl() {
+         tmux attach -t log
+      }
+      
+      tkillall() {
+         for session in \`tmux ls | sed -e 's/:.*//'\`;do
+           tmux kill-session -t \$session
+         done
+      }
+      EOF
+      
+      cat >> /home/akkapi/.profile <<EOF
+      
+      . .profile-tmux
+      EOF
+    owner: root:staff
+    permissions: '0755'
+    path: /usr/local/bin/finish-install
 
 # These commands will be ran once on first boot only
 runcmd:
@@ -105,10 +121,9 @@ runcmd:
   - 'rm /etc/cluster-hosts'
   # Pickup the hostname changes
   - 'systemctl restart avahi-daemon'
-  # Add key for java webupd8team update
-  - 'apt-key add /tmp/key.txt'
-  - 'echo "deb http://ppa.launchpad.net/webupd8team/java/ubuntu xenial main" | tee /etc/apt/sources.list.d/webupd8team-java.list'
-  - 'echo "deb-src http://ppa.launchpad.net/webupd8team/java/ubuntu xenial main" | tee -a /etc/apt/sources.list.d/webupd8team-java.list'
+  # Install OpenJDK 8
+  - apt-get update
+  - apt-get install -y galternatives openjdk-8-jdk
 
   # Activate WiFi interface
 #  - 'ifup wlan0'
