@@ -78,7 +78,7 @@ With this, you should now be able to log into the _akkapi_ on all nodes from the
 A number of scripts have to be installed on each node. Running `updateScripts` on your laptop your laptop will perform this task:
 
 ```
-$ ./updatePiScripts
+Pi-Akka-Cluster git:(master) ✗ ./updatePiScripts
 Copy  to node-0
 run                                                                                   100% 1037   273.9KB/s   00:00
 librpi_ws281x.so                                                                      100%   92KB   2.4MB/s   00:00
@@ -108,7 +108,7 @@ setLedType
 In this final step, we customise the login settings for the `akkapi` account on each node by running the following command from your laptop:
 
 ```
-for node in 0 1 2 3 4;do ssh akkapi@node-${node} 'finish-install';done
+Pi-Akka-Cluster git:(master) ✗ for node in 0 1 2 3 4;do ssh akkapi@node-${node} 'finish-install';done
 ```
 
 ### [Optional] Install Kubernetes
