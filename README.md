@@ -24,9 +24,9 @@ Removed the changelog & list of maintainers. Git history contains this informati
 
 If you want to build your own physical cluster, you may want to have a look at the BOM [here](images/BOM.md).
 
-## Pi-Hypriot customisation instructions
+## Pi-Hypriot installation instructions
 
-The easiest and _fastest_ way to flash a Hypriot OS instance that is ready to use for the Akka Cluster software can be found [here](Hypriot-OS-Customisation-Instructions.md).
+The easiest and _fastest_ way to flash a Hypriot OS instance that is ready to use for the Akka Cluster software can be found [here](Hypriot-OS-Installation-Instructions.md).
 
 ## Travel router configuration
 
