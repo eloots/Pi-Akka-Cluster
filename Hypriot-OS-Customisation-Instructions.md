@@ -15,7 +15,7 @@ On your Mac, add the following entries to your _/etc/hosts_ file:
 
 The installation is now relatively simple:
 
-Download and install the Hypriot _**flash**_ tool by following the instructions in the **Quick start** section [on this page](https://blog.hypriot.com/post/releasing-HypriotOS-1-8/).
+Download and install the Hypriot _**flash**_ tool by following the instructions in the **Installation** section [here](https://github.com/hypriot/flash#installation).
 
 Using the `akka-pi-os.yml` file in this repo, a 16GB micro SD card and a flash card reader/writer, you are now set to flash an SD card. You will probably customise at least one parameter in the `.yml`: the IP-address of the node (current value is _192.168.200.10_).
 
