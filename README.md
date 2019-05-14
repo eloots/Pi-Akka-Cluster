@@ -14,15 +14,26 @@ Removed the changelog & list of maintainers. Git history contains this informati
 
 ## Instructions
 
-- Make sure you completed the installation of
+- Install the following on the laptop or desktop that you will use for connecting to the pi cluster
     - Java 8 SDK
     - Some terminal (iTerm-2 on Mac, Terminator on Linux style OS-es, Powershell or ConEmu on Windows
     - curl
 - Clone the project on your laptop
 
-## Building your own 5-node Raspberry-Pi based Akka Cluster
+## Running the exercises
 
-If you want to build your own physical cluster, you may want to have a look at the BOM [here](images/BOM.md).
+- start from inside the project root
+    - `cd Pi-Akka-Cluster`
+- start the course using `sbt`
+    - type `sbt` from inside the project root
+- you should see the project starting from the initial state
+the first time you run it. Subsequent starts will be from the 
+last state where you left off. 
+- to see the instructions for the current exercise type
+    - `man e`
+- you will find full instructions to run each exercise and progress to the next 
+within the `man e`
+- for a quickstart to using the course tools, see [here](course-tools-quickstart.md)
 
 ## Pi-Hypriot installation instructions
 
