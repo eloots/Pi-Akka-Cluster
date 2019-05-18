@@ -84,7 +84,7 @@ ws2811_t ledstring =
             .gpionum = GPIO_PIN,
             .count = LED_COUNT,
             .invert = 0,
-            .brightness = 255,
+            .brightness = 30,
             .strip_type = STRIP_TYPE,
         },
         [1] =
@@ -129,30 +129,17 @@ void matrix_raise(void)
     }
 }
 
-void matrix_clear(void)
-{
-    int x, y;
-
-    for (y = 0; y < (height ); y++)
-    {
-        for (x = 0; x < width; x++)
-        {
-            matrix[y * width + x] = 0;
-        }
-    }
-}
-
 int dotspos[] = { 0, 1, 2, 3, 4, 5, 6, 7 };
 ws2811_led_t dotcolors[] =
 {
-    0x00200000,  // red
-    0x00201000,  // orange
-    0x00202000,  // yellow
+    0x00200000,  // blue
+    0x00201000,  // lightblue
+    0x00202000,  // cyan
     0x00002000,  // green
-    0x00002020,  // lightblue
-    0x00000020,  // blue
-    0x00100010,  // purple
-    0x00200010,  // pink
+    0x00002020,  // yellow
+    0x00000020,  // red
+    0x00100010,  // pink
+    0x00200010,  // purple
 };
 
 ws2811_led_t dotcolors_rgbw[] =
@@ -168,23 +155,28 @@ ws2811_led_t dotcolors_rgbw[] =
 
 };
 
-void matrix_bottom(void)
+void matrix_clear(void)
 {
-    int i;
+    int x, y;
 
-    for (i = 0; i < (int)(ARRAY_SIZE(dotspos)); i++)
+    for (y = 0; y < (height ); y++)
     {
-        dotspos[i]++;
-        if (dotspos[i] > (width - 1))
+        for (x = 0; x < width; x++)
         {
-            dotspos[i] = 0;
+            matrix[y * width + x] = dotcolors[3];
         }
+    }
+}
 
-        if (ledstring.channel[0].strip_type == SK6812_STRIP_RGBW) {
-            matrix[dotspos[i] + (height - 1) * width] = dotcolors_rgbw[i];
-        } else {
-            matrix[dotspos[i] + (height - 1) * width] = dotcolors[i];
-        }
+void matrix_bottom(int i)
+{
+    int n;
+
+    if (ledstring.channel[0].strip_type == SK6812_STRIP_RGBW) {
+        matrix[dotspos[i] + (height - 1) * width] = dotcolors_rgbw[i];
+    } else {
+        for (n = 0; n < 10; n++) matrix[n] = 0;
+        matrix[i] = dotcolors[5];
     }
 }
 
@@ -375,6 +367,7 @@ void parseargs(int argc, char **argv, ws2811_t *ws2811)
 int main(int argc, char *argv[])
 {
     ws2811_return_t ret;
+    int i = 0;
 
     sprintf(VERSION, "%d.%d.%d", VERSION_MAJOR, VERSION_MINOR, VERSION_MICRO);
 
@@ -393,7 +386,7 @@ int main(int argc, char *argv[])
     while (running)
     {
         matrix_raise();
-        matrix_bottom();
+        matrix_bottom(i);
         matrix_render();
 
         if ((ret = ws2811_render(&ledstring)) != WS2811_SUCCESS)
@@ -402,8 +395,9 @@ int main(int argc, char *argv[])
             break;
         }
 
-        // 15 frames /sec
-        usleep(1000000 / 15);
+        // 2 frames /sec
+        usleep(1000000 / 2);
+        i = (i + 1) % 10;
     }
 
     if (clear_on_exit) {
