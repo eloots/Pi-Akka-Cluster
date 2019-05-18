@@ -1,5 +1,7 @@
+package sbtstudent
+
 /**
-  * Copyright © 2018 Lightbend, Inc
+  * Copyright © 2017 - 2019 Lightbend, Inc
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -18,10 +20,8 @@
   * limitations under the License.
   */
 
-package sbtstudent
-
 import sbt.Keys._
-import sbt._
+import sbt.{Def, _}
 import stbstudent.MPSelection
 
 import scala.Console
@@ -44,14 +44,24 @@ object StudentCommandsPlugin extends AutoPlugin {
       }
     )
 
-  override lazy val projectSettings =
+  def extractCurrentExerciseDesc(state: State): String = {
+    val currentExercise =  Project.extract(state).currentProject.id
+
+    currentExercise
+      .replaceFirst("""^.*_\d{3}_""", "")
+      .replaceAll("_", " ")
+  }
+
+  def extractProjectName(state: State): String = {
+    IO.readLines(new sbt.File(new sbt.File(Project.extract(state).structure.root), ".courseName")).head
+  }
+
+  override lazy val projectSettings: Seq[Def.Setting[State => String]] =
     Seq(
       shellPrompt := { state =>
-        val base: File = Project.extract(state).get(sourceDirectory)
-        val basePath: String = base + "/test/resources/README.md"
-        val exercise = Console.GREEN + IO.readLines(new sbt.File(basePath)).head + Console.RESET
+        val exercise = Console.GREEN + extractCurrentExerciseDesc(state) + Console.RESET
         val manRmnd = Console.GREEN + "man [e]" + Console.RESET
-        val prjNbrNme = IO.readLines(new sbt.File(new sbt.File(Project.extract(state).structure.root), ".courseName")).head
+        val prjNbrNme = extractProjectName(state)
         s"$manRmnd > $prjNbrNme > $exercise > "
       }
     )

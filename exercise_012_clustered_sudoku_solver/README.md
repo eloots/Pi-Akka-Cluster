@@ -1,12 +1,11 @@
-base_clustered_sudoku_solver
-
 # Clustered Sudoku Solver
 
 In this step, we add an actor based Sudoku solver. Each node 
 will automatically start a solver and another actor will send 
 the same sudoku problem in a continues loop.  
 
-## Steps 
+## Steps
+
 1. Check out the new code in the file `ClusterStatusTrackerMain`
    
    You'll see two new actors being created as part of the actor system.

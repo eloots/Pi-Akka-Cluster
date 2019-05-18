@@ -1,8 +1,9 @@
-es_classic_console
-
 # How to demonstrate Enterprise Suite Classic Console with Raspberry Pi Akka Cluster
-## Exercise 19 - ES Classic Demo
+
+## Exercise - ES Classic Demo
+
 ### Demo Setup Pre-requisite steps
+
 1. Ensure you have passwordless ssh setup between your laptop and your Raspberry Pi Cluster. 
 	2. Steps found [here:](https://github.com/lightbend/Pi-Akka-Cluster/blob/master/Hypriot-OS-Customisation-Instructions.md#configure-password-less-login-1)
 2. ssh into each of the Rasperry Pi nodes in the cluster with user `akkapi`
@@ -10,13 +11,13 @@ es_classic_console
  
 ### Demo Steps
 1. From the project root assemble the jar using command:
-	`sbt exercise_020_es_classic_console/assembly`
+	`sbt exercise_017_es_classic_console/assembly`
 2. Copy the assembled jar to the raspberry pi's using the command: 	`CLUSTER_NR=0 ./copy 18`
 3. start vizceral docker machine on your laptop using the command: 
 	`docker-compose -f exercise_018_es_vizceral/docker-compose.yml up`
 4. Since you'll be using the Akka Http client to send sudoku problems to the cluster, you'll need to start that up 
 locally on your machine. Run exercise 16 locally by typing:
-    `sbt exercise_016_add_cluster_client/run`
+    `sbt exercise_013_add_cluster_client/run`
     > HINT: The project code may be configured to use port 8080 for the Akka Http server; you'll need to change this to something 
             different so it does not conflict with the default vizceral port. 
 5. Start vizceral visualization exercise 18 on the pi cluster [*from within the terminal window logged into the pi node*] by typing:

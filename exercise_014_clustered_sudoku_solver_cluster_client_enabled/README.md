@@ -1,5 +1,3 @@
-clustered_sudoku_solver_cluster_client_enabled
-
 # Clustered Sudoku Solver - Cluster Client Enabled
 
 In the previous exercise, we created an Akka HTTP server 
@@ -10,7 +8,8 @@ posted a problem to the server, there was an error.
 
 In order to fix this, we must enable to akka cluster to accept messages from cluster clients. 
 
-Steps
+## Steps
+
 1. Open up the file `src/main/scala/org/neopixel/ClusterStatusTrackerMain.scala` and see if you notice anything new...
     
    Of course you notice something new! 

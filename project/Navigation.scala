@@ -1,5 +1,7 @@
+package sbtstudent
+
 /**
-  * Copyright © 2018 Lightbend, Inc
+  * Copyright © 2017 - 2019 Lightbend, Inc
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -18,13 +20,8 @@
   * limitations under the License.
   */
 
-package sbtstudent
-
-/**
-  * Copyright © 2014, 2015, 2016 Lightbend, Inc. All rights reserved. [http://www.typesafe.com]
-  */
-
 import sbt._
+import scala.Console
 
 object Navigation {
 
@@ -39,8 +36,15 @@ object Navigation {
       .allProjectRefs
       .toList
       .map(r => r.project)
-      .filter(_.startsWith("exercise_"))
+      // By convention, a project exercise has a 3-digit number in it enclosed in underscores
+      .filter(_.matches(""".*_\d{3}_.*"""))
       .sorted
-    s"project ${refs.head}" :: state
+    if (refs.nonEmpty)
+      Command.process(s"project ${refs.head}", state)
+    else {
+      // No project was found adhering to the naming convention
+      println(s"\n${Console.RED}No projects found!${Console.RESET}\n")
+      state
+    }
   }
 }

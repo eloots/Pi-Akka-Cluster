@@ -1,10 +1,15 @@
-split_brain_resolver_static_quorum
+# Split brain resolver (SBR) with Keep Majority strategy
 
-# Split brain resolver (SBR) with Static Quorum strategy
+The split brain resolver is added and configured with a `Keep majority` strategy.
 
-The split brain resolver is added and configured with a `Static Quorum` strategy
+With this strategy, the `SBR` will down all nodes in a partition if that
+partition doesn't have a majority of the nodes that were part of the
+cluster when it was last in a converged state.
 
-In this case, we configure the SBR with a `Quorum`: in a partition with a number of nodes that is less than the `Quorum`, `SBR` will down all the nodes
+`Discuss`
+
+What are the implications with respect to cluster size when using this
+strategy?
 
 # Instructions
 
@@ -19,7 +24,7 @@ In this case, we configure the SBR with a `Quorum`: in a partition with a number
   from the switch it is connected to
   - Observe what happens and try to explain it
 
-- Try your own scenarios: think about what other (network) failures can
+- Try your own scenarios - think about what other (network) failures can
   happen
   
 - Reconnect everything back together, stop what is still running and

@@ -1,5 +1,3 @@
-Set-up the cluster hardware
-
 # Initial State - Set-up the cluster hardware and verify it work correctly
 
 Let's start by listing the components you'll be using for this:

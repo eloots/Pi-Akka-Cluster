@@ -1,5 +1,3 @@
-node_weakly_up_disabled
-
 # Disable Weakly-up feature
 
 In this set-up, we disable the so-called `WeaklyUp` feature.
