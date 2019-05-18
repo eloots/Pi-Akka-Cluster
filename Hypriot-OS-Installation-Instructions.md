@@ -1,5 +1,8 @@
 ## Pi-Hypriot OS installation instructions
 
+> ***NOTE: AFTER INITIAL POWER-UP OF THE NODES, AN INSTALLATION SCRIPT IS RUN WHICH WILL INSTALL THE OPENJDK AND A NUMBER OF PACKAGES. IT IS RECOMMENDED TO PLUGH AN LED STRIP ON THE GPIO CONNECTOR AS IT WILL DISPLAY THE PROGRESS OF THE INSTALLATION (ALL LEDS TURN GREEN WHEN THE INSTALLATION IS COMPLETED)***
+
+
 On your Mac, add the following entries to your _/etc/hosts_ file:
 
 ```
@@ -31,7 +34,13 @@ Pi-Akka-Cluster git:(master) ✗ flash -n node-0 -u akka-pi-os.yml https://githu
 
 We're also using the latest version of Hypriot (1.10.0 at the time of writing). For a complete list of available versions, see the [downloads page](https://blog.hypriot.com/downloads/).
 
-Insert the card into the micro SD slot on your Raspberry Pi (should work on Raspberry Pi 2 and 3 - Model B and B+), power-up the Pi and log-in as user _akkapi_ using ssh (password is also _akkapi_).
+Next:
+
+- Insert the card into the micro SD slot on your Raspberry Pi (should work on Raspberry Pi 2 and 3 - Model B and B+).
+- Power-up the Pi.
+- Be patient... Installation progress is indicated on the LED strip (provided one is plugged into the GPIO connector).
+- After about 1.5 minute, you can log-in on the Raspberry Pi. Log-in as user _akkapi_ using ssh (password is also _akkapi_).
+- It takes between 4 and 6 minutes to complete the initial installation (depending on the speed of the micro SD card).
 
 > Note: During the first boot, a number of things happen:
 >
@@ -39,7 +48,7 @@ Insert the card into the micro SD slot on your Raspberry Pi (should work on Rasp
 > - Install a number of packages (see `.yaml` file for details.
 > - Install Java 8 (OpenJDK).
 > 
-> This process takes about 5 minutes to complete. Check `/var/log/cloud-init-output.log` for progress.
+> Check `/var/log/cloud-init-output.log` for progress.
 > 
 > The process is finished when the following line is logged:
 
