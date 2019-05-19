@@ -1,5 +1,3 @@
-cluster_base
-
 # Explore base Akka Cluster formation
 
 In this exercise, we will explore the formation of an Akka Cluster with up-to

@@ -1,5 +1,7 @@
+package stbstudent
+
 /**
-  * Copyright © 2018 Lightbend, Inc
+  * Copyright © 2017 - 2019 Lightbend, Inc
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -18,8 +20,6 @@
   * limitations under the License.
   */
 
-package stbstudent
-
 import java.io.File
 import java.nio.charset.StandardCharsets
 import java.nio.file.{Files, Paths}
@@ -32,8 +32,7 @@ import scala.util.matching.Regex
 
 object MPSelection {
 
-  val ExercisePathSpec: Regex = """(.*/exercise_)(\d{3})(_\w+)$""".r
-  val ExerciseNameSpec: Regex = """(exercise_)(\d{3})(_\w+)$""".r
+  val ExercisePathSpec: Regex = """(.*_)(\d{3})(_\w+)$""".r
 
   object FoldersOnly {
     def apply() = new FoldersOnly
@@ -62,7 +61,7 @@ object MPSelection {
   def activateExerciseNr(state: State, nr: Int): State = {
     val selectedProjectFolder = new sbt.File(Project.extract(state).structure.root)
     val exercises = getExerciseNames(selectedProjectFolder)
-    val activeExercisePrefix = f"exercise_$nr%03d.*"
+    val activeExercisePrefix = f".*_$nr%03d.*"
     val activeExercisePrefixSpec = activeExercisePrefix.r
     val activeExercise = exercises.find(exerciseName => activeExercisePrefixSpec.findFirstIn(exerciseName).isDefined)
     if (activeExercise.isEmpty) {

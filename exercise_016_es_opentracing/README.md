@@ -1,5 +1,3 @@
-es_opentracing
-
 # Enable OpenTracing Visualizations
 
 * update the configuration to point to the IP of your machine

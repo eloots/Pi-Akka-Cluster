@@ -1,5 +1,3 @@
-clustered_sudoku_solver_add_http_client
-
 # Clustered Sudoku Solver - Add Akka Cluster Client & HTTP server
 
 In this step, we add a HTTP server which will allow us to POST 

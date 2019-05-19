@@ -1,5 +1,3 @@
-cluster_singleton
-
 # Cluster Singleton
 
 In this exercise, we introduce a so-called `Cluster Singleton`. As the name

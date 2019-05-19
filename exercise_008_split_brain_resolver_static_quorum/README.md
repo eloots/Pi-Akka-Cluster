@@ -1,10 +1,8 @@
-split_brain_resolver_keep_referee
+# Split brain resolver (SBR) with Static Quorum strategy
 
-# Split brain resolver with Keep Referee strategy
+The split brain resolver is added and configured with a `Static Quorum` strategy
 
-The split brain resolver is added and configured with a `Keep Referee` strategy.
-
-In case of partitioning of the cluster, the partition that has the `referee` node in it will "survive". All nodes in any other partition will be downed.
+In this case, we configure the SBR with a `Quorum`: in a partition with a number of nodes that is less than the `Quorum`, `SBR` will down all the nodes
 
 # Instructions
 
@@ -13,9 +11,19 @@ In case of partitioning of the cluster, the partition that has the `referee` nod
 - Partition the network in two by removing the white cable between the two
   switches
   - Observe what happens and try to explain it
+- Disconnect one of the remaining `Up` nodes from the network
+  - Observe what happens and try to explain it
+- If there still are two nodes in the `Up` state, disconnect one of them
+  from the switch it is connected to
+  - Observe what happens and try to explain it
 
-- Restore the network and restart all the nodes that were stopped by the `SBR`
-- Use `Akka HTTP Management` to stop the `Referee` node
+- Try your own scenarios: think about what other (network) failures can
+  happen
+  
+- Reconnect everything back together, stop what is still running and
+  start the full cluster from scratch and wait for convergence
+- Use `Akka HTTP Management` to down nodes one by one, but give the `SBR`
+  time to react (or not)
   - Observe what happens and try to explain it
 
 # LED Legend

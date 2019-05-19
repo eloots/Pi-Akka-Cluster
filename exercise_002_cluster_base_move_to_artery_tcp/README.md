@@ -1,5 +1,3 @@
-cluster_base_use_Artery_TCP
-
 # Switch remoting transport from default to Artery-TCP
 
 `Akka 2.5.11` introduced an new remoting transport named `Artery TCP`.

@@ -1,5 +1,3 @@
-cluster_bootstrap_config
-
 # Cluster Bootstrap via configuration
 
 This exercise demonstrates using Akka Management Cluster Bootstrap

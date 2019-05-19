@@ -1,5 +1,3 @@
-cluster_weakly_up_members
-
 # Demonstrate Akka Cluster Weakly-Up members
 
 When a node tries to join the cluster while one or more other nodes are already
