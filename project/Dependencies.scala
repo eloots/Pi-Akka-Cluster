@@ -21,7 +21,7 @@
 import sbt._
 
 object Version {
-  val akkaVer           = "2.5.21"
+  val akkaVer           = "2.5.22"
   val akkaHttpVer       = "10.1.8"
   val logbackVer        = "1.2.3"
   val scalaVer          = "2.12.8"
@@ -41,7 +41,8 @@ object Dependencies {
     "com.typesafe.akka"             %% "akka-distributed-data",
     "com.typesafe.akka"             %% "akka-persistence",
     "com.typesafe.akka"             %% "akka-slf4j",
-    "com.typesafe.akka"             %% "akka-stream"
+    "com.typesafe.akka"             %% "akka-stream",
+    "com.typesafe.akka"             %% "akka-discovery"
   ).map (_ % Version.akkaVer)
   
   private val logbackDeps = Seq (
