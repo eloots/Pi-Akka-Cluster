@@ -70,7 +70,7 @@ object ClusterStatusTrackerMain {
     val serviceDiscovery = Discovery(system).discovery
     ClusterBootstrap(system).start()
 //    println(s"~~> Doing a service discovery lookup... ")
-//    val sdStart = serviceDiscovery.lookup(Lookup("lb.com").withPortName("picluster").withProtocol("tcp"), 1.second)
+//    val sdStart = serviceDiscovery.lookup(Lookup("picluster.lb.com").withPortName("management").withProtocol("tcp"), 1.second)
 //    import system.dispatcher
 //    sdStart.foreach(println)
   }
