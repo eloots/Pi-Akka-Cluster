@@ -103,7 +103,7 @@ local=/lb.com/
 #srv-host=_management._tcp.picluster.lb.com,node-3,8558,1
 srv-host=_management._tcp.picluster.lb.com,node-4,8558,1
 ```
-
+- Restart `dnsmasq` to pick-up the changed configuration.
 - does the cluster form?
 
 5) repeat step 4) by uncommenting the line with the SRV record for `node-3` and restart `dnsmasq`. Observe what happens.
@@ -120,6 +120,7 @@ srv-host=_management._tcp.picluster.lb.com,node-3,8558,1
 srv-host=_management._tcp.picluster.lb.com,node-4,8558,1
 ```
 
+- Restart `dnsmasq` to pick-up the changed configuration.
 - does the cluster form?
 
 There are other configuration keys available for the cluster bootstrap settings. 
