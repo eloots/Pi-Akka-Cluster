@@ -38,4 +38,3 @@ Details on how to configure such a (TP-Link TL-WR802N) router can be found [here
 
 - A bill of material can be found [here](images/BOM.md)
 - A schematic of the LED strip can be found [here](images/Schema_LED_Strip.pdf)
-
