@@ -18,7 +18,10 @@ CLUSTER_BASE_NODE_NR=$(expr $CLUSTER_NR_SEL \* 5)
 PI_USER=akkapi
 EXERCISE_NR=`printf %03d $1`
 FATJAR=`ls exercise*${EXERCISE_NR}*/target/scala-2.12/exercise*${EXERCISE_NR}*jar`
-CINNAMON=`ls exercise*${EXERCISE_NR}*/target/cinnamon-agent.jar`
+
+if [ -f exercise*${EXERCISE_NR}*/target/cinnamon-agent.jar ];then
+  CINNAMON=`ls exercise*${EXERCISE_NR}*/target/cinnamon-agent.jar`
+fi
 
 ALL_NODES="0 1 2 3 4"
 SELECTED_NODE=$2
@@ -26,8 +29,6 @@ NODES=${SELECTED_NODE:-$ALL_NODES}
 
 for i in $NODES;do
   node=$[ CLUSTER_BASE_NODE_NR + i ]
-  echo "Copy $FATJAR to node-${node}"
-  scp $FATJAR ${PI_USER}@node-${node}:/home/${PI_USER}
-  echo "Copy $CINNAMON to node-${node}"
-  scp $CINNAMON ${PI_USER}@node-${node}:/home/${PI_USER}
+  echo "Copy $FATJAR $CINNAMON to node-${node}"
+  scp $FATJAR ${CINNAMON-} ${PI_USER}@node-${node}:/home/${PI_USER}
 done

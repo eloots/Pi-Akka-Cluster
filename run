@@ -22,6 +22,11 @@ if [ -f setLedType ];then
   . ./setLedType
 fi
 
+if [ -f $CINNAMON ];then
+  CINNAMON_AGENT="-javaagent:$CINNAMON"
+fi
+
 LedStripType=${LED_STRIP_TYPE:-eight-led-reversed-order}
 
-sudo java -javaagent:$CINNAMON -Djava.library.path=.  -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=9010 -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dcluster-node-configuration.node-hostname=$NODE -Dakka.management.http.hostname=$NODE -Dcluster-status-indicator.led-strip-type=$LedStripType -jar $FATJAR "com.neopixel.ClusterStatusTrackerMain $@"
+
+sudo java $CINNAMON_AGENT -Djava.library.path=.  -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=9010 -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dcluster-node-configuration.node-hostname=$NODE -Dakka.management.http.hostname=${NODE} -Dcluster-status-indicator.led-strip-type=$LedStripType -jar $FATJAR "com.neopixel.ClusterStatusTrackerMain $@"

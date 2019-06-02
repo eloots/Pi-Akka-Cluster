@@ -21,12 +21,12 @@
 import sbt._
 
 object Version {
-  val akkaVer           = "2.5.22"
+  val akkaVer           = "2.5.23"
   val akkaHttpVer       = "10.1.8"
   val logbackVer        = "1.2.3"
   val scalaVer          = "2.12.8"
   val akkaSBRVer        = "1.1.8"
-  val akkaManagementVer = "1.0.0"
+  val akkaManagementVer = "1.0.1"
   val scalaTestVer      = "3.0.6"
 }
 
@@ -50,9 +50,9 @@ object Dependencies {
     "ch.qos.logback"                 %  "logback-classic",
   ).map (_ % Version.logbackVer)
   
-  private val commercialModulesDeps = Seq(
-    "com.lightbend.akka"            %% "akka-split-brain-resolver",
-  ).map (_ % Version.akkaSBRVer)
+//  private val commercialModulesDeps = Seq(
+//    "com.lightbend.akka"            %% "akka-split-brain-resolver",
+//  ).map (_ % Version.akkaSBRVer)
   
   private val akkaHttpDeps = Seq(
     "com.typesafe.akka"             %% "akka-http",
@@ -76,7 +76,7 @@ object Dependencies {
   val dependencies: Seq[ModuleID] =
     akkaDeps ++
     logbackDeps ++
-    commercialModulesDeps ++
+    //commercialModulesDeps ++
     akkaHttpDeps ++
     akkaManagementDeps ++ 
     scalaTestDeps ++ 
