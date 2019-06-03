@@ -24,7 +24,10 @@ import sbt.Keys._
 import sbt._
 import sbtassembly._
 import sbtstudent.AdditionalSettings
-import AssemblyKeys.{assemblyMergeStrategy, assembly}
+import AssemblyKeys.{assembly, assemblyMergeStrategy}
+import com.typesafe.sbt.packager.archetypes.JavaAppPackaging
+import com.typesafe.sbt.packager.docker.{DockerPlugin}
+
 
 object CommonSettings {
   lazy val commonSettings = Seq(
@@ -52,7 +55,7 @@ object CommonSettings {
 
   lazy val configure: Project => Project = (proj: Project) => {
     proj
-    .enablePlugins(Cinnamon)
+    .enablePlugins(Cinnamon, DockerPlugin, JavaAppPackaging)
     .settings(CommonSettings.commonSettings: _*)
     .settings(
       libraryDependencies += Cinnamon.library.cinnamonPrometheus,
@@ -72,6 +75,7 @@ object CommonSettings {
           val oldStrategy = (assemblyMergeStrategy in assembly).value
           oldStrategy(x)
       }
+
     )
   }
 }
