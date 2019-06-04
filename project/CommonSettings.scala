@@ -18,8 +18,8 @@
   * limitations under the License.
   */
 
-//import com.lightbend.cinnamon.sbt.Cinnamon
-//import com.lightbend.sbt.javaagent.JavaAgent.JavaAgentKeys
+import com.lightbend.cinnamon.sbt.Cinnamon
+import com.lightbend.sbt.javaagent.JavaAgent.JavaAgentKeys
 import sbt.Keys._
 import sbt._
 import sbtassembly._
@@ -42,9 +42,9 @@ object CommonSettings {
     fork in Test := false,
     test in assembly := {},
     libraryDependencies ++= Dependencies.dependencies,
-//    credentials += Credentials(Path.userHome / ".lightbend" / "commercial.credentials"),
-//    resolvers += "com-mvn" at "https://repo.lightbend.com/commercial-releases/",
-//    resolvers += Resolver.url("com-ivy", url("https://repo.lightbend.com/commercial-releases/"))(Resolver.ivyStylePatterns)
+    credentials += Credentials(Path.userHome / ".lightbend" / "commercial.credentials"),
+    resolvers += "com-mvn" at "https://repo.lightbend.com/commercial-releases/",
+    resolvers += Resolver.url("com-ivy", url("https://repo.lightbend.com/commercial-releases/"))(Resolver.ivyStylePatterns)
   ) ++
     AdditionalSettings.initialCmdsConsole ++
     AdditionalSettings.initialCmdsTestConsole ++
@@ -52,26 +52,26 @@ object CommonSettings {
 
   lazy val configure: Project => Project = (proj: Project) => {
     proj
-    //.enablePlugins(Cinnamon)
+    .enablePlugins(Cinnamon)
     .settings(CommonSettings.commonSettings: _*)
-//    .settings(
-//      libraryDependencies += Cinnamon.library.cinnamonPrometheus,
-//      libraryDependencies += Cinnamon.library.cinnamonPrometheusHttpServer,
-//      libraryDependencies += Cinnamon.library.cinnamonAkkaHttp,
-//      libraryDependencies += Cinnamon.library.cinnamonOpenTracingZipkin,
-//      libraryDependencies += Cinnamon.library.cinnamonCHMetricsElasticsearchReporter,
-//      AssemblyKeys.assembly := Def.task {
-//        JavaAgentKeys.resolvedJavaAgents.value.filter(_.agent.name == "Cinnamon").foreach { agent =>
-//          sbt.IO.copyFile(agent.artifact, target.value / "cinnamon-agent.jar")
-//        }
-//        AssemblyKeys.assembly.value
-//      }.value,
-//      assemblyMergeStrategy in assembly := {
-//        case "cinnamon-reference.conf" => MergeStrategy.concat
-//        case x =>
-//          val oldStrategy = (assemblyMergeStrategy in assembly).value
-//          oldStrategy(x)
-//      }
-//    )
+    .settings(
+      libraryDependencies += Cinnamon.library.cinnamonPrometheus,
+      libraryDependencies += Cinnamon.library.cinnamonPrometheusHttpServer,
+      libraryDependencies += Cinnamon.library.cinnamonAkkaHttp,
+      libraryDependencies += Cinnamon.library.cinnamonOpenTracingZipkin,
+      libraryDependencies += Cinnamon.library.cinnamonCHMetricsElasticsearchReporter,
+      AssemblyKeys.assembly := Def.task {
+        JavaAgentKeys.resolvedJavaAgents.value.filter(_.agent.name == "Cinnamon").foreach { agent =>
+          sbt.IO.copyFile(agent.artifact, target.value / "cinnamon-agent.jar")
+        }
+        AssemblyKeys.assembly.value
+      }.value,
+      assemblyMergeStrategy in assembly := {
+        case "cinnamon-reference.conf" => MergeStrategy.concat
+        case x =>
+          val oldStrategy = (assemblyMergeStrategy in assembly).value
+          oldStrategy(x)
+      }
+    )
   }
 }
