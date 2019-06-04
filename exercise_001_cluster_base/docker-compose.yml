@@ -1,0 +1,6 @@
+version: '3'
+services:
+  seed:
+    image: "docker-registry-default.gsa2.lightbend.com/lightbend/exercise_001_cluster_base:1.3.0"
+    hostname: "node-0"
+command: "-Dakka.remote.netty.tcp.hostname=node-0"

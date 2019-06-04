@@ -27,6 +27,7 @@ import sbtstudent.AdditionalSettings
 import AssemblyKeys.{assembly, assemblyMergeStrategy}
 import com.typesafe.sbt.packager.archetypes.JavaAppPackaging
 import com.typesafe.sbt.packager.docker.{DockerPlugin}
+import com.typesafe.sbt.packager.docker.DockerKeysEx
 
 
 object CommonSettings {
@@ -75,7 +76,6 @@ object CommonSettings {
           val oldStrategy = (assemblyMergeStrategy in assembly).value
           oldStrategy(x)
       }
-
     )
   }
 }

@@ -27,6 +27,12 @@ import neopixel.{rpi_ws281xConstants => wsC}
 
 object ClusterStatusTrackerMain {
   def main(args: Array[String]): Unit = {
+    println("the library path is: " + System.getProperty("java.library.path"))
+
+    //System.setProperty("java.library.path", ".")
+
+    //println("the fixed library path is: " + System.getProperty("java.library.path"))
+
     System.loadLibrary("rpi_ws281x")
 
     val baseConfig = ConfigFactory.load()
