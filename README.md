@@ -20,6 +20,10 @@ Removed the changelog & list of maintainers. Git history contains this informati
     - curl
 - Clone the project on your laptop
 
+## Preparing your laptop for a _Raspberry-Pi based Akka Cluster_ workshop
+
+Detailed instructions can be found [here](Hypriot-OS-Course-Preparation-Instructions.md).
+
 ## Building your own 5-node Raspberry-Pi based Akka Cluster
 
 If you want to build your own physical cluster, you may want to have a look at the BOM [here](images/BOM.md).
