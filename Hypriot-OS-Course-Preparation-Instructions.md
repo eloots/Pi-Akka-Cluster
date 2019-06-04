@@ -20,12 +20,12 @@ On your Mac, add the following entries to your _/etc/hosts_ file:
 
 ### Configure password-less login
 
-Next, we set-up password-less login. We assume that we want to log in to account _akkapi_ on a pi from an account (_userxxx_) on your laptop. In order to set-up password-less login, you need a so-called public/private key pair. If you're unfamiliar with this concept, or don't have such a key pair, first read the paragraph titled _Generating a public/private key pair_ in the Addendum.
+Next, we set-up password-less login (unless your `ssh` remembers your password, in which case you can skip this step). We assume that we want to log in to account _akkapi_ on a Raspberry Pi node from an account (_userxxx_) on your laptop. In order to set-up password-less login, you need a so-called public/private key pair. If you're unfamiliar with this concept, or don't have such a key pair, first read the paragraph titled _Generating a public/private key pair_ in the Addendum.
 
 Now, proceed by create a `.ssh` folder on the _akkapi_'s home folder on the Pi and copy the public key (`id_rsa.pub`) to a file named `authorized_keys` in the `.ssh` folder. You will have to supply the password for the _akkapi_ account for the two commands launched. On your laptop:
 
 ```
-[Pi-Akka-Cluster git:(master) ✗ for node in 0 1 2 3 4;do ssh akkapi@node-${node} mkdir .ssh; done
+[Pi-Akka-Cluster git:(master) ✗ for node in 0 1 2 3 4;do ssh akkapi@node-${node} mkdir -p .ssh; done
 akkapi@node-0's password:
 ```
 
