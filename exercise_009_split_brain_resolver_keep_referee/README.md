@@ -1,5 +1,11 @@
 # Split brain resolver with Keep Referee strategy
 
+> NOTE: If you skipped the first exercise in the Split Brain Resolver exercise
+> series (`Keep majority` strategy), read the paragraphs titled 
+> `Introduction - SBR module set-up` and
+> `Setting up your credentials/enable commercial modules` in that first exercise
+> before continuing with this one
+
 The split brain resolver is added and configured with a `Keep Referee` strategy.
 
 In case of partitioning of the cluster, the partition that has the `referee` node in it will "survive". All nodes in any other partition will be downed.
