@@ -31,7 +31,7 @@ sudo apt-get install scons
 base64 test > test_encoded
 ```
 
-- If you file needs to be integrate in a SD image, transfer the file `test_encoded` to the laptop and add it to the `cloud-init` yaml file like here:
+- If your file needs to be integrate in a SD image, transfer the file `test_encoded` to the laptop and add it to the `cloud-init` yaml file like here:
 
 ```
   - encoding: b64
