@@ -1,0 +1,148 @@
+From 1b25d3c5da8658f07f7047395b0399001f19fdd7 Mon Sep 17 00:00:00 2001
+From: Eric Loots <eric.loots@gmail.com>
+Date: Tue, 4 Jun 2019 09:09:18 +0200
+Subject: [PATCH] Enable utilisation of commercial licenses
+
+- This are the changes required to enable the utilisation of
+  commercial licenses
+- Needed at present for Lightbend Telemetry & Akka Cluster
+  Split Brain Resolver exercises
+---
+ project/CommonSettings.scala | 50 ++++++++++++++++++------------------
+ project/Dependencies.scala   |  8 +++---
+ project/lightbend.sbt        | 10 ++++----
+ project/plugins.sbt          |  2 +-
+ 4 files changed, 35 insertions(+), 35 deletions(-)
+
+diff --git a/project/CommonSettings.scala b/project/CommonSettings.scala
+index d8c3b17..232a1f2 100644
+--- a/project/CommonSettings.scala
++++ b/project/CommonSettings.scala
+@@ -18,8 +18,8 @@
+   * limitations under the License.
+   */
+ 
+-//import com.lightbend.cinnamon.sbt.Cinnamon
+-//import com.lightbend.sbt.javaagent.JavaAgent.JavaAgentKeys
++import com.lightbend.cinnamon.sbt.Cinnamon
++import com.lightbend.sbt.javaagent.JavaAgent.JavaAgentKeys
+ import sbt.Keys._
+ import sbt._
+ import sbtassembly._
+@@ -42,9 +42,9 @@ object CommonSettings {
+     fork in Test := false,
+     test in assembly := {},
+     libraryDependencies ++= Dependencies.dependencies,
+-//    credentials += Credentials(Path.userHome / ".lightbend" / "commercial.credentials"),
+-//    resolvers += "com-mvn" at "https://repo.lightbend.com/commercial-releases/",
+-//    resolvers += Resolver.url("com-ivy", url("https://repo.lightbend.com/commercial-releases/"))(Resolver.ivyStylePatterns)
++    credentials += Credentials(Path.userHome / ".lightbend" / "commercial.credentials"),
++    resolvers += "com-mvn" at "https://repo.lightbend.com/commercial-releases/",
++    resolvers += Resolver.url("com-ivy", url("https://repo.lightbend.com/commercial-releases/"))(Resolver.ivyStylePatterns)
+   ) ++
+     AdditionalSettings.initialCmdsConsole ++
+     AdditionalSettings.initialCmdsTestConsole ++
+@@ -52,26 +52,26 @@ object CommonSettings {
+ 
+   lazy val configure: Project => Project = (proj: Project) => {
+     proj
+-    //.enablePlugins(Cinnamon)
++    .enablePlugins(Cinnamon)
+     .settings(CommonSettings.commonSettings: _*)
+-//    .settings(
+-//      libraryDependencies += Cinnamon.library.cinnamonPrometheus,
+-//      libraryDependencies += Cinnamon.library.cinnamonPrometheusHttpServer,
+-//      libraryDependencies += Cinnamon.library.cinnamonAkkaHttp,
+-//      libraryDependencies += Cinnamon.library.cinnamonOpenTracingZipkin,
+-//      libraryDependencies += Cinnamon.library.cinnamonCHMetricsElasticsearchReporter,
+-//      AssemblyKeys.assembly := Def.task {
+-//        JavaAgentKeys.resolvedJavaAgents.value.filter(_.agent.name == "Cinnamon").foreach { agent =>
+-//          sbt.IO.copyFile(agent.artifact, target.value / "cinnamon-agent.jar")
+-//        }
+-//        AssemblyKeys.assembly.value
+-//      }.value,
+-//      assemblyMergeStrategy in assembly := {
+-//        case "cinnamon-reference.conf" => MergeStrategy.concat
+-//        case x =>
+-//          val oldStrategy = (assemblyMergeStrategy in assembly).value
+-//          oldStrategy(x)
+-//      }
+-//    )
++    .settings(
++      libraryDependencies += Cinnamon.library.cinnamonPrometheus,
++      libraryDependencies += Cinnamon.library.cinnamonPrometheusHttpServer,
++      libraryDependencies += Cinnamon.library.cinnamonAkkaHttp,
++      libraryDependencies += Cinnamon.library.cinnamonOpenTracingZipkin,
++      libraryDependencies += Cinnamon.library.cinnamonCHMetricsElasticsearchReporter,
++      AssemblyKeys.assembly := Def.task {
++        JavaAgentKeys.resolvedJavaAgents.value.filter(_.agent.name == "Cinnamon").foreach { agent =>
++          sbt.IO.copyFile(agent.artifact, target.value / "cinnamon-agent.jar")
++        }
++        AssemblyKeys.assembly.value
++      }.value,
++      assemblyMergeStrategy in assembly := {
++        case "cinnamon-reference.conf" => MergeStrategy.concat
++        case x =>
++          val oldStrategy = (assemblyMergeStrategy in assembly).value
++          oldStrategy(x)
++      }
++    )
+   }
+ }
+diff --git a/project/Dependencies.scala b/project/Dependencies.scala
+index d9a1b83..bc539ff 100644
+--- a/project/Dependencies.scala
++++ b/project/Dependencies.scala
+@@ -50,9 +50,9 @@ object Dependencies {
+     "ch.qos.logback"                 %  "logback-classic",
+   ).map (_ % Version.logbackVer)
+   
+-//  private val commercialModulesDeps = Seq(
+-//    "com.lightbend.akka"            %% "akka-split-brain-resolver",
+-//  ).map (_ % Version.akkaSBRVer)
++  private val commercialModulesDeps = Seq(
++    "com.lightbend.akka"            %% "akka-split-brain-resolver",
++  ).map (_ % Version.akkaSBRVer)
+   
+   private val akkaHttpDeps = Seq(
+     "com.typesafe.akka"             %% "akka-http",
+@@ -76,7 +76,7 @@ object Dependencies {
+   val dependencies: Seq[ModuleID] =
+     akkaDeps ++
+     logbackDeps ++
+-    //commercialModulesDeps ++
++    commercialModulesDeps ++
+     akkaHttpDeps ++
+     akkaManagementDeps ++ 
+     scalaTestDeps ++ 
+diff --git a/project/lightbend.sbt b/project/lightbend.sbt
+index b317883..13f5f40 100644
+--- a/project/lightbend.sbt
++++ b/project/lightbend.sbt
+@@ -1,5 +1,5 @@
+-//credentials += Credentials(Path.userHome / ".lightbend" / "commercial.credentials")
+-//
+-//resolvers += "com-mvn" at "https://repo.lightbend.com/commercial-releases/"
+-//
+-//resolvers += Resolver.url("com-ivy", url("https://repo.lightbend.com/commercial-releases/"))(Resolver.ivyStylePatterns)
+\ No newline at end of file
++credentials += Credentials(Path.userHome / ".lightbend" / "commercial.credentials")
++
++resolvers += "com-mvn" at "https://repo.lightbend.com/commercial-releases/"
++
++resolvers += Resolver.url("com-ivy", url("https://repo.lightbend.com/commercial-releases/"))(Resolver.ivyStylePatterns)
+\ No newline at end of file
+diff --git a/project/plugins.sbt b/project/plugins.sbt
+index 69158ac..6ee44b7 100644
+--- a/project/plugins.sbt
++++ b/project/plugins.sbt
+@@ -1,5 +1,5 @@
+ addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "0.14.6")
+ 
+ // Cinnamon
+-//addSbtPlugin("com.lightbend.cinnamon" % "sbt-cinnamon" % "2.10.12")
++addSbtPlugin("com.lightbend.cinnamon" % "sbt-cinnamon" % "2.10.12")
+ // Cinnamon
+-- 
+2.21.0
+

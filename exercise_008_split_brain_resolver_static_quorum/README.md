@@ -1,5 +1,11 @@
 # Split brain resolver (SBR) with Static Quorum strategy
 
+> NOTE: If you skipped the first exercise in the Split Brain Resolver exercise
+> series (`Keep majority` strategy), read the paragraphs titled
+> `Introduction - SBR module set-up` and
+> `Setting up your credentials/enable commercial modules` in that first exercise
+> before continuing with this one
+
 The split brain resolver is added and configured with a `Static Quorum` strategy
 
 In this case, we configure the SBR with a `Quorum`: in a partition with a number of nodes that is less than the `Quorum`, `SBR` will down all the nodes
