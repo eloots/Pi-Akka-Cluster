@@ -1,6 +1,6 @@
 ## Raspberry-Pi based Akka Cluster workshop preparation instructions
 
-In case you're attending a `Raspberry-Pi based Akka Cluster workshop`, you will need to prepare you're laptop to integrate with a pre-installed 5-node cluster you'll be working on.
+In case you're attending a `Raspberry-Pi based Akka Cluster workshop`, you will need to prepare your laptop to integrate with a pre-installed 5-node cluster you'll be working on.
 
 The following sections give instructions on how to achieve this.
 
