@@ -110,7 +110,7 @@ librpi_ws281x.so                                                                
 setLedType
 ```
 
-> Note: the `updateScripts` command can take a single argument: a node number (0-4). Passing a node number as argument will update the script only on the node with that number.
+> Note: the `updatePiScripts` command can take a single argument: a node number (0-4). Passing a node number as argument will update the script only on the node with that number.
 
 ### Finish the installation
 

@@ -20,14 +20,16 @@
 
 import com.lightbend.cinnamon.sbt.Cinnamon
 import com.lightbend.sbt.javaagent.JavaAgent.JavaAgentKeys
-import sbt.Keys._
+import sbt.Keys.{javaOptions, _}
 import sbt._
 import sbtassembly._
 import sbtstudent.AdditionalSettings
 import AssemblyKeys.{assembly, assemblyMergeStrategy}
-import com.typesafe.sbt.packager.archetypes.JavaAppPackaging
-import com.typesafe.sbt.packager.docker.{DockerPlugin}
-import com.typesafe.sbt.packager.docker.DockerKeysEx
+import com.typesafe.sbt.packager.archetypes.{JavaAppPackaging, JavaServerAppPackaging}
+import com.typesafe.sbt.packager.docker.DockerChmodType.UserGroupWriteExecute
+import com.typesafe.sbt.packager.docker.DockerPlugin.autoImport.{dockerAdditionalPermissions, dockerBaseImage, dockerChmodType, dockerCommands, dockerEnvVars, dockerExposedPorts, dockerRepository}
+import com.typesafe.sbt.packager.docker.{Cmd, DockerChmodType, DockerPlugin}
+import com.typesafe.sbt.packager.universal.UniversalPlugin, UniversalPlugin.autoImport._
 
 
 object CommonSettings {
@@ -56,26 +58,36 @@ object CommonSettings {
 
   lazy val configure: Project => Project = (proj: Project) => {
     proj
-    .enablePlugins(Cinnamon, DockerPlugin, JavaAppPackaging)
-    .settings(CommonSettings.commonSettings: _*)
-    .settings(
-      libraryDependencies += Cinnamon.library.cinnamonPrometheus,
-      libraryDependencies += Cinnamon.library.cinnamonPrometheusHttpServer,
-      libraryDependencies += Cinnamon.library.cinnamonAkkaHttp,
-      libraryDependencies += Cinnamon.library.cinnamonOpenTracingZipkin,
-      libraryDependencies += Cinnamon.library.cinnamonCHMetricsElasticsearchReporter,
-      AssemblyKeys.assembly := Def.task {
-        JavaAgentKeys.resolvedJavaAgents.value.filter(_.agent.name == "Cinnamon").foreach { agent =>
-          sbt.IO.copyFile(agent.artifact, target.value / "cinnamon-agent.jar")
+      .enablePlugins(Cinnamon, DockerPlugin, JavaAppPackaging)
+      .settings(CommonSettings.commonSettings: _*)
+      .settings(
+        libraryDependencies += Cinnamon.library.cinnamonPrometheus,
+        libraryDependencies += Cinnamon.library.cinnamonPrometheusHttpServer,
+        libraryDependencies += Cinnamon.library.cinnamonAkkaHttp,
+        libraryDependencies += Cinnamon.library.cinnamonOpenTracingZipkin,
+        libraryDependencies += Cinnamon.library.cinnamonCHMetricsElasticsearchReporter,
+        mappings in Universal += file("librpi_ws281x.so") -> "lib/librpi_ws281x.so",
+        javaOptions in Universal += "-Djava.library.path=lib -Dcluster-node-configuration.cluster-id=cluster-0",
+        dockerBaseImage := "hypriot/rpi-java",
+        dockerCommands ++= Seq( Cmd("USER", "root"),
+                              Cmd("RUN", "mkdir -p","/dev/mem")  ),
+        dockerChmodType := UserGroupWriteExecute,
+        dockerRepository := Some("docker-registry-default.gsa2.lightbend.com/lightbend"),
+        dockerExposedPorts := Seq(8080, 8558, 2550, 9001),
+        dockerAdditionalPermissions ++= Seq((DockerChmodType.UserGroupPlusExecute, "/tmp")),
+        dockerEnvVars := Map("LED_STRIP_TYPE" -> "eight-led-reversed-order"),
+        AssemblyKeys.assembly := Def.task {
+          JavaAgentKeys.resolvedJavaAgents.value.filter(_.agent.name == "Cinnamon").foreach { agent =>
+            sbt.IO.copyFile(agent.artifact, target.value / "cinnamon-agent.jar")
+          }
+          AssemblyKeys.assembly.value
+        }.value,
+        assemblyMergeStrategy in assembly := {
+          case "cinnamon-reference.conf" => MergeStrategy.concat
+          case x =>
+            val oldStrategy = (assemblyMergeStrategy in assembly).value
+            oldStrategy(x)
         }
-        AssemblyKeys.assembly.value
-      }.value,
-      assemblyMergeStrategy in assembly := {
-        case "cinnamon-reference.conf" => MergeStrategy.concat
-        case x =>
-          val oldStrategy = (assemblyMergeStrategy in assembly).value
-          oldStrategy(x)
-      }
-    )
+      )
   }
 }
