@@ -39,6 +39,8 @@ object ClusterStatusTrackerMain {
 
     val system = ActorSystem(actorSystemName, config)
 
+    println(s"======== The configured node-name is: $nodeHostname")
+
     val settings = ConfigSettingsExtension(system)
 
     import settings.LedStripConfig._
@@ -62,6 +64,6 @@ object ClusterStatusTrackerMain {
     val clusterStatusTracker = system.actorOf(ClusterStatusTracker.props(strip, logicalToPhysicalLEDMapping), "cluster-status-tracker")
 
     // Start Akka HTTP Management extension
-    AkkaManagement(system).start
+    //AkkaManagement(system).start
   }
 }

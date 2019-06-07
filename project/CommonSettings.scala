@@ -18,7 +18,7 @@
   * limitations under the License.
   */
 
-import com.lightbend.cinnamon.sbt.Cinnamon
+//import com.lightbend.cinnamon.sbt.Cinnamon
 import com.lightbend.sbt.javaagent.JavaAgent.JavaAgentKeys
 import sbt.Keys.{javaOptions, _}
 import sbt._
@@ -58,17 +58,18 @@ object CommonSettings {
 
   lazy val configure: Project => Project = (proj: Project) => {
     proj
-      .enablePlugins(Cinnamon, DockerPlugin, JavaAppPackaging)
+      .enablePlugins(/*Cinnamon, */DockerPlugin, JavaAppPackaging)
       .settings(CommonSettings.commonSettings: _*)
       .settings(
-        libraryDependencies += Cinnamon.library.cinnamonPrometheus,
-        libraryDependencies += Cinnamon.library.cinnamonPrometheusHttpServer,
-        libraryDependencies += Cinnamon.library.cinnamonAkkaHttp,
-        libraryDependencies += Cinnamon.library.cinnamonOpenTracingZipkin,
-        libraryDependencies += Cinnamon.library.cinnamonCHMetricsElasticsearchReporter,
+//        libraryDependencies += Cinnamon.library.cinnamonPrometheus,
+//        libraryDependencies += Cinnamon.library.cinnamonPrometheusHttpServer,
+//        libraryDependencies += Cinnamon.library.cinnamonAkkaHttp,
+//        libraryDependencies += Cinnamon.library.cinnamonOpenTracingZipkin,
+//        libraryDependencies += Cinnamon.library.cinnamonCHMetricsElasticsearchReporter,
         mappings in Universal += file("librpi_ws281x.so") -> "lib/librpi_ws281x.so",
-        javaOptions in Universal += "-Djava.library.path=lib -Dcluster-node-configuration.cluster-id=cluster-0",
-        dockerBaseImage := "hypriot/rpi-java",
+        javaOptions in Universal ++= Seq("-Djava.library.path=lib",
+          "-Dcluster-node-configuration.cluster-id=cluster-0"),
+        dockerBaseImage := "arm32v7/openjdk",
         dockerCommands ++= Seq( Cmd("USER", "root"),
                               Cmd("RUN", "mkdir -p","/dev/mem")  ),
         dockerChmodType := UserGroupWriteExecute,
@@ -76,7 +77,7 @@ object CommonSettings {
         dockerExposedPorts := Seq(8080, 8558, 2550, 9001),
         dockerAdditionalPermissions ++= Seq((DockerChmodType.UserGroupPlusExecute, "/tmp")),
         dockerEnvVars := Map("LED_STRIP_TYPE" -> "eight-led-reversed-order"),
-        AssemblyKeys.assembly := Def.task {
+       /* AssemblyKeys.assembly := Def.task {
           JavaAgentKeys.resolvedJavaAgents.value.filter(_.agent.name == "Cinnamon").foreach { agent =>
             sbt.IO.copyFile(agent.artifact, target.value / "cinnamon-agent.jar")
           }
@@ -87,7 +88,7 @@ object CommonSettings {
           case x =>
             val oldStrategy = (assemblyMergeStrategy in assembly).value
             oldStrategy(x)
-        }
+        }*/
       )
   }
 }

@@ -21,12 +21,12 @@
         <appender-ref ref="file"/>
     </logger>
 
-    <logger name="akka.actor.RepointableActorRef" level="debug" additivity="false">
+    <logger name="akka.actor.RepointableActorRef" level="info" additivity="false">
         <appender-ref ref="console"/>
         <appender-ref ref="file"/>
     </logger>
 
-    <root level="warn">
+    <root level="info">
         <appender-ref ref="console"/>
         <appender-ref ref="file"/>
     </root>
