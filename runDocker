@@ -1,0 +1,7 @@
+#!/bin/bash
+
+EXERCISE_NR=$1
+
+export HOST=`hostname`
+
+docker-compose up exercise_${EXERCISE_NR:-1}

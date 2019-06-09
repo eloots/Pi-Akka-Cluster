@@ -1,0 +1,26 @@
+version: '3'
+services:
+  exercise_1:
+    image: "docker-registry-default.gsa2.lightbend.com/lightbend/exercise_001_cluster_base:1.3.0"
+    hostname: "${HOST}"
+    command: "-Dakka.remote.artery.canonical.hostname=${HOST} -Dakka.management.http.hostname=${HOST} -Dcluster-node-configuration.node-hostname=${HOST} -Dcluster-status-indicator.led-strip-type=ten-led-non-reversed-order"
+    privileged: true
+    network_mode: "host"
+    extra_hosts:
+      - "node-0:192.168.200.10"
+      - "node-1:192.168.200.11"
+      - "node-2:192.168.200.12"
+      - "node-3:192.168.200.13"
+      - "node-4:192.168.200.14"
+  exercise_2:
+    image: "docker-registry-default.gsa2.lightbend.com/lightbend/exercise_002_cluster_base_move_to_artery_tcp:1.3.0"
+    hostname: "${HOST}"
+    command: "-Dakka.remote.artery.canonical.hostname=${HOST} -Dakka.management.http.hostname=${HOST} -Dcluster-node-configuration.node-hostname=${HOST}"
+    privileged: true
+    network_mode: "host"
+    extra_hosts:
+      - "node-0:192.168.200.10"
+      - "node-1:192.168.200.11"
+      - "node-2:192.168.200.12"
+      - "node-3:192.168.200.13"
+      - "node-4:192.168.200.14"
