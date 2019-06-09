@@ -1,0 +1,6 @@
+# Scrape configuration for default Cinnamon Prometheus HTTP Server on localhost
+scrape_configs:
+  - job_name: 'cinnamon'
+    scrape_interval: 10s
+    static_configs:
+      - targets: ['host.docker.internal:9001']

@@ -1,0 +1,800 @@
+{
+  "id": null,
+  "title": "JVM Metrics",
+  "tags": [],
+  "style": "dark",
+  "timezone": "browser",
+  "editable": true,
+  "hideControls": true,
+  "sharedCrosshair": false,
+  "rows": [
+    {
+      "title": "",
+      "collapse": false,
+      "editable": true,
+      "height": "250px",
+      "panels": [
+        {
+          "aliasColors": {},
+          "bars": false,
+          "datasource": "Cinnamon Prometheus",
+          "editable": true,
+          "error": false,
+          "fill": 1,
+          "grid": {
+            "threshold1": null,
+            "threshold1Color": "rgba(216, 200, 27, 0.27)",
+            "threshold2": null,
+            "threshold2Color": "rgba(234, 112, 112, 0.22)"
+          },
+          "id": 7,
+          "interval": "10s",
+          "isNew": true,
+          "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": false,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 2,
+          "links": [],
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "span": 6,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "jvm_heap_committed{host=~\"$Servers\", application=~\"$Applications\"}",
+              "format": "time_series",
+              "legendFormat": "{{host}} / {{application}} / heap_committed"
+            },
+            {
+              "expr": "jvm_heap_init{host=~\"$Servers\", application=~\"$Applications\"}",
+              "format": "time_series",
+              "legendFormat": "{{host}} / {{application}} / heap_init"
+            },
+            {
+              "expr": "jvm_heap_max{host=~\"$Servers\", application=~\"$Applications\"}",
+              "format": "time_series",
+              "legendFormat": "{{host}} / {{application}} / heap_max"
+            },
+            {
+              "expr": "jvm_heap_used{host=~\"$Servers\", application=~\"$Applications\"}",
+              "format": "time_series",
+              "legendFormat": "{{host}} / {{application}} / heap_used"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Heap",
+          "tooltip": {
+            "msResolution": false,
+            "shared": true,
+            "value_type": "cumulative",
+            "sort": 2
+          },
+          "type": "graph",
+          "xaxis": {
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "bytes",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ]
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "datasource": "Cinnamon Prometheus",
+          "editable": true,
+          "error": false,
+          "fill": 1,
+          "grid": {
+            "threshold1": null,
+            "threshold1Color": "rgba(216, 200, 27, 0.27)",
+            "threshold2": null,
+            "threshold2Color": "rgba(234, 112, 112, 0.22)"
+          },
+          "id": 6,
+          "interval": "10s",
+          "isNew": true,
+          "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": false,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 2,
+          "links": [],
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "span": 6,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "jvm_non_heap_committed",
+              "format": "time_series",
+              "legendFormat": "{{host}} / {{application}} / non_heap_committed"
+            },
+            {
+              "expr": "jvm_non_heap_init",
+              "format": "time_series",
+              "legendFormat": "{{host}} / {{application}} / non_heap_init"
+            },
+            {
+              "expr": "jvm_non_heap_max",
+              "format": "time_series",
+              "legendFormat": "{{host}} / {{application}} / non_heap_max"
+            },
+            {
+              "expr": "jvm_non_heap_used",
+              "format": "time_series",
+              "legendFormat": "{{host}} / {{application}} / non_heap_used"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Non Heap",
+          "tooltip": {
+            "msResolution": false,
+            "shared": true,
+            "value_type": "cumulative",
+            "sort": 2
+          },
+          "type": "graph",
+          "xaxis": {
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "bytes",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "",
+      "collapse": false,
+      "editable": true,
+      "height": "250px",
+      "panels": [
+        {
+          "aliasColors": {},
+          "bars": false,
+          "datasource": "Cinnamon Prometheus",
+          "editable": true,
+          "error": false,
+          "fill": 1,
+          "grid": {
+            "threshold1": null,
+            "threshold1Color": "rgba(216, 200, 27, 0.27)",
+            "threshold2": null,
+            "threshold2Color": "rgba(234, 112, 112, 0.22)"
+          },
+          "id": 4,
+          "interval": "10s",
+          "isNew": true,
+          "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": false,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 2,
+          "links": [],
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "span": 6,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "jvm_total_committed",
+              "format": "time_series",
+              "legendFormat": "{{host}} / {{application}} / total_heap_committed"
+            },
+            {
+              "expr": "jvm_total_init",
+              "format": "time_series",
+              "legendFormat": "{{host}} / {{application}} / total_heap_init"
+            },
+            {
+              "expr": "jvm_total_max",
+              "format": "time_series",
+              "legendFormat": "{{host}} / {{application}} / total_heap_max"
+            },
+            {
+              "expr": "jvm_total_used",
+              "format": "time_series",
+              "legendFormat": "{{host}} / {{application}} / total_heap_used"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Total Heap",
+          "tooltip": {
+            "msResolution": false,
+            "shared": true,
+            "value_type": "cumulative",
+            "sort": 2
+          },
+          "type": "graph",
+          "xaxis": {
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "",
+      "collapse": false,
+      "editable": true,
+      "height": "250px",
+      "panels": [
+        {
+          "aliasColors": {},
+          "bars": false,
+          "datasource": "Cinnamon Prometheus",
+          "editable": true,
+          "error": false,
+          "fill": 1,
+          "grid": {
+            "threshold1": null,
+            "threshold1Color": "rgba(216, 200, 27, 0.27)",
+            "threshold2": null,
+            "threshold2Color": "rgba(234, 112, 112, 0.22)"
+          },
+          "id": 2,
+          "interval": "10s",
+          "isNew": true,
+          "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": false,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 2,
+          "links": [],
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "span": 6,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "jvm_PS_MarkSweep_time",
+              "format": "time_series",
+              "legendFormat": "{{host}} / {{application}} / PS_MarkSweep"
+            },
+            {
+              "expr": "jvm_PS_Scavenge_time",
+              "format": "time_series",
+              "legendFormat": "{{host}} / {{application}} / PS_Scavenge"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "GC Time",
+          "tooltip": {
+            "msResolution": false,
+            "shared": true,
+            "value_type": "cumulative",
+            "sort": 2
+          },
+          "type": "graph",
+          "xaxis": {
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "ms",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ]
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "datasource": "Cinnamon Prometheus",
+          "editable": true,
+          "error": false,
+          "fill": 1,
+          "grid": {
+            "threshold1": null,
+            "threshold1Color": "rgba(216, 200, 27, 0.27)",
+            "threshold2": null,
+            "threshold2Color": "rgba(234, 112, 112, 0.22)"
+          },
+          "id": 3,
+          "interval": "10s",
+          "isNew": true,
+          "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": false,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 2,
+          "links": [],
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "span": 6,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "jvm_PS_MarkSweep_count",
+              "format": "time_series",
+              "legendFormat": "{{host}} / {{application}} / PS_MarkSweep"
+            },
+            {
+              "expr": "jvm_PS_Scavenge_count",
+              "format": "time_series",
+              "legendFormat": "{{host}} / {{application}} / PS_Scavenge"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "GC Count",
+          "tooltip": {
+            "msResolution": false,
+            "shared": true,
+            "value_type": "cumulative",
+            "sort": 2
+          },
+          "type": "graph",
+          "xaxis": {
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "",
+      "collapse": false,
+      "editable": true,
+      "height": "250px",
+      "panels": [
+        {
+          "aliasColors": {},
+          "bars": false,
+          "datasource": "Cinnamon Prometheus",
+          "editable": true,
+          "error": false,
+          "fill": 1,
+          "grid": {
+            "threshold1": null,
+            "threshold1Color": "rgba(216, 200, 27, 0.27)",
+            "threshold2": null,
+            "threshold2Color": "rgba(234, 112, 112, 0.22)"
+          },
+          "id": 5,
+          "interval": "10s",
+          "isNew": true,
+          "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": false,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 2,
+          "links": [],
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "span": 6,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "jvm_pools_Code_Cache_usage",
+              "format": "time_series",
+              "legendFormat": "{{host}} / {{application}} / Code-Cache"
+            },
+            {
+              "expr": "jvm_pools_Compressed_Class_Space_usage",
+              "format": "time_series",
+              "legendFormat": "{{host}} / {{application}} / Compressed-Class-Space"
+            },
+            {
+              "expr": "jvm_pools_Metaspace_usage",
+              "format": "time_series",
+              "legendFormat": "{{host}} / {{application}} / Metaspace"
+            },
+            {
+              "expr": "jvm_pools_PS_Eden_Space_usage",
+              "format": "time_series",
+              "legendFormat": "{{host}} / {{application}} / PS-Eden-Space"
+            },
+            {
+              "expr": "jvm_pools_PS_Old_Gen_usage",
+              "format": "time_series",
+              "legendFormat": "{{host}} / {{application}} / PS-Old-Gen"
+            },
+            {
+              "expr": "jvm_pools_PS_Survivor_Space_usage",
+              "format": "time_series",
+              "legendFormat": "{{host}} / {{application}} / PS-Survivor-Space"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Memory Pools",
+          "tooltip": {
+            "msResolution": false,
+            "shared": true,
+            "value_type": "cumulative",
+            "sort": 2
+          },
+          "type": "graph",
+          "xaxis": {
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ]
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "datasource": "Cinnamon Prometheus",
+          "editable": true,
+          "error": false,
+          "fill": 1,
+          "grid": {
+            "threshold1": null,
+            "threshold1Color": "rgba(216, 200, 27, 0.27)",
+            "threshold2": null,
+            "threshold2Color": "rgba(234, 112, 112, 0.22)"
+          },
+          "id": 1,
+          "interval": "10s",
+          "isNew": true,
+          "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": false,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 2,
+          "links": [],
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "span": 6,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "jvm_loaded",
+              "format": "time_series",
+              "legendFormat": "{{host}} / {{application}} / loaded"
+            },
+            {
+              "expr": "jvm_unloaded",
+              "format": "time_series",
+              "legendFormat": "{{host}} / {{application}} / unloaded"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Class Loading",
+          "tooltip": {
+            "msResolution": false,
+            "shared": true,
+            "value_type": "cumulative",
+            "sort": 2
+          },
+          "type": "graph",
+          "xaxis": {
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "time": {
+    "from": "now-15m",
+    "to": "now"
+},
+  "timepicker": {
+    "refresh_intervals": [
+      "5s",
+      "10s",
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h",
+      "2h",
+      "1d"
+    ],
+    "time_options": [
+      "5m",
+      "15m",
+      "1h",
+      "6h",
+      "12h",
+      "24h",
+      "2d",
+      "7d",
+      "30d"
+    ]
+},
+  "templating": {
+    "list": [
+      {
+          "current": {},
+          "datasource": "Cinnamon Prometheus",
+          "hide": 0,
+          "includeAll": true,
+          "allValue": ".*",
+          "multi": true,
+          "name": "Servers",
+          "options": [],
+          "query": "label_values(host)",
+          "refresh": 2,
+          "regex": "",
+          "tagValuesQuery": "",
+          "tagsQuery": "name",
+          "type": "query",
+          "useTags": false
+      },
+      {
+          "current": {},
+          "datasource": "Cinnamon Prometheus",
+          "hide": 0,
+          "includeAll": true,
+          "allValue": ".*",
+          "multi": true,
+          "name": "Applications",
+          "options": [],
+          "query": "label_values(jvm_heap_committed{host=~\"$Servers\"}, application)",
+          "refresh": 2,
+          "regex": "",
+          "tagValuesQuery": "",
+          "tagsQuery": "name",
+          "type": "query",
+          "useTags": false
+      },
+      {
+        "current": {},
+        "datasource": "Cinnamon Prometheus",
+        "hide": 0,
+        "includeAll": true,
+        "multi": true,
+        "name": "Not Applicable",
+        "options": [],
+        "query": "",
+        "refresh": 1,
+        "regex": "",
+        "tagValuesQuery": "",
+        "tagsQuery": "name",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "current": {},
+        "datasource": "Cinnamon Prometheus",
+        "hide": 0,
+        "includeAll": true,
+        "multi": true,
+        "name": "Not Applicable",
+        "options": [],
+        "query": "",
+        "refresh": 1,
+        "regex": "",
+        "tagValuesQuery": "",
+        "tagsQuery": "name",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "current": {},
+        "datasource": "Cinnamon Prometheus",
+        "hide": 0,
+        "includeAll": true,
+        "multi": true,
+        "name": "Not Applicable",
+        "options": [],
+        "query": "",
+        "refresh": 1,
+        "regex": "",
+        "tagValuesQuery": "",
+        "tagsQuery": "name",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "current": {},
+        "datasource": "Cinnamon Prometheus",
+        "hide": 0,
+        "includeAll": true,
+        "multi": true,
+        "name": "Not Applicable",
+        "options": [],
+        "query": "",
+        "refresh": 1,
+        "regex": "",
+        "tagValuesQuery": "",
+        "tagsQuery": "name",
+        "type": "query",
+        "useTags": false
+      }
+    ]
+  },
+  "annotations": {
+  "list": []
+  },
+  "refresh": false,
+  "schemaVersion": 12,
+  "version": 3,
+  "links": [],
+  "gnetId": null
+}

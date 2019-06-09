@@ -1,0 +1,21 @@
+version: "3"
+
+services:
+
+  prometheus:
+    image: prom/prometheus:v2.8.1
+    volumes: ["./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml"]
+    ports: ["9090:9090"]
+    networks: ["sandbox"]
+
+  grafana:
+    image: grafana/grafana:6.0.2
+    volumes: ["./grafana/plugins/cinnamon-prometheus-app:/var/lib/grafana/plugins/cinnamon-prometheus-app"]
+    ports: ["3000:3000"]
+    networks: ["sandbox"]
+    depends_on: ["prometheus"]
+
+networks:
+
+  sandbox:
+    driver: bridge
