@@ -1,4 +1,4 @@
 #!/bin/bash
 
-export LED_STRIP_TYPE=eight-led-reversed-order
-#export LED_STRIP_TYPE=ten-led-non-reversed-order
+#export LED_STRIP_TYPE=eight-led-reversed-order
+export LED_STRIP_TYPE=ten-led-non-reversed-order
