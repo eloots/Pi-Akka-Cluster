@@ -17,7 +17,6 @@ On your Mac, add the following entries to your _/etc/hosts_ file:
 192.168.200.14 node-4
 ```
 
-
 ### Configure password-less login
 
 Next, we set-up password-less login (unless your `ssh` remembers your password, in which case you can skip this step). We assume that we want to log in to account _akkapi_ on a Raspberry Pi node from an account (_userxxx_) on your laptop. In order to set-up password-less login, you need a so-called public/private key pair. If you're unfamiliar with this concept, or don't have such a key pair, first read the paragraph titled _Generating a public/private key pair_ in the Addendum.
@@ -37,6 +36,22 @@ akkapi@node-0's password:
 ```
 
 With this, you should now be able to log into the _akkapi_ on all nodes from the _userxxx_ account on your laptop without having to enter a password.
+
+Finish the configuration by running the `updateScripts` command:
+
+```
+Pi-Akka-Cluster git:(master) ✗ ./updatePiScripts
+Copy  to node-0
+run                                         100% 1104   450.3KB/s   00:00
+librpi_ws281x.so                            100%   92KB   6.4MB/s   00:00
+setLedType                                  100%  110    32.1KB/s   00:00
+docker-compose.yml                          100% 1136    76.1KB/s   00:00
+runDocker                                   100%   98    61.0KB/s   00:00
+Copy  to node-1
+.
+.
+.
+```
 
 ## Addendum
 
