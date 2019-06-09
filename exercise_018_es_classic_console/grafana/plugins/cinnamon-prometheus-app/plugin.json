@@ -1,0 +1,169 @@
+{
+  "type": "app",
+  "name": "Cinnamon Prometheus",
+  "id": "cinnamon-prometheus-app",
+
+  "info": {
+    "description": "Cinnamon dashboards for Prometheus data source",
+    "author": {
+      "name": "Lightbend",
+      "url": "https://lightbend.com"
+    },
+    "keywords": ["lightbend", "cinnamon", "akka", "prometheus"],
+    "logos": {
+      "small": "img/lightbend-logo.svg",
+      "large": "img/lightbend-logo.svg"
+    },
+    "links": [
+      {"name": "Lightbend", "url": "https://lightbend.com"},
+      {"name": "Cinnamon docs", "url": "https://developer.lightbend.com/docs/cinnamon/latest"}
+    ],
+    "screenshots": [],
+    "version": "2.11.1",
+    "updated": "2019-04-17"
+  },
+
+  "pages": [],
+
+  "css": {},
+
+  "includes": [
+    {
+      "type": "dashboard",
+      "name": "Akka Actors",
+      "path": "dashboards/akka-actors.json",
+      "revision": "2.11.1"
+    },
+    {
+      "type": "dashboard",
+      "name": "Akka Cluster",
+      "path": "dashboards/akka-cluster.json",
+      "revision": "2.11.1"
+    },
+    {
+      "type": "dashboard",
+      "name": "Akka Cluster Sharding",
+      "path": "dashboards/akka-cluster-sharding.json",
+      "revision": "2.11.1"
+    },
+    {
+      "type": "dashboard",
+      "name": "Akka Dispatchers",
+      "path": "dashboards/akka-dispatchers.json",
+      "revision": "2.11.1"
+    },
+    {
+      "type": "dashboard",
+      "name": "Akka Events",
+      "path": "dashboards/akka-events.json",
+      "revision": "2.11.1"
+    },
+    {
+      "type": "dashboard",
+      "name": "Akka Http Clients",
+      "path": "dashboards/akka-http-clients.json",
+      "revision": "2.11.1"
+    },
+    {
+      "type": "dashboard",
+      "name": "Akka Http Endpoints",
+      "path": "dashboards/akka-http-endpoints.json",
+      "revision": "2.11.1"
+    },
+    {
+      "type": "dashboard",
+      "name": "Akka Http Servers",
+      "path": "dashboards/akka-http-servers.json",
+      "revision": "2.11.1"
+    },
+    {
+      "type": "dashboard",
+      "name": "Akka Persistence",
+      "path": "dashboards/akka-persistence.json",
+      "revision": "2.11.1"
+    },
+    {
+      "type": "dashboard",
+      "name": "Akka Remote Actors",
+      "path": "dashboards/akka-remote-actors.json",
+      "revision": "2.11.1"
+    },
+    {
+      "type": "dashboard",
+      "name": "Akka Remote Nodes",
+      "path": "dashboards/akka-remote-nodes.json",
+      "revision": "2.11.1"
+    },
+    {
+      "type": "dashboard",
+      "name": "Akka Routers",
+      "path": "dashboards/akka-routers.json",
+      "revision": "2.11.1"
+    },
+    {
+      "type": "dashboard",
+      "name": "Akka Stopwatches",
+      "path": "dashboards/akka-stopwatches.json",
+      "revision": "2.11.1"
+    },
+    {
+      "type": "dashboard",
+      "name": "Akka Streams",
+      "path": "dashboards/akka-streams.json",
+      "revision": "2.11.1"
+    },
+    {
+      "type": "dashboard",
+      "name": "Akka Streams (extended)",
+      "path": "dashboards/akka-streams-extended.json",
+      "revision": "2.11.1"
+    },
+    {
+      "type": "dashboard",
+      "name": "Java Futures",
+      "path": "dashboards/java-futures.json",
+      "revision": "2.11.1"
+    },
+    {
+      "type": "dashboard",
+      "name": "JVM Metrics",
+      "path": "dashboards/jvm-metrics.json",
+      "revision": "2.11.1"
+    },
+    {
+      "type": "dashboard",
+      "name": "Lagom Circuit Breakers",
+      "path": "dashboards/lagom-circuitbreakers.json",
+      "revision": "2.11.1"
+    },
+    {
+      "type": "dashboard",
+      "name": "Play Clients",
+      "path": "dashboards/play-clients.json",
+      "revision": "2.11.1"
+    },
+    {
+      "type": "dashboard",
+      "name": "Play Endpoints",
+      "path": "dashboards/play-endpoints.json",
+      "revision": "2.11.1"
+    },
+    {
+      "type": "dashboard",
+      "name": "Play Servers",
+      "path": "dashboards/play-servers.json",
+      "revision": "2.11.1"
+    },
+    {
+      "type": "dashboard",
+      "name": "Scala Futures",
+      "path": "dashboards/scala-futures.json",
+      "revision": "2.11.1"
+    }
+  ],
+
+  "dependencies": {
+    "grafanaVersion": "4.x",
+    "plugins": []
+  }
+}
