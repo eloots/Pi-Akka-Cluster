@@ -24,7 +24,12 @@ import sbt.Keys._
 import sbt._
 import sbtassembly._
 import sbtstudent.AdditionalSettings
-import AssemblyKeys.{assemblyMergeStrategy, assembly}
+import AssemblyKeys.{assembly, assemblyMergeStrategy}
+import com.typesafe.sbt.packager.archetypes.{JavaAppPackaging, JavaServerAppPackaging}
+import com.typesafe.sbt.packager.docker.DockerChmodType.UserGroupWriteExecute
+import com.typesafe.sbt.packager.docker.DockerPlugin.autoImport.{dockerAdditionalPermissions, dockerBaseImage, dockerChmodType, dockerCommands, dockerEnvVars, dockerExposedPorts, dockerRepository}
+import com.typesafe.sbt.packager.docker.{Cmd, DockerChmodType, DockerPlugin}
+import com.typesafe.sbt.packager.universal.UniversalPlugin, UniversalPlugin.autoImport._
 
 object CommonSettings {
   lazy val commonSettings = Seq(
@@ -73,5 +78,19 @@ object CommonSettings {
 //          oldStrategy(x)
 //      }
 //    )
+      .enablePlugins(DockerPlugin, JavaAppPackaging)
+      .settings(
+      mappings in Universal += file("librpi_ws281x.so") -> "lib/librpi_ws281x.so",
+      javaOptions in Universal ++= Seq("-Djava.library.path=lib",
+        "-Dcluster-node-configuration.cluster-id=cluster-0"),
+      //dockerBaseImage := "arm32v7/openjdk",
+      dockerBaseImage := "arm32v7/adoptopenjdk",
+      dockerCommands ++= Seq( Cmd("USER", "root"),
+        Cmd("RUN", "mkdir -p","/dev/mem")  ),
+      dockerChmodType := UserGroupWriteExecute,
+      dockerRepository := Some("docker-registry-default.gsa2.lightbend.com/lightbend"),
+      dockerExposedPorts := Seq(8080, 8558, 2550, 9001),
+      dockerAdditionalPermissions ++= Seq((DockerChmodType.UserGroupPlusExecute, "/tmp")),
+    )
   }
 }
