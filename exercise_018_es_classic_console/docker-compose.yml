@@ -7,6 +7,12 @@ services:
     volumes: ["./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml"]
     ports: ["9090:9090"]
     networks: ["sandbox"]
+    extra_hosts:
+      - "node-0:192.168.200.10"
+      - "node-1:192.168.200.11"
+      - "node-2:192.168.200.12"
+      - "node-3:192.168.200.13"
+      - "node-4:192.168.200.14"
 
   grafana:
     image: grafana/grafana:6.0.2
