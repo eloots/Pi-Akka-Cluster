@@ -88,3 +88,32 @@ total 56
 -rw-------  1 ericloots  staff   3326 Dec 21  2015 id_rsa
 -rw-r--r--  1 ericloots  staff    746 Dec 21  2015 id_rsa.pub
 ```
+
+### SSH client-side configuration options
+
+Additionally you can apply host specific options in `~/.ssh/config`, which is the client-side configuration file located in the user's home directory. This file is not created by default. It is safe to create it now with the below command. Altenatively use a text editor to add the `node-*` (wildcarded) `Host` section (only the 5 indented lines).
+
+This way you can define custom connection options, and change the username, keyfile or setup more permissive host key checking. 
+
+```
+$ cat <<HERE >> ~/.ssh/config
+    Host node-*
+      User akkapi
+      IdentityFile /Users/userxxx/.ssh/id_rsa
+      StrictHostKeyChecking no
+      UserKnownHostsFile=/dev/null
+HERE
+$
+```
+
+Essentialy SSH checks for each defintion, and if it matches the hostname value given on the command line, it applies the configurations found in the matching section.
+
+Let's try the login with SSH client-side configurations:
+
+```
+$ ssh node-0
+Linux node-0 4.14.98-v7+ #1200 SMP Tue Feb 12 20:27:48 GMT 2019 armv7l
+
+HypriotOS/armv7: akkapi@node-0 in ~
+$ 
+```
