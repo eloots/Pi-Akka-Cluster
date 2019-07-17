@@ -4,7 +4,7 @@
 
 This code is used on a Raspberry-Pi based Akka Cluster to demonstrate cluster formation, split-brain occurrence and Split Brain Resolver in a visual manner.
 
-Each node is equipped with an 8-LED RGB strip where different LED's are used to show each node's state (`Joining`, `Up`, `Weakly-up`, `Unreachable`, `Leaving`, `Exiting` and `Down`/`Removed`). In addition, it shows if a node has a so-called _leader_ role and whether a node is running an Akka Cluster Singleton (if one is created on the cluster).
+Each node is equipped with an 10-LED RGB strip where different LED's are used to show each node's state (`Joining`, `Up`, `Weakly-up`, `Unreachable`, `Leaving`, `Exiting` and `Down`/`Removed`). In addition, it shows if a node has a so-called _leader_ role and whether a node is running an Akka Cluster Singleton (if one is created on the cluster).
 
 In the last series of exercises, we deploy an actor based application (a Sudoku Solver) on the cluster and add monitoring (`Cinnamon`/`Prometheus`/`Grafana`) and tracing to the set-up (`Open-tracing`/`Zipkin`).
 
@@ -15,10 +15,10 @@ Removed the changelog & list of maintainers. Git history contains this informati
 ## Instructions
 
 - Make sure you completed the installation of
-    - Java 8 SDK
-    - Some terminal (iTerm-2 on Mac, Terminator on Linux style OS-es, Powershell or ConEmu on Windows
-    - curl
-- Clone the project on your laptop
+    - Java 8 SDK.
+    - Some terminal ([iTerm-2 on Mac](https://iterm2.com), [Terminator on Linux](https://gnometerminator.blogspot.com/p/introduction.html) style OS-es, Powershell or [ConEmu on Windows](https://conemu.github.io)).
+    - curl.
+- Clone [this project](https://github.com/lightbend/Pi-Akka-Cluster) on your laptop.
 
 ## Preparing your laptop for a _Raspberry-Pi based Akka Cluster_ workshop
 
@@ -41,5 +41,6 @@ Details on how to configure such a (TP-Link TL-WR802N) router can be found [here
 ## Build your own Akka-Cluster on Raspberry Pi
 
 - A bill of material can be found [here](images/BOM.md)
-- A schematic of the LED strip can be found [here](images/Schema_LED_Strip.pdf)
+- A custom 10-LED strip that can be directly plugged on a Raspberry Pi board's GPIO connector can now be bought from Lightbend! You can buy them in a pack of 5 [here](https://shop.lightbend.com/products/custom-led-strips-for-raspberry-pi-clusters).
+- A schematic of the LED strip can be found [here](images/raspberry_led_platine_v2.pdf)
 
