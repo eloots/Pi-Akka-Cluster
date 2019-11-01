@@ -10,7 +10,7 @@ Subject: [PATCH 1/1] Enable utilisation of commercial licenses
  project/plugins.sbt          |  2 +-
  4 files changed, 35 insertions(+), 35 deletions(-)
 
-diff --git a/project/CommonSettings.scala b/project/CommonSettings.scala
+diff --git a/led/project/CommonSettings.scala b/led/project/CommonSettings.scala
 index 18afa57..6be19dc 100644
 --- a/project/CommonSettings.scala
 +++ b/project/CommonSettings.scala
@@ -86,7 +86,7 @@ index 18afa57..6be19dc 100644
        .enablePlugins(DockerPlugin, JavaAppPackaging)
        .settings(
        mappings in Universal += file("librpi_ws281x.so") -> "lib/librpi_ws281x.so",
-diff --git a/project/Dependencies.scala b/project/Dependencies.scala
+diff --git a/led/project/Dependencies.scala b/led/project/Dependencies.scala
 index d9a1b83..bc539ff 100644
 --- a/project/Dependencies.scala
 +++ b/project/Dependencies.scala
@@ -112,7 +112,7 @@ index d9a1b83..bc539ff 100644
      akkaHttpDeps ++
      akkaManagementDeps ++ 
      scalaTestDeps ++ 
-diff --git a/project/lightbend.sbt b/project/lightbend.sbt
+diff --git a/led/project/lightbend.sbt b/led/project/lightbend.sbt
 index b317883..13f5f40 100644
 --- a/project/lightbend.sbt
 +++ b/project/lightbend.sbt
@@ -129,7 +129,7 @@ index b317883..13f5f40 100644
 +
 +resolvers += Resolver.url("com-ivy", url("https://repo.lightbend.com/commercial-releases/"))(Resolver.ivyStylePatterns)
 \ No newline at end of file
-diff --git a/project/plugins.sbt b/project/plugins.sbt
+diff --git a/led/project/plugins.sbt b/led/project/plugins.sbt
 index aa80956..9161c4d 100644
 --- a/project/plugins.sbt
 +++ b/project/plugins.sbt

@@ -212,12 +212,12 @@ man [e] > mini-cluster > split_brain_resolver_static_quorum > projects
 [info] 	   exercise_013_split_brain_resolver_static_quorum_http_mamagement
 [info] 	   pi_cluster_master
 man [e] > mini-cluster > split_brain_resolver_static_quorum > project exercise_004_cluster_base
-[info] Set current project to exercise_004_cluster_base (in build file:/Users/ericloots/Trainingen/LightbendTraining/Pi-Akka-Cluster/)
+[info] Set current project to exercise_004_cluster_base (in build file:/Users/ericloots/Trainingen/LightbendTraining/Pi-Akka-Cluster/led/)
 man [e] > mini-cluster > cluster_base > ;clean;assembly
 
 <... elided>
 
-[info] Packaging /Users/ericloots/Trainingen/LightbendTraining/Pi-Akka-Cluster/exercise_004_cluster_base/target/scala-2.12/exercise_004_cluster_base-assembly-1.3.0.jar ...
+[info] Packaging /Users/ericloots/Trainingen/LightbendTraining/Pi-Akka-Cluster/led/exercise_004_cluster_base/target/scala-2.12/exercise_004_cluster_base-assembly-1.3.0.jar ...
 [info] Done packaging.
 [success] Total time: 14 s, completed Mar 14, 2018 12:01:29 PM
 man [e] > mini-cluster > cluster_base >

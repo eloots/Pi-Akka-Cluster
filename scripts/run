@@ -8,7 +8,7 @@
 ######################################################################
 
 EXERCISE_NR=`printf %03d $1`
-FATJAR=`ls exercise*${EXERCISE_NR}*jar`
+FATJAR=`ls ../led/exercise*${EXERCISE_NR}*jar`
 CINNAMON="cinnamon-agent.jar"
 NODE=`hostname`
 
