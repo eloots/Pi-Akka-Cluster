@@ -17,7 +17,7 @@ CLUSTER_BASE_NODE_NR=$(expr $CLUSTER_NR_SEL \* 5)
 
 PI_USER=akkapi
 EXERCISE_NR=`printf %03d $1`
-FATJAR=`ls exercise*${EXERCISE_NR}*/target/scala-2.12/exercise*${EXERCISE_NR}*jar`
+FATJAR=`ls exercise*${EXERCISE_NR}*/target/scala-2.1[23]/exercise*${EXERCISE_NR}*jar`
 
 if [ -f exercise*${EXERCISE_NR}*/target/cinnamon-agent.jar ];then
   CINNAMON=`ls exercise*${EXERCISE_NR}*/target/cinnamon-agent.jar`
