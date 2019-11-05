@@ -22,25 +22,25 @@ Removed the changelog & list of maintainers. Git history contains this informati
 
 ## Preparing your laptop for a _Raspberry-Pi based Akka Cluster_ workshop
 
-Detailed instructions can be found [here](Hypriot-OS-Course-Preparation-Instructions.md).
+Detailed instructions can be found [here](docs/Hypriot-OS-Course-Preparation-Instructions.md).
 
 ## Building your own 5-node Raspberry-Pi based Akka Cluster
 
-If you want to build your own physical cluster, you may want to have a look at the BOM [here](images/BOM.md).
+If you want to build your own physical cluster, you may want to have a look at the BOM [here](docs/images/BOM.md).
 
 ## Pi-Hypriot installation instructions
 
-The easiest and _fastest_ way to flash a Hypriot OS instance that is ready to use for the Akka Cluster software can be found [here](Hypriot-OS-Installation-Instructions.md).
+The easiest and _fastest_ way to flash a Hypriot OS instance that is ready to use for the Akka Cluster software can be found [here](docs/Hypriot-OS-Installation-Instructions.md).
 
 ## Travel router configuration
 
 In some cases it can be handy to use a so-called travel router which allows you to connect to a Wifi network on location, and still get access to a physical network with a fixed IP network address. This is because, currently, all nodes have statically configured IP addresses.
 
-Details on how to configure such a (TP-Link TL-WR802N) router can be found [here](Configuring-TP-Link-Travel-Router-for-class-room-environment.md).
+Details on how to configure such a (TP-Link TL-WR802N) router can be found [here](docs/Configuring-TP-Link-Travel-Router-for-class-room-environment.md).
 
 ## Build your own Akka-Cluster on Raspberry Pi
 
-- A bill of material can be found [here](images/BOM.md)
+- A bill of material can be found [here](docs/images/BOM.md)
 - A custom 10-LED strip that can be directly plugged on a Raspberry Pi board's GPIO connector can now be bought from Lightbend! You can buy them in a pack of 5 [here](https://shop.lightbend.com/products/custom-led-strips-for-raspberry-pi-clusters).
-- A schematic of the LED strip can be found [here](images/raspberry_led_platine_v2.pdf)
+- A schematic of the LED strip can be found [here](docs/images/raspberry_led_platine_v2.pdf)
 
