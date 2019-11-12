@@ -3,8 +3,7 @@ lazy val pi_cluster_master = (project in file("."))
   .aggregate(
     common,
     exercise_000_initial_state,
-    exercise_001_cluster_base,
-    exercise_002_cluster_base_move_to_artery_tcp,
+    exercise_002_cluster_base,
     exercise_003_cluster_weakly_up,
     exercise_004_cluster_singleton,
     exercise_005_cluster_the_perils_of_auto_downing,
@@ -18,7 +17,6 @@ lazy val pi_cluster_master = (project in file("."))
     exercise_013_clustered_sudoku_solver,
     exercise_014_add_cluster_client,
     exercise_015_clustered_sudoku_solver_cluster_client_enabled,
-    exercise_016_es_vizceral,
     exercise_017_es_opentracing,
     exercise_018_es_classic_console,
     exercise_050_cluster_cluster_singleton_akka_bootstrap_discovery_via_config,
@@ -31,11 +29,7 @@ lazy val exercise_000_initial_state = project
   .configure(CommonSettings.configure)
   .dependsOn(common % "test->test;compile->compile")
 
-lazy val exercise_001_cluster_base = project
-  .configure(CommonSettings.configure)
-  .dependsOn(common % "test->test;compile->compile")
-
-lazy val exercise_002_cluster_base_move_to_artery_tcp = project
+lazy val exercise_002_cluster_base = project
   .configure(CommonSettings.configure)
   .dependsOn(common % "test->test;compile->compile")
 
@@ -91,10 +85,6 @@ lazy val exercise_015_clustered_sudoku_solver_cluster_client_enabled = project
   .configure(CommonSettings.configure)
   .dependsOn(common % "test->test;compile->compile")
 
-lazy val exercise_016_es_vizceral = project
-  .configure(CommonSettings.configure)
-  .dependsOn(common % "test->test;compile->compile")
-
 lazy val exercise_017_es_opentracing = project
   .configure(CommonSettings.configure)
   .dependsOn(common % "test->test;compile->compile")
@@ -110,4 +100,3 @@ lazy val exercise_050_cluster_cluster_singleton_akka_bootstrap_discovery_via_con
 lazy val exercise_051_cluster_singleton_akka_bootstrap_discovery_via_akka_dns = project
   .configure(CommonSettings.configure)
   .dependsOn(common % "test->test;compile->compile")
-       
