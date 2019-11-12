@@ -3,7 +3,7 @@ lazy val pi_cluster_master = (project in file("."))
   .aggregate(
     common,
     exercise_000_initial_state,
-    exercise_002_cluster_base_a,
+    exercise_002_cluster_base,
     exercise_003_cluster_weakly_up,
     exercise_004_cluster_singleton,
     exercise_005_cluster_the_perils_of_auto_downing,
@@ -29,7 +29,7 @@ lazy val exercise_000_initial_state = project
   .configure(CommonSettings.configure)
   .dependsOn(common % "test->test;compile->compile")
 
-lazy val exercise_002_cluster_base_a = project
+lazy val exercise_002_cluster_base = project
   .configure(CommonSettings.configure)
   .dependsOn(common % "test->test;compile->compile")
 
