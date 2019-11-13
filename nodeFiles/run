@@ -7,12 +7,18 @@
 #
 ######################################################################
 
-EXERCISE_NR=`printf %03d $1`
-FATJAR=`ls exercise*${EXERCISE_NR}*jar`
-CINNAMON="cinnamon-agent.jar"
+EXERCISE_NR=$(printf %03d $1 2>/dev/null)
+EXERCISE_FOLDER=$(cd exercises 2>/dev/null;  ls -d exercise*${EXERCISE_NR}* 2>/dev/null)
+# Check if an exercise was found with the given number, otherwise exit
+if [ "Empty$EXERCISE_FOLDER" == "Empty" ]; then
+	echo "No exercise found with exercise number $1"
+  exit -1
+fi
+
+EXERCISE_RUNSCRIPT=$(cd exercises/$EXERCISE_FOLDER/bin && ls |grep -v .bat)
 NODE=`hostname`
 
-echo "Running $FATJAR on $NODE"
+echo "Running $EXERCISE_RUNSCRIPT on $NODE"
 
 sudo pkill -SIGKILL -f "exercise.*_[0-9][0-9][0-9]_.*"
 
@@ -28,5 +34,4 @@ fi
 
 LedStripType=${LED_STRIP_TYPE:-eight-led-reversed-order}
 
-
-sudo java $CINNAMON_AGENT -Djava.library.path=.  -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=9010 -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dcluster-node-configuration.node-hostname=$NODE -Dakka.management.http.hostname=${NODE} -Dcluster-status-indicator.led-strip-type=$LedStripType -jar $FATJAR "com.neopixel.ClusterStatusTrackerMain $@"
+(cd exercises/$EXERCISE_FOLDER && sudo bin/$EXERCISE_RUNSCRIPT -Dcluster-node-configuration.node-hostname=$NODE -Dcluster-status-indicator.led-strip-type=$LED_STRIP_TYPE)

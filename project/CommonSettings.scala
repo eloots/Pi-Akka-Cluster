@@ -22,9 +22,7 @@
 //import com.lightbend.sbt.javaagent.JavaAgent.JavaAgentKeys
 import sbt.Keys._
 import sbt._
-import sbtassembly._
 import sbtstudent.AdditionalSettings
-import AssemblyKeys.{assembly, assemblyMergeStrategy}
 import com.typesafe.sbt.packager.archetypes.{JavaAppPackaging, JavaServerAppPackaging}
 import com.typesafe.sbt.packager.docker.DockerChmodType.UserGroupWriteExecute
 import com.typesafe.sbt.packager.docker.DockerPlugin.autoImport.{dockerAdditionalPermissions, dockerBaseImage, dockerChmodType, dockerCommands, dockerEnvVars, dockerExposedPorts, dockerRepository}
@@ -45,7 +43,8 @@ object CommonSettings {
     parallelExecution in GlobalScope := false,
     parallelExecution in ThisBuild := false,
     fork in Test := false,
-    test in assembly := {},
+    publishArtifact in packageSrc := false,
+    publishArtifact in packageDoc := false,
     libraryDependencies ++= Dependencies.dependencies,
 //    credentials += Credentials(Path.userHome / ".lightbend" / "commercial.credentials"),
 //    resolvers += "com-mvn" at "https://repo.lightbend.com/commercial-releases/",
@@ -64,33 +63,29 @@ object CommonSettings {
 //      libraryDependencies += Cinnamon.library.cinnamonPrometheusHttpServer,
 //      libraryDependencies += Cinnamon.library.cinnamonAkkaHttp,
 //      libraryDependencies += Cinnamon.library.cinnamonOpenTracingZipkin,
-//      libraryDependencies += Cinnamon.library.cinnamonCHMetricsElasticsearchReporter,
-//      AssemblyKeys.assembly := Def.task {
-//        JavaAgentKeys.resolvedJavaAgents.value.filter(_.agent.name == "Cinnamon").foreach { agent =>
-//          sbt.IO.copyFile(agent.artifact, target.value / "cinnamon-agent.jar")
-//        }
-//        AssemblyKeys.assembly.value
-//      }.value,
-//      assemblyMergeStrategy in assembly := {
-//        case "cinnamon-reference.conf" => MergeStrategy.concat
-//        case x =>
-//          val oldStrategy = (assemblyMergeStrategy in assembly).value
-//          oldStrategy(x)
-//      }
+//      libraryDependencies += Cinnamon.library.cinnamonCHMetricsElasticsearchReporter
 //    )
       .enablePlugins(DockerPlugin, JavaAppPackaging)
       .settings(
-      mappings in Universal += file("librpi_ws281x.so") -> "lib/librpi_ws281x.so",
-      javaOptions in Universal ++= Seq("-Djava.library.path=lib",
-        "-Dcluster-node-configuration.cluster-id=cluster-0"),
-      //dockerBaseImage := "arm32v7/openjdk",
-      dockerBaseImage := "arm32v7/adoptopenjdk",
-      dockerCommands ++= Seq( Cmd("USER", "root"),
-        Cmd("RUN", "mkdir -p","/dev/mem")  ),
-      dockerChmodType := UserGroupWriteExecute,
-      dockerRepository := Some("docker-registry-default.gsa2.lightbend.com/lightbend"),
-      dockerExposedPorts := Seq(8080, 8558, 2550, 9001),
-      dockerAdditionalPermissions ++= Seq((DockerChmodType.UserGroupPlusExecute, "/tmp")),
-    )
+        mappings in Universal ++=
+          Seq(
+            file("nodeFiles/librpi_ws281x.so") -> "lib/librpi_ws281x.so",
+            file("sudokus/001.sudoku") -> "sudokus/001.sudoku"
+          ),
+        javaOptions in Universal ++=
+          Seq(
+            "-Djava.library.path=lib",
+            "-Dcluster-node-configuration.cluster-id=cluster-0",
+            "-Dcluster-status-indicator.led-strip-type=ten-led-non-reversed-order"
+          ),
+        //dockerBaseImage := "arm32v7/openjdk",
+        dockerBaseImage := "arm32v7/adoptopenjdk",
+        dockerCommands ++= Seq( Cmd("USER", "root"),
+          Cmd("RUN", "mkdir -p","/dev/mem")  ),
+        dockerChmodType := UserGroupWriteExecute,
+        dockerRepository := Some("docker-registry-default.gsa2.lightbend.com/lightbend"),
+        dockerExposedPorts := Seq(8080, 8558, 2550, 9001),
+        dockerAdditionalPermissions ++= Seq((DockerChmodType.UserGroupPlusExecute, "/tmp"))
+      )
   }
 }

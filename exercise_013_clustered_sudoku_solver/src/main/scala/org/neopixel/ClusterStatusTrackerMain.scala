@@ -62,7 +62,6 @@ object ClusterStatusTrackerMain {
 
     val clusterStatusTracker = system.actorOf(ClusterStatusTracker.props(strip, logicalToPhysicalLEDMapping), "cluster-status-tracker")
 
-
     val sudokuSolver = system.actorOf(SudokuSolver.props(), "sudoku-solver")
 
     val sudokuProblemSender = system.actorOf(SudokuProblemSender.props(sudokuSolver), "sudoku-problem-sender")

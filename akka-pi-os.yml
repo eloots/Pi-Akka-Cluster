@@ -1404,6 +1404,7 @@ runcmd:
   - apt-get -y install jq
   - apt-get -y install dnsutils
   - apt-get -y apt-install transport-https
+  - apt-get -y install zip
   # Add cluster hosts to /etc/hosts
   - 'cat /etc/cluster-hosts >> /etc/hosts'
   - 'rm /etc/cluster-hosts'

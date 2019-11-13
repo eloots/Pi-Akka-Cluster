@@ -10,13 +10,13 @@
     </appender>
 
     <appender name="file" class="ch.qos.logback.core.FileAppender">
-        <file>${coffee-house.log-file:-coffee-house.log}</file>
+        <file>${neopixel.log-file:-neopixel.log}</file>
         <encoder>
             <pattern>%date{HH:mm:ss} %-5level [%X{akkaSource}] - %msg%n</pattern>
         </encoder>
     </appender>
 
-    <logger name="com.lightbend.training.coffeehouse" level="debug" additivity="false">
+    <logger name="org.neopixel" level="debug" additivity="false">
         <appender-ref ref="console"/>
         <appender-ref ref="file"/>
     </logger>

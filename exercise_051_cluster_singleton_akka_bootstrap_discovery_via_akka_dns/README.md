@@ -80,19 +80,14 @@ nameserver 192.168.200.100
 >       when you reboot the node(s).
 
 
-
 Try the following steps:
-
  
-1) Build the exercise by running `sbt exercise_051_.../assembly`
+1. Run `sbt universal:packageBin` to create the packaged binaries.
+2. Use the `copy` script to copy the binaries to each node in the cluster.
 
-2) Copy the jar onto the Pi cluster nodes by running `./copy 51`
-
-3) Start the application on `node-2`, `node-3` and `node-4`
-
+3. Start the application on `node-2`, `node-3` and `node-4`
 - does the cluster form?
-
-4) Uncomment the last line in `/usr/local/etc/dnsmasq.d/development.conf` to show the following content:
+4. Uncomment the last line in `/usr/local/etc/dnsmasq.d/development.conf` to show the following content:
 
 ```scala
 $ cat /usr/local/etc/dnsmasq.d/development.conf
@@ -106,9 +101,9 @@ srv-host=_management._tcp.picluster.lb.com,node-4,8558,1
 - Restart `dnsmasq` to pick-up the changed configuration.
 - does the cluster form?
 
-5) repeat step 4) by uncommenting the line with the SRV record for `node-3` and restart `dnsmasq`. Observe what happens.
+- repeat step 4) by uncommenting the line with the SRV record for `node-3` and restart `dnsmasq`. Observe what happens.
 
-6) repeat again with the last three lines uncommented:
+-repeat again with the last three lines uncommented:
 
 ```scala
 $ cat /usr/local/etc/dnsmasq.d/development.conf

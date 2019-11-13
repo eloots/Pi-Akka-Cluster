@@ -1,5 +1,7 @@
 package org.neopixel
 
+import java.util.NoSuchElementException
+
 object SudokuIO {
 
   def printRow( row: ReductionSet): String = {
@@ -54,20 +56,43 @@ object SudokuIO {
   import java.io.{BufferedReader, File, FileReader}
 
   import scala.language.postfixOps
-  class FileLineTraversable(file: File) extends Traversable[String] {
-    override def foreach[U](f: String => U): Unit = {
-      val input = new BufferedReader(new FileReader(file))
-      try {
-        var line = input.readLine
-        while (line != null) {
-          f(line)
-          line = input.readLine
+  class FileLineTraversable(file: File) extends Iterable[String] {
+    val input = new BufferedReader(new FileReader(file))
+    var cachedLine: Option[String] = None
+    var finished: Boolean = false
+
+    override def iterator: Iterator[String] = new Iterator[String] {
+
+      override def hasNext: Boolean = (cachedLine, finished) match {
+        case (Some(_), _) => true
+
+        case (None, true) => false
+
+        case (None, false) =>
+          try {
+            val line = input.readLine()
+            if (line == null) {
+              finished = true
+              false
+            } else {
+              cachedLine = Some(line)
+              true
+            }
+          } catch {
+            case e: java.io.IOError =>
+              throw new IllegalStateException(e.toString)
+          }
+      }
+
+      override def next(): String = {
+        if (! hasNext) {
+          throw new NoSuchElementException("No more lines in file")
         }
-      } finally {
-        input.close()
+        val currentLine = cachedLine.get
+        cachedLine = None
+        currentLine
       }
     }
-
     override def toString: String =
       "{Lines of " + file.getAbsolutePath + "}"
   }

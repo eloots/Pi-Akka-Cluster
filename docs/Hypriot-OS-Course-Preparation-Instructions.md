@@ -21,21 +21,17 @@ On your Mac, add the following entries to your _/etc/hosts_ file:
 
 Next, we set-up password-less login (unless your `ssh` remembers your password, in which case you can skip this step). We assume that we want to log in to account _akkapi_ on a Raspberry Pi node from an account (_userxxx_) on your laptop. In order to set-up password-less login, you need a so-called public/private key pair. If you're unfamiliar with this concept, or don't have such a key pair, first read the paragraph titled _Generating a public/private key pair_ in the Addendum.
 
-Now, proceed by create a `.ssh` folder on the _akkapi_'s home folder on the Pi and copy the public key (`id_rsa.pub`) to a file named `authorized_keys` in the `.ssh` folder. You will have to supply the password for the _akkapi_ account for the two commands launched. On your laptop:
+Now, proceed by executing the following command on your laptop:
 
 ```
-[Pi-Akka-Cluster git:(master) ✗ for node in 0 1 2 3 4;do ssh akkapi@node-${node} mkdir -p .ssh; done
-akkapi@node-0's password:
+Pi-Akka-Cluster git:(master) ✗ for node in 0 1 2 3 4;do ssh-copy-id akkapi@node-${node}; done
 ```
 
-Copy the contents of your *public key* to the `authorized_keys` file:
+For each of the 5 nodes, you will be prompted to confirm that you want to connect (enter `yes`) and the password for the `akkapi` account which is `akkapi`.
 
-```
-Pi-Akka-Cluster git:(master) ✗ for node in 0 1 2 3 4;do cat ~/.ssh/id_rsa.pub | ssh akkapi@node-${node} 'cat >> .ssh/authorized_keys'; done
-akkapi@node-0's password:
-```
+With this, you should now be able to log into the _akkapi_ account on all nodes from the _userxxx_ account on your laptop without having to enter a password.
 
-With this, you should now be able to log into the _akkapi_ on all nodes from the _userxxx_ account on your laptop without having to enter a password.
+### Finishing the configuration
 
 Finish the configuration by running the `updateScripts` command:
 

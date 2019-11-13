@@ -55,7 +55,7 @@ object Main {
 
     val updateInterval = if (args.length == 2) args(1).toInt else 1
 
-    for { i <- 1 to 100 } {
+    for { i <- 1 to 25 } {
       for {b <- mp to 1 by -1} {
         strip.setBrightness(b.toShort)
         strip.show()
