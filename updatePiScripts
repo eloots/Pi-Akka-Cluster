@@ -10,10 +10,8 @@ ALL_NODES="0 1 2 3 4"
 SELECTED_NODE=$1
 NODES=${SELECTED_NODE:-$ALL_NODES}
 
-FILES_TO_UPDATE="run librpi_ws281x.so setLedType docker-compose.yml runDocker"
-
 for i in $NODES;do
   node=$[ CLUSTER_BASE_NODE_NR + i ]
   echo "Copy $CINNAMON to node-${node}"
-  scp $FILES_TO_UPDATE ${PI_USER}@node-${node}:/home/${PI_USER}
+  scp ./nodeFiles/* ${PI_USER}@node-${node}:/home/${PI_USER}
 done
