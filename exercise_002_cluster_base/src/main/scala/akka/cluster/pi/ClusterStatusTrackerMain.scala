@@ -18,12 +18,13 @@
   * limitations under the License.
   */
 
-package org.neopixel
+package akka.cluster.pi
 
+import org.neopixel._
+import _root_.neopixel.{rpi_ws281xConstants => wsC}
 import akka.actor.ActorSystem
 import akka.management.scaladsl.AkkaManagement
 import com.typesafe.config.{ConfigFactory, ConfigValueFactory}
-import neopixel.{rpi_ws281xConstants => wsC}
 
 object ClusterStatusTrackerMain {
   def main(args: Array[String]): Unit = {
