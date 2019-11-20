@@ -11,9 +11,11 @@ object SudokuSolver {
   case class Result(sudoku: Sudoku)
 
   def genDetailProcessors[A <: SudokoDetailType : UpdateSender](context: ActorContext): Map[Int, ActorRef] = {
+
     cellIndexesVector.map {
       index =>
-        val detailProcessor = context.actorOf(SudokuDetailProcessor.props[A](index))
+        val detailProcessorName = implicitly[UpdateSender[A]].processorName(index)
+        val detailProcessor = context.actorOf(SudokuDetailProcessor.props[A](index), detailProcessorName)
         (index, detailProcessor)
     }.toMap
   }
@@ -44,12 +46,12 @@ class SudokuSolver extends Actor with ActorLogging with Stash {
           rowDetailProcessors(row) ! SudokuDetailProcessor.Update(cellUpdates)
       }
       progressTracker ! SudokuProgressTracker.NewUpdatesInFlight(rowUpdates.size)
-      context.become(processRequest(Some(sender())))
+      context.become(processRequest(Some(sender()), System.currentTimeMillis()))
       log.info(s"Received sudo problem: $initialUpdate")
 
   }
 
-  def processRequest(requestor: Option[ActorRef]): Receive = {
+  def processRequest(requestor: Option[ActorRef], startTime: Long): Receive = {
     case SudokuDetailProcessor.RowUpdate(rowNr, updates) =>
       updates.foreach {
         case (rowCellNr, newCellContent) =>
@@ -100,6 +102,7 @@ class SudokuSolver extends Actor with ActorLogging with Stash {
       resetAllDetailProcessors()
       unstashAll()
       context.become(idle)
+      log.info(s"Sudoku processing time: ${System.currentTimeMillis() - startTime} milliseconds")
       log.info(
         s"""Result:
            |${result.sudoku.mkString("\n   ", "\n   ", "")}
