@@ -24,7 +24,7 @@ class SudokuProblemSender(sudokuSolver: ActorRef) extends Actor with ActorLoggin
 
   import SudokuProblemSender._
 
-  timers.startPeriodicTimer("problem-send-interval", SendNewSudoku, 1000.millis)
+  timers.startPeriodicTimer("problem-send-interval", SendNewSudoku, 500.millis)
 
   override def receive: Receive = {
     case SendNewSudoku =>

@@ -57,7 +57,8 @@ object SudokuIO {
 
   import scala.language.postfixOps
   class FileLineTraversable(file: File) extends Iterable[String] {
-    val input = new BufferedReader(new FileReader(file))
+    val fr = new FileReader(file)
+    val input = new BufferedReader(fr)
     var cachedLine: Option[String] = None
     var finished: Boolean = false
 
@@ -73,6 +74,8 @@ object SudokuIO {
             val line = input.readLine()
             if (line == null) {
               finished = true
+              input.close()
+              fr.close()
               false
             } else {
               cachedLine = Some(line)

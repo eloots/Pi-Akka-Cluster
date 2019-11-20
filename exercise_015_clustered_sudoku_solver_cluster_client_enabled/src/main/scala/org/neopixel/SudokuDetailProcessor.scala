@@ -56,17 +56,23 @@ class SudokuDetailProcessor[DetailType <: SudokoDetailType : UpdateSender](id: I
   def operational(id: Int, state: ReductionSet, fullyReduced: Boolean = false): Receive = {
 
     case Update(cellUpdates) if ! fullyReduced =>
+      val previousState = state
       val updatedState = mergeState(state, cellUpdates)
-      val transformedUpdatedState = reductionRuleTwo(reductionRuleOne(updatedState))
-      if (transformedUpdatedState == state) {
+      if (updatedState == previousState && cellUpdates != cellUpdatesEmpty) {
         sender ! SudokuDetailUnchanged
       } else {
-        val updateSender = implicitly[UpdateSender[DetailType]]
-        updateSender.sendUpdate(id, stateChanges(state, transformedUpdatedState))(sender)
-        context.become(operational(id, transformedUpdatedState, isFullyReduced(transformedUpdatedState)))
+        val transformedUpdatedState = reductionRuleTwo(reductionRuleOne(updatedState))
+        if (transformedUpdatedState == state) {
+          sender ! SudokuDetailUnchanged
+        } else {
+          val updateSender = implicitly[UpdateSender[DetailType]]
+          updateSender.sendUpdate(id, stateChanges(state, transformedUpdatedState))(sender)
+          context.become(operational(id, transformedUpdatedState, isFullyReduced(transformedUpdatedState)))
+        }
       }
 
     case Update(cellUpdates) =>
+      //      log.debug(s"State: Nothing left to do ! $state")
       sender ! SudokuDetailUnchanged
 
     case GetSudokuDetailState =>
