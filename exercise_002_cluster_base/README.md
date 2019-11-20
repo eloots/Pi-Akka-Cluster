@@ -35,3 +35,8 @@ In this exercise, we will explore the formation of an Akka Cluster with up-to
 - LED number 7: Not used in this exercise
 - LED number 8: Cluster liveliness indicator: when it blinks, we know
                 that the cluster node software is actually running
+                It blinks in red when the membership state of the cluster has not yet converged
+                It flashes 3 times in green when the membership state just converged
+                It blinks in white when the cluster is operating normally
+
+Note that in this exercise, the cluster gossip interval (and other parameters related to it) are slowed down on purpose in order to be able to get more time to see what is happening - normally, things move along faster. This is configured in `src/main/application.conf`.

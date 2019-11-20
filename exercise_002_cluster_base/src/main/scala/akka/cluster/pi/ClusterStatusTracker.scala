@@ -18,12 +18,13 @@
   * limitations under the License.
   */
 
-package org.neopixel
+package akka.cluster.pi
 
 import akka.actor.{Actor, ActorLogging, Props, Timers}
 import akka.cluster.Cluster
 import akka.cluster.ClusterEvent._
 import akka.cluster.MemberStatus.{Up, WeaklyUp}
+import org.neopixel._
 
 object ClusterStatusTracker {
 
@@ -35,6 +36,7 @@ object ClusterStatusTracker {
   }
 
   case object Heartbeat
+  case object ConvergenceBeat
 
   def props(strip: Adafruit_NeoPixel.type, logicalToPhysicalLEDMapping: Int => Int): Props =
     Props(new ClusterStatusTracker(strip, logicalToPhysicalLEDMapping))
@@ -51,18 +53,35 @@ class ClusterStatusTracker(strip: Adafruit_NeoPixel.type, logicalToPhysicalLEDMa
   private val LeaderLedNumber = 5
   private val HeartbeatLedNumber = 7
 
+  var convergenceReached = false
+
   override def receive: Receive = idle
 
   def idle: Receive = akka.actor.Actor.emptyBehavior
 
-  def running(hearbeatLEDOn: Boolean): Receive = {
+  def running(hearbeatLEDOn: Boolean, convergenceBlinkCount: Int): Receive = {
     case Heartbeat if hearbeatLEDOn =>
       setPixelColorAndShow(strip, logicalToPhysicalLEDMapping(HeartbeatLedNumber), Black)
-      context.become(running(hearbeatLEDOn = false))
+      context.become(running(hearbeatLEDOn = false, convergenceBlinkCount = 0))
 
     case Heartbeat =>
-      setPixelColorAndShow(strip, logicalToPhysicalLEDMapping(HeartbeatLedNumber), heartbeartIndicatorColor)
-      context.become(running(hearbeatLEDOn = true))
+      setPixelColorAndShow(strip, logicalToPhysicalLEDMapping(HeartbeatLedNumber), if(convergenceReached) heartbeartIndicatorColor else heartbeartIndicatorNoConvergenceColor)
+      context.become(running(hearbeatLEDOn = true, convergenceBlinkCount = 0))
+
+    case ConvergenceBeat if hearbeatLEDOn =>
+      setPixelColorAndShow(strip, logicalToPhysicalLEDMapping(HeartbeatLedNumber), Black)
+      context.become(running(hearbeatLEDOn = false, convergenceBlinkCount = convergenceBlinkCount + 1))
+
+    case ConvergenceBeat =>
+      if (convergenceBlinkCount == 3) {
+        timers.cancel("convergence-timer")
+        startHeartbeatTimer()
+        setPixelColorAndShow(strip, logicalToPhysicalLEDMapping(HeartbeatLedNumber), heartbeartIndicatorColor)
+        context.become(running(hearbeatLEDOn = true, convergenceBlinkCount = 0))
+      } else {
+        setPixelColorAndShow(strip, logicalToPhysicalLEDMapping(HeartbeatLedNumber), heartbeartIndicatorConvergenceColor)
+        context.become(running(hearbeatLEDOn = true, convergenceBlinkCount = convergenceBlinkCount))
+      }
 
     case msg @ MemberUp(member) =>
       setPixelColorAndShow(strip, mapHostToLED(member.address.host.get), nodeUpColor)
@@ -112,6 +131,16 @@ class ClusterStatusTracker(strip: Adafruit_NeoPixel.type, logicalToPhysicalLEDMa
       setPixelColorAndShow(strip, logicalToPhysicalLEDMapping(LeaderLedNumber), Black)
       log.debug(s"$msg")
 
+    case msg @ CurrentInternalStats(_, vclockStats) =>
+      val hasNowConverged = vclockStats.seenLatest == Cluster(context.system).state.members.size
+      if (!convergenceReached && hasNowConverged) {
+        timers.cancel("heartbeat-timer")
+        startConvergenceTimer()
+      }
+      convergenceReached = hasNowConverged
+      log.debug(s"$msg")
+
+
     case event =>
       log.debug(s"~~~> UNHANDLED CLUSTER DOMAIN EVENT: $event")
 
@@ -125,12 +154,18 @@ class ClusterStatusTracker(strip: Adafruit_NeoPixel.type, logicalToPhysicalLEDMa
         InitialStateAsEvents,
         classOf[LeaderChanged],
         classOf[ReachabilityEvent],
-        classOf[MemberEvent]
+        classOf[MemberEvent],
+        classOf[CurrentInternalStats],
       )
-    timers.startPeriodicTimer("heartbeat-timer", Heartbeat, heartbeatIndicatorInterval)
-    context.become(running(hearbeatLEDOn = false))
-
+    startHeartbeatTimer()
+    context.become(running(hearbeatLEDOn = false, convergenceBlinkCount = 0))
   }
+
+  private def startHeartbeatTimer(): Unit =
+    timers.startPeriodicTimer("heartbeat-timer", Heartbeat, heartbeatIndicatorInterval)
+
+  private def startConvergenceTimer(): Unit =
+    timers.startPeriodicTimer("convergence-timer", ConvergenceBeat, clusterStateConvergenceInterval)
 
   override def postStop(): Unit = {
     resetAllLeds(strip)
