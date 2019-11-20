@@ -23,7 +23,7 @@ package org.neopixel
 import akka.actor.{Actor, ExtendedActorSystem, Extension, ExtensionId, ExtensionIdProvider}
 import com.typesafe.config.Config
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 import scala.concurrent.duration.{Duration, FiniteDuration, MILLISECONDS => Millis}
 
 object ConfigSettingsExtension extends ExtensionId[ConfigSettingsImpl] with ExtensionIdProvider {
