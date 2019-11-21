@@ -27,6 +27,11 @@
  *
  */
 
+/*
+ * Adapted to a "progress bar" Eric Loots 21/11/2019
+ *  - When started, a RED running light is shown in the first 8 LEDs of an LED strip
+ *  - When SIGTERM (Ctrl-C) is sent, all 8 LEDs turn GREEN
+ */
 
 static char VERSION[] = "XX.YY.ZZ";
 
@@ -64,7 +69,7 @@ static char VERSION[] = "XX.YY.ZZ";
 //#define STRIP_TYPE            SK6812_STRIP_RGBW		// SK6812RGBW (NOT SK6812RGB)
 
 #define WIDTH                   8
-#define HEIGHT                  8
+#define HEIGHT                  1
 #define LED_COUNT               (WIDTH * HEIGHT)
 
 int width = WIDTH;
@@ -84,7 +89,7 @@ ws2811_t ledstring =
             .gpionum = GPIO_PIN,
             .count = LED_COUNT,
             .invert = 0,
-            .brightness = 30,
+            .brightness = 55,
             .strip_type = STRIP_TYPE,
         },
         [1] =
@@ -129,17 +134,16 @@ void matrix_raise(void)
     }
 }
 
-int dotspos[] = { 0, 1, 2, 3, 4, 5, 6, 7 };
 ws2811_led_t dotcolors[] =
 {
-    0x00200000,  // blue
-    0x00201000,  // lightblue
-    0x00202000,  // cyan
+    0x00200000,  // red
+    0x00201000,  // orange
+    0x00202000,  // yellow
     0x00002000,  // green
-    0x00002020,  // yellow
-    0x00000020,  // red
-    0x00100010,  // pink
-    0x00200010,  // purple
+    0x00002020,  // lightblue
+    0x00000020,  // blue
+    0x00100010,  // purple
+    0x00200010,  // pink
 };
 
 ws2811_led_t dotcolors_rgbw[] =
@@ -168,16 +172,13 @@ void matrix_clear(void)
     }
 }
 
-void matrix_bottom(int i)
-{
-    int n;
+int dotspos[] = { 0, 1, 2, 3, 4, 5, 6, 7 };
 
-    if (ledstring.channel[0].strip_type == SK6812_STRIP_RGBW) {
-        matrix[dotspos[i] + (height - 1) * width] = dotcolors_rgbw[i];
-    } else {
-        for (n = 0; n < 10; n++) matrix[n] = 0;
-        matrix[i] = dotcolors[5];
-    }
+void matrix_bottom(int count)
+{
+
+    matrix[(count - 1) % WIDTH] = 0;
+    matrix[count % WIDTH] = dotcolors[5];
 }
 
 static void ctrl_c_handler(int signum)
@@ -367,7 +368,6 @@ void parseargs(int argc, char **argv, ws2811_t *ws2811)
 int main(int argc, char *argv[])
 {
     ws2811_return_t ret;
-    int i = 0;
 
     sprintf(VERSION, "%d.%d.%d", VERSION_MAJOR, VERSION_MINOR, VERSION_MICRO);
 
@@ -382,11 +382,13 @@ int main(int argc, char *argv[])
         fprintf(stderr, "ws2811_init failed: %s\n", ws2811_get_return_t_str(ret));
         return ret;
     }
+    
+    int count = 0;
 
     while (running)
     {
         matrix_raise();
-        matrix_bottom(i);
+        matrix_bottom(count);
         matrix_render();
 
         if ((ret = ws2811_render(&ledstring)) != WS2811_SUCCESS)
@@ -395,9 +397,9 @@ int main(int argc, char *argv[])
             break;
         }
 
-        // 2 frames /sec
+        // 15 frames /sec
         usleep(1000000 / 2);
-        i = (i + 1) % 10;
+        count = count + 1;
     }
 
     if (clear_on_exit) {
