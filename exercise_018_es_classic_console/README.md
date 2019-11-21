@@ -12,17 +12,15 @@ with a Prometheus-based sandbox
 > Hint 1: Use a multi-input terminal to make this easier. For example with a mac you can use iTerm2 [link to iTerm2](https://www.iterm2.com)
  
 ### Demo Steps
-1. From the project root assemble the jar using command:
-	`sbt exercise_018_es_classic_console/assembly`
-2. Copy the assembled jar to the raspberry pi's using the command: 	`./copy 18`
+1. Run `sbt universal:packageBin` to create the packaged binaries.
+2. Use the `copy` script to copy the binaries to each node in the cluster.
 3. start the Lightbend Telemetry sandbox on your laptop: 
     * `cd exercise_018_es_classic_console`
 	* `docker-compose up -d`
 4. After the docker images have started, log into grafana on your laptop at the address `localhost:3000`
 > the username and password for grafana default to `admin\admin`
 5. Enable the Prometheus plugin
-    * ![prometheus plugin](../images/prometheus-plugin-enable.png)
+    * ![prometheus plugin](../docs/images/prometheus-plugin-enable.png)
 6. Open the Lightbend Dashboard home
-5. Start exercise 18 on the pi cluster [*from within the terminal window logged into the pi node*] by typing:
-    `./run 18`
+5. Run the example on the cluster by using the `run` command with the appropriate exercise number.
 6. View your metrics in the pre-enabled Lightbend Telemetry dashboard

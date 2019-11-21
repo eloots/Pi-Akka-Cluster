@@ -1,6 +1,6 @@
 ## LED Status indicator - assembly instructions
 
-Following is a sequence of steps in the assembly of the LED status indicator.
+A pre-assembled 10-LED strip can now be bought [here](https://shop.lightbend.com/products/custom-led-strips-for-raspberry-pi-clusters). If you prefer to assemble your own, follow the steps below.
 
 ### Required components and tools
 
@@ -69,4 +69,4 @@ Following is a picture of a fully assembled strip.
 
 ### Fit the assembly on Pi
 
-Missing a picture... In any case: with the side of the Pi board that has the 40-pin GPIO connecter on the near side, plug the assembly on the left side of the GPIO connector. Run exercise_000_initial_state to verify that your assembly actually works.
+With the side of the Pi board that has the 40-pin GPIO connecter on the near side, plug the assembly on the right side of the GPIO connector. Run exercise_000_initial_state to verify that your assembly actually works.

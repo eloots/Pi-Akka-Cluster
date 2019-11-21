@@ -13,7 +13,7 @@ object SudokuProblemSender {
   def props(sudokuSolver: ActorRef): Props = Props(new SudokuProblemSender(sudokuSolver))
 
   private val rowUpdates: Seq[SudokuDetailProcessor.RowUpdate] =
-    SudokuIO.readSudokuFromFile(new File("sudokus/dm171203-03.sudoku"))
+    SudokuIO.readSudokuFromFile(new File("sudokus/001.sudoku"))
       .map { case (rowIndex, update) => SudokuDetailProcessor.RowUpdate(rowIndex, update) }
 
   private val initialUpdate =
@@ -24,11 +24,11 @@ class SudokuProblemSender(sudokuSolver: ActorRef) extends Actor with ActorLoggin
 
   import SudokuProblemSender._
 
-  timers.startPeriodicTimer("problem-send-interval", SendNewSudoku, 1000.millis)
+  timers.startPeriodicTimer("problem-send-interval", SendNewSudoku, 500.millis)
 
   override def receive: Receive = {
     case SendNewSudoku =>
-      log.info("sending new sudoku problem")
+      log.debug("sending new sudoku problem")
       sudokuSolver ! initialUpdate
   }
 }

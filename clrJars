@@ -24,6 +24,7 @@ NODES=${SELECTED_NODE:-$ALL_NODES}
 
 for i in $NODES;do
   node=$[ CLUSTER_BASE_NODE_NR + i ]
-  echo "Clearing jars on node-${node}"
-  ssh ${PI_USER}@node-${node} "sudo rm *.jar"
+  account=${PI_USER}@node-${node}
+  echo "Clearing jars/exercises on node-${node}"
+  ssh $account "sudo rm -rf *.jar exercises"
 done
