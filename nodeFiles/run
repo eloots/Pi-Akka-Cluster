@@ -37,10 +37,6 @@ if [ -f setLedType ];then
   . ./setLedType
 fi
 
-if [ -f $CINNAMON ];then
-  CINNAMON_AGENT="-javaagent:$CINNAMON"
-fi
-
 LedStripType=${LED_STRIP_TYPE:-eight-led-reversed-order}
 
-(cd exercises/$EXERCISE_FOLDER && sudo bin/$EXERCISE_RUNSCRIPT -Dcluster-node-configuration.node-hostname=$NODE -Dcluster-status-indicator.led-strip-type=$LED_STRIP_TYPE)
+(cd exercises/$EXERCISE_FOLDER && sudo bin/$EXERCISE_RUNSCRIPT -Dcluster-node-configuration.node-hostname=$NODE -Dakka.management.http.host=$NODE -Dcluster-status-indicator.led-strip-type=$LED_STRIP_TYPE)
