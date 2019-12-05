@@ -1520,7 +1520,7 @@ runcmd:
   # Pickup the hostname changes
   - 'systemctl restart avahi-daemon'
   # Install OpenJDK 8
-  - apt-get install -y galternatives openjdk-8-jdk
+  - apt-get install -y galternatives openjdk-11-jdk
   # Send SIGTERM to progress tracker - all LEDs switch to green
   - pkill progresstracker
 
