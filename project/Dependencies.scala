@@ -21,7 +21,7 @@
 import sbt._
 
 object Version {
-  val akkaVer           = "2.5.26"
+  val akkaVer           = "2.6.1"
   val akkaHttpVer       = "10.1.10"
   val logbackVer        = "1.2.3"
   val scalaVer          = "2.13.1"
@@ -33,13 +33,18 @@ object Version {
 object Dependencies {
   
   private val akkaDeps = Seq(
-    "com.typesafe.akka"             %% "akka-actor",
+    "com.typesafe.akka"             %% "akka-actor-typed",
+    "com.typesafe.akka"             %% "akka-serialization-jackson",
+    "com.typesafe.akka"             %% "akka-cluster-typed",
+    "com.typesafe.akka"             %% "akka-cluster-sharding-typed",
+    "com.typesafe.akka"             %% "akka-persistence-typed",
+//    "com.typesafe.akka"             %% "akka-actor",
     "com.typesafe.akka"             %% "akka-slf4j",
-    "com.typesafe.akka"             %% "akka-cluster-tools",
-    "com.typesafe.akka"             %% "akka-cluster",
-    "com.typesafe.akka"             %% "akka-cluster-sharding",
-    "com.typesafe.akka"             %% "akka-distributed-data",
-    "com.typesafe.akka"             %% "akka-persistence",
+//    "com.typesafe.akka"             %% "akka-cluster-tools",
+//    "com.typesafe.akka"             %% "akka-cluster",
+//    "com.typesafe.akka"             %% "akka-cluster-sharding",
+//    "com.typesafe.akka"             %% "akka-distributed-data",
+//    "com.typesafe.akka"             %% "akka-persistence",
     "com.typesafe.akka"             %% "akka-slf4j",
     "com.typesafe.akka"             %% "akka-stream",
     "com.typesafe.akka"             %% "akka-discovery"
