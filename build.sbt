@@ -21,7 +21,12 @@ lazy val pi_cluster_master = (project in file("."))
     exercise_018_es_classic_console,
     exercise_050_cluster_cluster_singleton_akka_bootstrap_discovery_via_config,
     exercise_051_cluster_singleton_akka_bootstrap_discovery_via_akka_dns,
-    exercise_060_cluster_base
+    exercise_060_cluster_base,
+
+    exercise_101_display_cluster_status,
+    exercise_102_display_cluster_sharding,
+    exercise_103_display_cluster_crdt
+      
  ).settings(CommonSettings.commonSettings: _*)
 
 lazy val common = project.settings(CommonSettings.commonSettings: _*)
@@ -105,3 +110,15 @@ lazy val exercise_051_cluster_singleton_akka_bootstrap_discovery_via_akka_dns = 
 lazy val exercise_060_cluster_base = project
   .configure(CommonSettings.configure)
   .dependsOn(common % "test->test;compile->compile")
+
+lazy val exercise_101_display_cluster_status = project
+   .configure(CommonSettings.configure)
+   .dependsOn(common % "test->test;compile->compile")
+
+lazy val exercise_102_display_cluster_sharding = project
+   .configure(CommonSettings.configure)
+   .dependsOn(common % "test->test;compile->compile")
+
+lazy val exercise_103_display_cluster_crdt = project
+   .configure(CommonSettings.configure)
+   .dependsOn(common % "test->test;compile->compile")

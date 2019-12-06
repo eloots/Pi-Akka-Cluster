@@ -1,0 +1,142 @@
+#cloud-config
+# vim: syntax=yaml
+#
+
+# Set your hostname here, the manage_etc_hosts will update the hosts file entries as well
+hostname: static
+manage_etc_hosts: false
+# don't write debian.org into apt mirrors
+apt_preserve_sources_list: true
+
+packages:
+
+# You could modify this for your own user information
+users:
+  - name: pirate
+    gecos: "Hypriot Pirate"
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    shell: /bin/bash
+    groups: users,docker,video
+    plain_text_passwd: hypriot
+    lock_passwd: false
+    ssh_pwauth: true
+    chpasswd: { expire: false }
+  - name: akkapi
+    gecos: "Akka Cluster Pi User"
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    shell: /bin/bash
+    groups: users,docker,video
+    plain_text_passwd: akkapi
+    lock_passwd: false
+    ssh_pwauth: true
+    chpasswd: { expire: false }
+
+package_upgrade: false
+
+# Static IP address
+write_files:
+  - content: |
+      persistent
+      # Generate Stable Private IPv6 Addresses instead of hardware based ones
+      slaac private
+
+      # static IP configuration:
+      interface eth0
+      static ip_address=192.168.1.102/24
+      # static ip6_address=fd51:42f8:caae:d92e::ff/64
+      static routers=192.168.200.1
+      static domain_name_servers=192.168.200.1 8.8.8.8
+    path: /etc/dhcpcd.conf
+
+  - content: |
+      # Cluster #0
+      192.168.200.10 node-0
+      192.168.200.11 node-1
+      192.168.200.12 node-2
+      192.168.200.13 node-3
+      192.168.200.14 node-4
+    path: /etc/cluster-hosts
+
+  - content: |
+      curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+      sudo apt-get update
+      sudo apt-get -y upgrade
+      echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+      sudo apt-get update
+      sudo apt-get install -qy kubelet kubeadm kubectl kubernetes-cni
+    owner: root:staff
+    permissions: '0755'
+    path: /usr/local/bin/install-kubernetes
+
+  - content: |
+        hdmi_force_hotplug=1
+        enable_uart=0
+        start_x=0
+        disable_camera_led=1
+        gpu_mem=16
+        dtparam=audio=on
+        #turn spi on for display
+        dtparam=spi=on
+    path: /boot/config.txt
+
+  - content: |
+      #!/bin/bash -e
+      
+      cat > /home/akkapi/.profile-tmux <<EOF
+      tnr() {
+         tmux new -s run
+      }
+      
+      tr() {
+         tmux attach -t run
+      }
+      
+      tnl() {
+         tmux new -s log
+      }
+      
+      tl() {
+         tmux attach -t log
+      }
+      
+      tkillall() {
+         for session in \`tmux ls | sed -e 's/:.*//'\`;do
+           tmux kill-session -t \$session
+         done
+      }
+      EOF
+      
+      cat >> /home/akkapi/.profile <<EOF
+      
+      . .profile-tmux
+      EOF
+    owner: root:staff
+    permissions: '0755'
+    path: /usr/local/bin/finish-install
+
+# These commands will be ran once on first boot only
+runcmd:
+  # Install a few extra packages - this could be done in the package section
+  - apt-get update
+  - apt-get -y install tmux
+  - apt-get -y install file
+  - apt-get -y install jq
+  - apt-get -y install dnsutils
+  - apt-get -y apt-install transport-https
+  - apt-get -y install zip
+  - apt-get -y install iftop
+  - apt-get -y install wiringpi
+  # Add cluster hosts to /etc/hosts
+  - 'cat /etc/cluster-hosts >> /etc/hosts'
+  - 'rm /etc/cluster-hosts'
+  # Install AdoptOpenJDK 11
+  - wget -qO - https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public | apt-key add -
+  - echo "deb https://adoptopenjdk.jfrog.io/adoptopenjdk/deb buster main" | tee /etc/apt/sources.list.d/adoptopenjdk.list
+  - apt-get update
+  - apt-get install -y adoptopenjdk-11-hotspot
+
+  # Activate WiFi interface
+#  - 'ifup wlan0'
+
+power_state:
+ mode: reboot
