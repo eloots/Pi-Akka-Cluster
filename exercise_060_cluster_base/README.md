@@ -1,7 +1,7 @@
 # Demonstrate Akka Cluster Weakly-Up members
 
-This exercise is a duplicate of the `cluster_weakly_up` exercise but implemented
-in Akka Typed.
+This exercise is a duplicate of the `cluster_weakly_up` exercise (implemented using
+the Akka Classic API's), but implemented using the Akka Typed API's.
 
 When a node tries to join the cluster while one or more other nodes are already
 up but unreachable, the leader will move the new node from `Joining` to `WeaklyUp`

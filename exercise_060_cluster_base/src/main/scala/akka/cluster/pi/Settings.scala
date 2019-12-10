@@ -20,7 +20,6 @@
 
 package akka.cluster.pi
 
-import akka.actor.typed.ActorSystem
 import com.typesafe.config.{Config, ConfigFactory, ConfigValueFactory}
 import org.neopixel._
 

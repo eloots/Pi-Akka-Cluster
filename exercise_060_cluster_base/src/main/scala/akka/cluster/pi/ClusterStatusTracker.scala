@@ -40,29 +40,26 @@ import akka.cluster.Member
 import akka.cluster.MemberStatus.{Up, WeaklyUp}
 import akka.cluster.typed.{Cluster, Subscribe}
 
-import scala.concurrent.duration._
-
 object ClusterStatusTracker {
 
-  sealed trait Event
+  sealed trait ClusterEvent
   // internal adapted cluster events only
-  private final case class ReachabilityChange(reachabilityEvent: ReachabilityEvent) extends Event
-  private final case class MemberChange(event: MemberEvent) extends Event
-  private final case class LeaderChange(event: LeaderChanged) extends Event
-  private case object Tick extends Event
+  private final case class ReachabilityChange(reachabilityEvent: ReachabilityEvent) extends ClusterEvent
+  private final case class MemberChange(event: MemberEvent) extends ClusterEvent
+  private final case class LeaderChange(event: LeaderChanged) extends ClusterEvent
 
-  def apply(settings: Settings): Behavior[Event] =
+  def apply(settings: Settings): Behavior[ClusterEvent] =
     Behaviors.setup { context =>
-      Behaviors.withTimers[Event] { timers =>
+      Behaviors.withTimers[ClusterEvent] { timers =>
         new ClusterStatusTracker(context, settings, timers).running
       }
     }
 
 }
 
-class ClusterStatusTracker(context: ActorContext[ClusterStatusTracker.Event],
+class ClusterStatusTracker(context: ActorContext[ClusterStatusTracker.ClusterEvent],
                            settings: Settings,
-                           timers: TimerScheduler[ClusterStatusTracker.Event]
+                           timers: TimerScheduler[ClusterStatusTracker.ClusterEvent]
                            ) {
   import ClusterStatusTracker._
 
@@ -71,8 +68,6 @@ class ClusterStatusTracker(context: ActorContext[ClusterStatusTracker.Event],
   private val thisHost = settings.config.getString("akka.remote.artery.canonical.hostname")
 
   private val ledStrip = context.spawn(LedStripController(settings), "led-strip-controller")
-
-  timers.startTimerAtFixedRate(Tick, 1.seconds)
 
   private val memberEventAdapter: ActorRef[MemberEvent] = context.messageAdapter(MemberChange)
   Cluster(context.system).subscriptions ! Subscribe(memberEventAdapter, classOf[MemberEvent])
@@ -83,10 +78,10 @@ class ClusterStatusTracker(context: ActorContext[ClusterStatusTracker.Event],
   private val roleLeadChangedAdapter: ActorRef[LeaderChanged] = context.messageAdapter(LeaderChange)
   Cluster(context.system).subscriptions ! Subscribe(roleLeadChangedAdapter, classOf[LeaderChanged])
 
-  def running: Behavior[ClusterStatusTracker.Event] = Behaviors.receiveMessage { message =>
+  def running: Behavior[ClusterStatusTracker.ClusterEvent] = Behaviors.receiveMessage { message =>
     message match {
-      case ReachabilityChange(reachabilityEvent) =>
-        reachabilityEvent match {
+      case ReachabilityChange(reachabilityChange) =>
+        reachabilityChange match {
           case UnreachableMember(member) =>
             ledStrip ! LedStripController.Unreachable(mapHostToLedId(member))
           case ReachableMember(member) if member.status == Up =>
@@ -117,8 +112,6 @@ class ClusterStatusTracker(context: ActorContext[ClusterStatusTracker.Event],
         ledStrip ! LedStripController.IsLeader
       case LeaderChange(LeaderChanged(Some(leader))) =>
         ledStrip ! LedStripController.IsNoLeader
-      case Tick =>
-
     }
     Behaviors.same
   }

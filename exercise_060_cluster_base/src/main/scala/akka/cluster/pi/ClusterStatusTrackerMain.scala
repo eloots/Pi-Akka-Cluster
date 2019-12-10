@@ -29,7 +29,7 @@ object ClusterStatusTrackerMain {
 
     val settings = Settings()
     val config = settings.config
-    val system = ActorSystem[ClusterStatusTracker.Event](ClusterStatusTracker(settings), settings.actorSystemName, config)
+    val system = ActorSystem[ClusterStatusTracker.ClusterEvent](ClusterStatusTracker(settings), settings.actorSystemName, config)
 
     // Start Akka HTTP Management extension
     AkkaManagement(system.classicSystem).start
