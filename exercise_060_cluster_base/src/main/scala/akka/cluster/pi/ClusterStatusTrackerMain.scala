@@ -20,8 +20,22 @@
 
 package akka.cluster.pi
 
-import akka.actor.typed.ActorSystem
+import akka.NotUsed
+import akka.actor.typed.scaladsl.Behaviors
+import akka.actor.typed.{ActorSystem, Behavior, Terminated}
 import akka.management.scaladsl.AkkaManagement
+
+object Main {
+  def apply(settings: Settings): Behavior[NotUsed] = Behaviors.setup { context =>
+    val ledStripController = context.spawn(LedStripVisualiser(settings), "led-strip-controller")
+    val clusterStatusTracker = context.spawn(ClusterStatusTracker(settings), "cluster-status-tracker")
+    clusterStatusTracker ! ClusterStatusTracker.SubscribeVisualiser(ledStripController)
+    Behaviors.receiveSignal {
+      case (_, Terminated(_)) =>
+        Behaviors.stopped
+    }
+  }
+}
 
 object ClusterStatusTrackerMain {
   def main(args: Array[String]): Unit = {
@@ -29,9 +43,9 @@ object ClusterStatusTrackerMain {
 
     val settings = Settings()
     val config = settings.config
-    val system = ActorSystem[ClusterStatusTracker.ClusterEvent](ClusterStatusTracker(settings), settings.actorSystemName, config)
+    val system = ActorSystem[NotUsed](Main(settings), settings.actorSystemName, config)
 
     // Start Akka HTTP Management extension
-    AkkaManagement(system.classicSystem).start
+    AkkaManagement(system.classicSystem).start()
   }
 }

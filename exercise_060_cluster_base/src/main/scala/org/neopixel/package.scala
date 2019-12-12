@@ -40,6 +40,7 @@ package object neopixel {
   val Red = color(0, 255, 0)
   val DarkRed = color(0, 100, 0)
   val Blue = color(0, 0, 255)
+  val LightBlue = color(40, 40, 255)
   val DarkBlue = color(0, 0, 100)
   val Yellow = color(255, 255, 0)
   val Cyan = color(255, 0, 255)
@@ -58,6 +59,7 @@ package object neopixel {
       "Red" -> Red,
       "DarkRed" -> DarkRed,
       "Blue" -> Blue,
+      "LightBlue" -> LightBlue,
       "DarkBlue" -> DarkBlue,
       "Yellow" -> Yellow,
       "Cyan" -> Cyan,
