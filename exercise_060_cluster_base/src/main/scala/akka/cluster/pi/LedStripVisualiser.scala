@@ -56,6 +56,7 @@ class LedStripVisualiser(context: ActorContext[ClusterStatusTracker.NodeState],
 
   import settings._
 
+  // TODO: This needs to move to configuration settings
   private val LeaderLedNumber = 5
   private val SingletonLedNumber = 6
 
