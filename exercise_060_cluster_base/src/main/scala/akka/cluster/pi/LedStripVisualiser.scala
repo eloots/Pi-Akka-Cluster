@@ -47,7 +47,7 @@ object LedStripVisualiser {
   def apply(settings: Settings): Behavior[ClusterStatusTracker.NodeState] =
     Behaviors.setup { context =>
         new LedStripVisualiser(context, settings)
-          .running(heartbeatLedOn = false, weaklyUpIndicatorOn = false, weaklyUpMembers = Set.empty[Int])
+          .running()
   }
 }
 
@@ -62,61 +62,52 @@ class LedStripVisualiser(context: ActorContext[ClusterStatusTracker.NodeState],
 
   private val ledStripDriver = context.spawn(LedStripDriver(settings), "led-strip-driver")
 
-  def running(heartbeatLedOn: Boolean, weaklyUpIndicatorOn: Boolean, weaklyUpMembers: Set[Int]): Behavior[ClusterStatusTracker.NodeState] = Behaviors
+  def running(): Behavior[ClusterStatusTracker.NodeState] = Behaviors
     .receiveMessage[ClusterStatusTracker.NodeState] {
       case ClusterStatusTracker.NodeUp(nodeLedId) =>
         setLedState(nodeLedId, nodeUpColor, None)
-        running(heartbeatLedOn, weaklyUpIndicatorOn, weaklyUpMembers - nodeLedId)
       case ClusterStatusTracker.NodeJoining(nodeLedId) =>
         setLedState(nodeLedId, nodeJoinedColor, None)
-        running(heartbeatLedOn, weaklyUpIndicatorOn, weaklyUpMembers - nodeLedId)
       case ClusterStatusTracker.NodeLeaving(nodeLedId) =>
         setLedState(nodeLedId, nodeLeftColor, None)
-        running(heartbeatLedOn, weaklyUpIndicatorOn, weaklyUpMembers - nodeLedId)
       case ClusterStatusTracker.NodeExiting(nodeLedId) =>
         setLedState(nodeLedId, nodeExitedColor, None)
-        running(heartbeatLedOn, weaklyUpIndicatorOn, weaklyUpMembers - nodeLedId)
       case ClusterStatusTracker.NodeRemoved(nodeLedId) =>
         setLedState(nodeLedId, nodeDownColor, None)
-        running(heartbeatLedOn, weaklyUpIndicatorOn, weaklyUpMembers - nodeLedId)
       case ClusterStatusTracker.NodeDown(nodeLedId) =>
         setLedState(nodeLedId, nodeDownColor, None)
-        running(heartbeatLedOn, weaklyUpIndicatorOn, weaklyUpMembers - nodeLedId)
       case ClusterStatusTracker.NodeUnreachable(nodeLedId) =>
         setLedState(nodeLedId, nodeUnreachableColor, None)
-        running(heartbeatLedOn = true, weaklyUpIndicatorOn, weaklyUpMembers - nodeLedId)
       case ClusterStatusTracker.NodeWeaklyUp(nodeLedId) =>
         setLedState(nodeLedId, nodeWeaklyUpColor, Some(LedStripDriver.WeaklyUpBlinker))
-        running(heartbeatLedOn, weaklyUpIndicatorOn, weaklyUpMembers + nodeLedId)
       case ClusterStatusTracker.IsLeader =>
         setLeaderIndicator(true)
-        Behaviors.same
       case ClusterStatusTracker.IsNoLeader =>
         setLeaderIndicator(false)
-        Behaviors.same
       case ClusterStatusTracker.PiClusterSingletonRunning =>
         setSingletonIndicator(singletonRunning = true)
-        Behaviors.same
       case ClusterStatusTracker.PiClusterSingletonNotRunning =>
         setSingletonIndicator(singletonRunning = false)
-        Behaviors.same
     }
 
-  private def setLeaderIndicator(isLeader: Boolean): Unit = {
+  private def setLeaderIndicator(isLeader: Boolean): Behavior[ClusterStatusTracker.NodeState] = {
     if (isLeader)
       ledStripDriver ! LedStripDriver.SetLedState(logicalToPhysicalLEDMapping(LeaderLedNumber), leaderIndicatorColor, None)
     else
       ledStripDriver ! LedStripDriver.SetLedState(logicalToPhysicalLEDMapping(LeaderLedNumber), Black, None)
+    Behaviors.same
   }
 
-  private def setSingletonIndicator(singletonRunning: Boolean): Unit = {
+  private def setSingletonIndicator(singletonRunning: Boolean): Behavior[ClusterStatusTracker.NodeState] = {
     if (singletonRunning)
       ledStripDriver ! LedStripDriver.SetLedState(logicalToPhysicalLEDMapping(SingletonLedNumber), LightBlue, None)
     else
       ledStripDriver ! LedStripDriver.SetLedState(logicalToPhysicalLEDMapping(SingletonLedNumber), Black, None)
+    Behaviors.same
   }
-  private def setLedState(nodeLedId: Int, color: Long, blinker: Option[LedStripDriver.Blinker]): Unit = {
+  private def setLedState(nodeLedId: Int, color: Long, blinker: Option[LedStripDriver.Blinker]): Behavior[ClusterStatusTracker.NodeState] = {
     ledStripDriver ! LedStripDriver.SetLedState(logicalToPhysicalLEDMapping(nodeLedId), color, blinker)
+    Behaviors.same
   }
 
   private val ledStripType = settings.config.getString("cluster-status-indicator.led-strip-type")
