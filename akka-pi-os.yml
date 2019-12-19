@@ -69,13 +69,6 @@ write_files:
     path: /usr/local/bin/install-kubernetes
 
   - content: |
-      sudo apt-get update
-      sudo apt-get install -y galternatives openjdk-8-jdk
-    owner: root:staff
-    permissions: '0755'
-    path: /usr/local/bin/install-java
-
-  - content: |
       #!/bin/bash -e
       
       cat > /home/akkapi/.profile-tmux <<EOF
@@ -1514,13 +1507,17 @@ runcmd:
   - apt-get -y install dnsutils
   - apt-get -y apt-install transport-https
   - apt-get -y install zip
+  - apt-get -y install iftop
   # Add cluster hosts to /etc/hosts
   - 'cat /etc/cluster-hosts >> /etc/hosts'
   - 'rm /etc/cluster-hosts'
   # Pickup the hostname changes
   - 'systemctl restart avahi-daemon'
-  # Install OpenJDK 8
-  - apt-get install -y galternatives openjdk-11-jdk
+  # Install AdoptOpenJDK 11
+  - wget -qO - https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public | apt-key add -
+  - echo "deb https://adoptopenjdk.jfrog.io/adoptopenjdk/deb buster main" | tee /etc/apt/sources.list.d/adoptopenjdk.list
+  - apt-get update
+  - apt-get install -y adoptopenjdk-11-hotspot
   # Send SIGTERM to progress tracker - all LEDs switch to green
   - pkill progresstracker
 
