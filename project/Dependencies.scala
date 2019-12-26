@@ -38,13 +38,6 @@ object Dependencies {
     "com.typesafe.akka"             %% "akka-cluster-typed",
     "com.typesafe.akka"             %% "akka-cluster-sharding-typed",
     "com.typesafe.akka"             %% "akka-persistence-typed",
-//    "com.typesafe.akka"             %% "akka-actor",
-    "com.typesafe.akka"             %% "akka-slf4j",
-//    "com.typesafe.akka"             %% "akka-cluster-tools",
-//    "com.typesafe.akka"             %% "akka-cluster",
-//    "com.typesafe.akka"             %% "akka-cluster-sharding",
-//    "com.typesafe.akka"             %% "akka-distributed-data",
-//    "com.typesafe.akka"             %% "akka-persistence",
     "com.typesafe.akka"             %% "akka-slf4j",
     "com.typesafe.akka"             %% "akka-stream",
     "com.typesafe.akka"             %% "akka-discovery"
