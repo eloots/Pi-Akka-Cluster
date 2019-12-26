@@ -56,10 +56,6 @@ class LedStripVisualiser(context: ActorContext[ClusterStatusTracker.NodeState],
 
   import settings._
 
-  // TODO: This needs to move to configuration settings
-  private val LeaderLedNumber = 5
-  private val SingletonLedNumber = 6
-
   private val ledStripDriver = context.spawn(LedStripDriver(settings), "led-strip-driver")
 
   def running(): Behavior[ClusterStatusTracker.NodeState] = Behaviors
@@ -100,7 +96,7 @@ class LedStripVisualiser(context: ActorContext[ClusterStatusTracker.NodeState],
 
   private def setSingletonIndicator(singletonRunning: Boolean): Behavior[ClusterStatusTracker.NodeState] = {
     if (singletonRunning)
-      ledStripDriver ! LedStripDriver.SetLedState(logicalToPhysicalLEDMapping(SingletonLedNumber), LightBlue, None)
+      ledStripDriver ! LedStripDriver.SetLedState(logicalToPhysicalLEDMapping(SingletonLedNumber), singletonIndicatorColor, None)
     else
       ledStripDriver ! LedStripDriver.SetLedState(logicalToPhysicalLEDMapping(SingletonLedNumber), Black, None)
     Behaviors.same

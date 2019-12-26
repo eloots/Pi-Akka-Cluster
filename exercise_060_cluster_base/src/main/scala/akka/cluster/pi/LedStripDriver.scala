@@ -50,8 +50,6 @@ class LedStripDriver(context: ActorContext[LedStripDriver.Command],
   import settings.LedStripConfig._
   import settings._
 
-  private val HeartbeatLedNumber = 7
-
   private val strip = Adafruit_NeoPixel(ledCount, ledPin, ledFreqHz, ledDma, ledInvert, ledBrightness, ledChannel, wsC.WS2811_STRIP_RGB)
 
   strip.begin()

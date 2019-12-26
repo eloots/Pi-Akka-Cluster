@@ -48,7 +48,7 @@ class Settings(implicit val config: Config) {
     } else throw new Exception(s"$color: invalid color for $colorSetting")
   }
 
-  implicit val colorMap: Map[String, Long] = availableColorMap.map { case (x, y) => (x.toUpperCase, y)}
+  implicit private val colorMap: Map[String, Long] = availableColorMap.map { case (x, y) => (x.toUpperCase, y)}
 
   private val clusterNodeConfig = config.getConfig("cluster-node-configuration")
 
@@ -83,6 +83,9 @@ class Settings(implicit val config: Config) {
   val nodeJoinedColor: Long =
     validateColor("cluster-status-indicator.cluster-node-colors.cluster-node-joined-color")
 
+  val singletonIndicatorColor: Long =
+    validateColor("cluster-status-indicator.cluster-node-colors.cluster-node-singleton-indicator-color")
+
   val leaderIndicatorColor: Long =
     validateColor("cluster-status-indicator.cluster-leader-indicator-color")
 
@@ -103,6 +106,11 @@ class Settings(implicit val config: Config) {
 
   val clusterStateConvergenceInterval: FiniteDuration =
     Duration(config.getDuration("cluster-status-indicator.cluster-heartbeat-indicator-convergence-interval", Millis), Millis)
+
+  // Mapping of different status indicators to their logical position on the LED strip
+  val LeaderLedNumber = 5
+  val SingletonLedNumber = 6
+  val HeartbeatLedNumber = 7
 
   object LedStripConfig {
 
