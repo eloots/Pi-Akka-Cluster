@@ -80,11 +80,7 @@ class LedStripVisualiser(context: ActorContext[ClusterStatusTracker.NodeState],
         setLeaderIndicator(true)
       case ClusterStatusTracker.IsNoLeader =>
         setLeaderIndicator(false)
-      case ClusterStatusTracker.PiClusterSingletonRunning =>
-        setSingletonIndicator(singletonRunning = true)
-      case ClusterStatusTracker.PiClusterSingletonNotRunning =>
-        setSingletonIndicator(singletonRunning = false)
-    }
+      }
 
   private def setLeaderIndicator(isLeader: Boolean): Behavior[ClusterStatusTracker.NodeState] = {
     if (isLeader)
@@ -94,13 +90,6 @@ class LedStripVisualiser(context: ActorContext[ClusterStatusTracker.NodeState],
     Behaviors.same
   }
 
-  private def setSingletonIndicator(singletonRunning: Boolean): Behavior[ClusterStatusTracker.NodeState] = {
-    if (singletonRunning)
-      ledStripDriver ! LedStripDriver.SetLedState(logicalToPhysicalLEDMapping(SingletonLedNumber), singletonIndicatorColor, None)
-    else
-      ledStripDriver ! LedStripDriver.SetLedState(logicalToPhysicalLEDMapping(SingletonLedNumber), Black, None)
-    Behaviors.same
-  }
   private def setLedState(nodeLedId: Int, color: Long, blinker: Option[LedStripDriver.Blinker]): Behavior[ClusterStatusTracker.NodeState] = {
     ledStripDriver ! LedStripDriver.SetLedState(logicalToPhysicalLEDMapping(nodeLedId), color, blinker)
     Behaviors.same

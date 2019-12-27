@@ -1,25 +1,25 @@
-# Demonstrate Akka Cluster Weakly-Up members
+# Explore base Akka Cluster formation
 
-This exercise is a duplicate of the `cluster_weakly_up` exercise (implemented using
-the Akka Classic API's), but implemented using the Akka Typed API's.
-
-When a node tries to join the cluster while one or more other nodes are already
-up but unreachable, the leader will move the new node from `Joining` to `WeaklyUp`
-instead of `Up`.
-
-The joining of a cluster in the `WeaklyUp` state can be disabled by setting 
-`akka.cluster.allow-weakly-up-members` to `off`
+In this exercise, we will explore the formation of an Akka Cluster with up-to
+5 nodes.
 
 # Instructions
 
-- Build and transfer the new version of the code to the nodes
-- Start a cluster on node-0, node-1 and node-2
-- Wait until the cluster is in a converged state before proceeding with
-  the next step
-- Start the application on the remaining nodes (3 & 4) and disconnect one
-  of the first three nodes
-- Observe and explain what happens
-- Next, reconnect the unplugged node and observe what happens. `Be patient`
+- Build the fat-jar for this exercise and transfer it to all the nodes using
+  the `copy` command
+- Run different scenarios and observe what happens
+- Here's a sample scenario:
+    - Start-up nodes individually
+        - Start up `node-0` and wait until the heart-beat LED starts blinking
+        - Wait for some time - what happens (or doesn't happen)
+        - Start up `node-1`
+        - Observe...
+        - Start up the remaining nodes  
+    - Hit `Ctrl-C` in `node-1`'s terminal
+    - Observe...
+    - Hit `Ctrl-C` in `node-0`'s terminal
+    - Observe...
+    - Hit `Ctrl-C` in remaining node terminal sessions  
 
 # LED Legend
 
@@ -31,7 +31,12 @@ The joining of a cluster in the `WeaklyUp` state can be disabled by setting
     - White:      Node is Unreachable
     - Dark Green: Node is WeaklyUp - The LED is blinking
 
-- LED number 6 indicates is Cyan when the node has a leader role
-- LED number 7 is unused
-- LED number 8 is the cluster liveliness indicator: when it blinks, we know
-that the cluster node software is actually running
+- LED number 6: Cyan when the node has a leader role
+- LED number 7: Not used in this exercise
+- LED number 8: Cluster liveliness indicator: when it blinks, we know
+                that the cluster node software is actually running
+                It blinks in red when the membership state of the cluster has not yet converged
+                It flashes 3 times in green when the membership state just converged
+                It blinks in white when the cluster is operating normally
+
+Note that in this exercise, the cluster gossip interval (and other parameters related to it) are slowed down on purpose in order to be able to get more time to see what is happening - normally, things move along faster. This is configured in `src/main/application.conf`.

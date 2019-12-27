@@ -48,9 +48,9 @@ object Dependencies {
     "ch.qos.logback"                 %  "logback-classic",
   ).map (_ % Version.logbackVer)
   
-//  private val commercialModulesDeps = Seq(
-//    "com.lightbend.akka"            %% "akka-split-brain-resolver",
-//  ).map (_ % Version.akkaSBRVer)
+  private val commercialModulesDeps = Seq(
+    "com.lightbend.akka"            %% "akka-split-brain-resolver",
+  ).map (_ % Version.akkaSBRVer)
   
   private val akkaHttpDeps = Seq(
     "com.typesafe.akka"             %% "akka-http",
@@ -74,7 +74,7 @@ object Dependencies {
   val dependencies: Seq[ModuleID] =
     akkaDeps ++
     logbackDeps ++
-    //commercialModulesDeps ++
+    commercialModulesDeps ++
     akkaHttpDeps ++
     akkaManagementDeps ++ 
     scalaTestDeps ++ 
