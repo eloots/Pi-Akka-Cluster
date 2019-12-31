@@ -1,5 +1,5 @@
 // Cinnamon
-addSbtPlugin("com.lightbend.cinnamon" % "sbt-cinnamon" % "2.12.3")
+//addSbtPlugin("com.lightbend.cinnamon" % "sbt-cinnamon" % "2.12.3")
 // Cinnamon
 
 // SBT Native Packager

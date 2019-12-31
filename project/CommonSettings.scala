@@ -18,8 +18,8 @@
   * limitations under the License.
   */
 
-import com.lightbend.cinnamon.sbt.Cinnamon
-import com.lightbend.sbt.javaagent.JavaAgent.JavaAgentKeys
+//import com.lightbend.cinnamon.sbt.Cinnamon
+//import com.lightbend.sbt.javaagent.JavaAgent.JavaAgentKeys
 import sbt.Keys._
 import sbt._
 import sbtstudent.AdditionalSettings
@@ -46,9 +46,9 @@ object CommonSettings {
     publishArtifact in packageSrc := false,
     publishArtifact in packageDoc := false,
     libraryDependencies ++= Dependencies.dependencies,
-    credentials += Credentials(Path.userHome / ".lightbend" / "commercial.credentials"),
-    resolvers += "com-mvn" at "https://repo.lightbend.com/commercial-releases/",
-    resolvers += Resolver.url("com-ivy", url("https://repo.lightbend.com/commercial-releases/"))(Resolver.ivyStylePatterns)
+//    credentials += Credentials(Path.userHome / ".lightbend" / "commercial.credentials"),
+//    resolvers += "com-mvn" at "https://repo.lightbend.com/commercial-releases/",
+//    resolvers += Resolver.url("com-ivy", url("https://repo.lightbend.com/commercial-releases/"))(Resolver.ivyStylePatterns)
   ) ++
     AdditionalSettings.initialCmdsConsole ++
     AdditionalSettings.initialCmdsTestConsole ++
@@ -56,15 +56,15 @@ object CommonSettings {
 
   lazy val configure: Project => Project = (proj: Project) => {
     proj
-    .enablePlugins(Cinnamon)
+    //.enablePlugins(Cinnamon)
     .settings(CommonSettings.commonSettings: _*)
-    .settings(
-      libraryDependencies += Cinnamon.library.cinnamonPrometheus,
-      libraryDependencies += Cinnamon.library.cinnamonPrometheusHttpServer,
-      libraryDependencies += Cinnamon.library.cinnamonAkkaHttp,
-      libraryDependencies += Cinnamon.library.cinnamonOpenTracingZipkin,
-      libraryDependencies += Cinnamon.library.cinnamonCHMetricsElasticsearchReporter
-    )
+//    .settings(
+//      libraryDependencies += Cinnamon.library.cinnamonPrometheus,
+//      libraryDependencies += Cinnamon.library.cinnamonPrometheusHttpServer,
+//      libraryDependencies += Cinnamon.library.cinnamonAkkaHttp,
+//      libraryDependencies += Cinnamon.library.cinnamonOpenTracingZipkin,
+//      libraryDependencies += Cinnamon.library.cinnamonCHMetricsElasticsearchReporter
+//    )
       .enablePlugins(DockerPlugin, JavaAppPackaging)
       .settings(
         mappings in Universal ++=
