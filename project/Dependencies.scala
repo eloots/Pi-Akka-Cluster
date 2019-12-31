@@ -22,7 +22,7 @@ import sbt._
 
 object Version {
   val akkaVer           = "2.6.1"
-  val akkaHttpVer       = "10.1.10"
+  val akkaHttpVer       = "10.1.11"
   val logbackVer        = "1.2.3"
   val scalaVer          = "2.13.1"
   val akkaSBRVer        = "1.1.12"
@@ -67,7 +67,7 @@ object Dependencies {
   )
   
   private val akkaTestkitDeps = Seq(
-    "com.typesafe.akka"             %% "akka-testkit" % Version.akkaVer % Test
+    "com.typesafe.akka"             %% "akka-actor-testkit-typed" % Version.akkaVer % Test
   )
 
   val dependencies: Seq[ModuleID] =
