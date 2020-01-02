@@ -1,21 +1,26 @@
 package akka.cluster.pi
 
+import akka.actor.typed.receptionist.{Receptionist, ServiceKey}
 import akka.actor.typed.scaladsl.{ActorContext, Behaviors, StashBuffer}
-import akka.actor.typed.{ActorRef, Behavior}
+import akka.actor.typed.{ActorRef, Behavior, SupervisorStrategy}
 import akka.cluster.pi.SudokuDetailProcessor.UpdateSender
 
+import scala.concurrent.duration._
+
 object SudokuSolver {
+
+  val Key: ServiceKey[Command] = ServiceKey("sudoku-processor")
 
   // SudokuSolver Protocol
   sealed trait Command
   final case class InitialRowUpdates(rowUpdates: Seq[SudokuDetailProcessor.RowUpdate],
-                                     replyTo: ActorRef[SudokuSolver.Response]) extends Command
+                                     replyTo: ActorRef[SudokuSolver.Response]) extends Command with CborSerializable
   // Wrapped responses
   private final case class SudokuDetailProcessorResponseWrapped(response: SudokuDetailProcessor.Response) extends Command
   private final case class SudokuProgressTrackerResponseWrapped(response: SudokuProgressTracker.Response) extends Command
   // My Responses
   sealed trait Response
-  final case class SudokuSolution(sudoku: Sudoku) extends Response
+  final case class SudokuSolution(sudoku: Sudoku) extends Response with CborSerializable
 
   def genDetailProcessors[A <: SudokoDetailType : UpdateSender](context: ActorContext[Command]): Map[Int, ActorRef[SudokuDetailProcessor.Command]] = {
     cellIndexesVector.map {
@@ -27,17 +32,23 @@ object SudokuSolver {
   }
 
   def apply(): Behavior[Command] =
-    Behaviors.withStash(capacity = 10) { buffer =>
-      Behaviors.setup { context =>
-        new SudokuSolver(context, buffer).idle()
+    Behaviors.supervise[Command] {
+      Behaviors.withStash(capacity = 200) { buffer =>
+        Behaviors.setup { context =>
+          new SudokuSolver(context, buffer).idle()
+        }
       }
-    }
+    }.onFailure[Exception](
+      SupervisorStrategy.restartWithBackoff(minBackoff = 5.seconds, maxBackoff = 1.minute, randomFactor = 0.2)
+    )
 }
 
 class SudokuSolver(context: ActorContext[SudokuSolver.Command],
                    buffer: StashBuffer[SudokuSolver.Command]) {
   import SudokuSolver._
   import akka.cluster.pi.CellMappings._
+
+  context.system.receptionist ! Receptionist.Register(Key, context.self)
 
   val detailProcessorResponseMapper: ActorRef[SudokuDetailProcessor.Response] =
     context.messageAdapter(response => SudokuDetailProcessorResponseWrapped(response))

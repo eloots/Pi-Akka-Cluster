@@ -21,8 +21,9 @@
 package akka.cluster.pi
 
 import akka.NotUsed
-import akka.actor.typed.scaladsl.Behaviors
+import akka.actor.typed.scaladsl.{Behaviors, Routers}
 import akka.actor.typed.{ActorSystem, Behavior, Terminated}
+import akka.cluster.typed.{ClusterSingleton, SingletonActor}
 import akka.management.scaladsl.AkkaManagement
 
 object Main {
@@ -32,9 +33,12 @@ object Main {
     val clusterStatusTracker = context.spawn(ClusterStatusTracker(settings), "cluster-status-tracker")
     clusterStatusTracker ! ClusterStatusTracker.SubscribeVisualiser(ledStripController)
 
-    // Start SodukuSolver & a Sudoku problem sender
-    val sudokuSolver = context.spawn(SudokuSolver(), "sudoku-solver")
-    context.spawn(SudokuProblemSender(sudokuSolver), "sudoku-problem-sender")
+    // Start SodukuSolver: we'll run one instance/cluster node
+    val sudokuSolver = context.spawn(SudokuSolver(), s"sudoku-solver")
+    // We'll use a [cluster-aware] group router
+    val sudokuSolverGroup = context.spawn(Routers.group(SudokuSolver.Key), "sudoku-solvers")
+    // And run one instance if the Sudoku problem sender in the cluster
+    ClusterSingleton(context.system).init(SingletonActor(SudokuProblemSender(sudokuSolverGroup), "sudoku-problem-sender"))
 
     Behaviors.receiveSignal {
       case (_, Terminated(_)) =>

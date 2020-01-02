@@ -40,9 +40,10 @@ object Dependencies {
     "com.typesafe.akka"             %% "akka-persistence-typed",
     "com.typesafe.akka"             %% "akka-slf4j",
     "com.typesafe.akka"             %% "akka-stream",
-    "com.typesafe.akka"             %% "akka-discovery"
+    "com.typesafe.akka"             %% "akka-discovery",
+    "com.typesafe.akka"             %% "akka-serialization-jackson",
   ).map (_ % Version.akkaVer)
-  
+
   private val logbackDeps = Seq (
     "ch.qos.logback"                 %  "logback-classic",
   ).map (_ % Version.logbackVer)
