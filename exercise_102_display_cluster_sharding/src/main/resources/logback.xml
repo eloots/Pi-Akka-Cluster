@@ -1,0 +1,23 @@
+<configuration>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} %-5level [%-20.20thread] %-36.36logger{36}  %msg%n%rEx</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="com.datastax.driver.core.Connection" level="TRACE"/>
+    <logger name="slick" level="INFO"/>
+    <logger name="com.zaxxer.hikari" level="INFO"/>
+
+    <logger name="kafka" level="WARN"/>
+    <logger name="org.apache.kafka" level="WARN"/>
+    <logger name="org.apache.kafka.common.utils.AppInfoParser" level="ERROR"/>
+    <logger name="org.apache.kafka.clients.NetworkClient" level="ERROR"/>
+
+    <logger name="com.datastax.driver.core" level="INFO"/>
+    <logger name="io.netty" level="WARN"/>
+
+    <root level="DEBUG">
+        <appender-ref ref="STDOUT" />
+    </root>
+</configuration>
