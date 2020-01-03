@@ -81,8 +81,9 @@ object Dependencies {
   )
 
   private val persistenceDep = Seq(
-    "com.github.dnvriend" %% "akka-persistence-jdbc" % "3.5.2",
-    "mysql" % "mysql-connector-java" % "8.0.18"
+    "com.typesafe.akka"            %% "akka-persistence-query" % Version.akkaVer,
+    "com.github.dnvriend"          %% "akka-persistence-jdbc" % "3.5.2",
+    "mysql"                        %  "mysql-connector-java" % "8.0.18"
   )
 
   private val commonsDep = Seq(
