@@ -84,8 +84,6 @@ class ClusterStatusTracker private (context: ActorContext[ClusterStatusTracker.C
                            ) {
   import ClusterStatusTracker._
 
-  private val cluster = Cluster(context.system)
-
   private val thisHost = settings.config.getString("akka.remote.artery.canonical.hostname")
 
   private val memberEventAdapter: ActorRef[MemberEvent] = context.messageAdapter(MemberChange)
@@ -97,7 +95,7 @@ class ClusterStatusTracker private (context: ActorContext[ClusterStatusTracker.C
   private val roleLeadChangedAdapter: ActorRef[LeaderChanged] = context.messageAdapter(LeaderChange)
   Cluster(context.system).subscriptions ! Subscribe(roleLeadChangedAdapter, classOf[LeaderChanged])
 
-  private val pcs = createPiClusterSingleton()
+  createPiClusterSingleton()
 
   def running(nodesState: Map[String, NodeState],
               isLeader: Boolean,

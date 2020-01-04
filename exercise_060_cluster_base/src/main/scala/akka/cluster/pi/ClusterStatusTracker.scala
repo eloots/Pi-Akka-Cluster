@@ -38,7 +38,7 @@ import akka.actor.typed.{ActorRef, Behavior}
 import akka.cluster.ClusterEvent._
 import akka.cluster.Member
 import akka.cluster.MemberStatus.{Up, WeaklyUp}
-import akka.cluster.typed.{Cluster, ClusterSingleton, SingletonActor, Subscribe}
+import akka.cluster.typed.{Cluster, Subscribe}
 
 object ClusterStatusTracker {
 
@@ -78,8 +78,6 @@ class ClusterStatusTracker private (context: ActorContext[ClusterStatusTracker.C
                            settings: Settings
                            ) {
   import ClusterStatusTracker._
-
-  private val cluster = Cluster(context.system)
 
   private val thisHost = settings.config.getString("akka.remote.artery.canonical.hostname")
 
