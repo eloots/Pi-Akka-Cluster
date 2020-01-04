@@ -55,7 +55,6 @@ object SudokuIO {
 
   import java.io.{BufferedReader, File, FileReader}
 
-  import scala.language.postfixOps
   class FileLineTraversable(file: File) extends Iterable[String] {
     val fr = new FileReader(file)
     val input = new BufferedReader(fr)

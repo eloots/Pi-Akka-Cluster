@@ -21,7 +21,7 @@
 package akka.cluster.pi
 
 import com.typesafe.config.{Config, ConfigFactory, ConfigValueFactory}
-import org.neopixel._
+import org.neopixel.Neopixel
 
 import scala.concurrent.duration.{Duration, FiniteDuration, MILLISECONDS => Millis}
 import scala.jdk.CollectionConverters._
@@ -48,7 +48,7 @@ class Settings(implicit val config: Config) {
     } else throw new Exception(s"$color: invalid color for $colorSetting")
   }
 
-  implicit private val colorMap: Map[String, Long] = availableColorMap.map { case (x, y) => (x.toUpperCase, y)}
+  implicit private val colorMap: Map[String, Long] = Neopixel.availableColorMap.map { case (x, y) => (x.toUpperCase, y)}
 
   private val clusterNodeConfig = config.getConfig("cluster-node-configuration")
 

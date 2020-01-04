@@ -18,18 +18,13 @@
   * limitations under the License.
   */
 
-package org
+package org.neopixel
 
-import _root_.neopixel.{rpi_ws281x => ws}
-import _root_.neopixel.ws2811_t
-import _root_.neopixel.{rpi_ws281xConstants => wsC}
-import _root_.neopixel.{rpi_ws281xJNI => wsJ}
-import _root_.neopixel.ws2811_channel_t
-import _root_.neopixel.{ws2811_return_t => wsRet}
+import _root_.neopixel.{ws2811_channel_t, ws2811_t, rpi_ws281x => ws, rpi_ws281xConstants => wsC, ws2811_return_t => wsRet}
 
 import scala.collection.mutable.ListBuffer
 
-package object neopixel {
+object Neopixel {
 
   val Black = color(0, 0, 0)
   val Green = color(255, 0, 0)

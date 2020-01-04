@@ -40,7 +40,7 @@ package akka.cluster.pi
 
 import akka.actor.typed.Behavior
 import akka.actor.typed.scaladsl.{ActorContext, Behaviors}
-import org.neopixel._
+import org.neopixel.Neopixel
 
 object LedStripVisualiser {
 
@@ -86,7 +86,7 @@ class LedStripVisualiser private (context: ActorContext[ClusterStatusTracker.Nod
     if (isLeader)
       ledStripDriver ! LedStripDriver.SetLedState(logicalToPhysicalLEDMapping(LeaderLedNumber), leaderIndicatorColor, None)
     else
-      ledStripDriver ! LedStripDriver.SetLedState(logicalToPhysicalLEDMapping(LeaderLedNumber), Black, None)
+      ledStripDriver ! LedStripDriver.SetLedState(logicalToPhysicalLEDMapping(LeaderLedNumber), Neopixel.Black, None)
     Behaviors.same
   }
 

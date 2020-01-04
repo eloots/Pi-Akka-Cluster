@@ -23,7 +23,7 @@ package akka.cluster.pi
 import akka.actor.typed.scaladsl.{ActorContext, Behaviors, TimerScheduler}
 import akka.actor.typed.{Behavior, PostStop}
 import neopixel.{rpi_ws281xConstants => wsC}
-import org.neopixel.{Adafruit_NeoPixel, Black}
+import org.neopixel.Neopixel.{Adafruit_NeoPixel, Black}
 
 object LedStripDriver {
 
