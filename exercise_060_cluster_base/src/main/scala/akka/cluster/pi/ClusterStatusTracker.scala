@@ -74,7 +74,7 @@ object ClusterStatusTracker {
 
 }
 
-class ClusterStatusTracker(context: ActorContext[ClusterStatusTracker.ClusterEvent],
+class ClusterStatusTracker private (context: ActorContext[ClusterStatusTracker.ClusterEvent],
                            settings: Settings
                            ) {
   import ClusterStatusTracker._

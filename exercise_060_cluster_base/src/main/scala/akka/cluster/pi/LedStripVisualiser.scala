@@ -51,7 +51,7 @@ object LedStripVisualiser {
   }
 }
 
-class LedStripVisualiser(context: ActorContext[ClusterStatusTracker.NodeState],
+class LedStripVisualiser private (context: ActorContext[ClusterStatusTracker.NodeState],
                          settings: Settings) {
 
   import settings._

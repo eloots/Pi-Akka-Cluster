@@ -55,7 +55,7 @@ object SudokuDetailProcessor {
   }
 }
 
-class SudokuDetailProcessor[DetailType <: SudokoDetailType : UpdateSender] {
+class SudokuDetailProcessor[DetailType <: SudokoDetailType : UpdateSender] private {
 
   import ReductionRules.{reductionRuleOne, reductionRuleTwo}
   import SudokuDetailProcessor._

@@ -42,7 +42,7 @@ object LedStripDriver {
   }
 }
 
-class LedStripDriver(context: ActorContext[LedStripDriver.Command],
+class LedStripDriver private (context: ActorContext[LedStripDriver.Command],
                      settings: Settings,
                      timers: TimerScheduler[LedStripDriver.Command]) {
 

@@ -19,7 +19,7 @@ object SudokuProgressTracker {
     }
 }
 
-class SudokuProgressTracker(rowDetailProcessors: Map[Int, ActorRef[SudokuDetailProcessor.Command]],
+class SudokuProgressTracker private (rowDetailProcessors: Map[Int, ActorRef[SudokuDetailProcessor.Command]],
                             context: ActorContext[SudokuProgressTracker.Command],
                             sudokuSolver: ActorRef[SudokuProgressTracker.Response]) {
 

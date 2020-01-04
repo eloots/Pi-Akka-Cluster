@@ -43,7 +43,7 @@ object SudokuSolver {
     )
 }
 
-class SudokuSolver(context: ActorContext[SudokuSolver.Command],
+class SudokuSolver private (context: ActorContext[SudokuSolver.Command],
                    buffer: StashBuffer[SudokuSolver.Command]) {
   import SudokuSolver._
   import akka.cluster.pi.CellMappings._
