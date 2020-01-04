@@ -24,6 +24,7 @@ object CompileOptions {
     "-unchecked",
     "-deprecation",
     "-language:_",
+    "-Xlint",
     "-encoding", "UTF-8"
   )
 }
