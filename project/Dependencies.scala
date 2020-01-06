@@ -49,9 +49,7 @@ object Dependencies {
     "com.pi4j" % "pi4j-core",
     "com.pi4j" % "pi4j-device",
     "com.pi4j" % "pi4j-gpio-extension"
-
   ).map (_ % "1.2")
-
 
   private val logbackDeps = Seq (
     "ch.qos.logback"                 %  "logback-classic",
@@ -78,22 +76,6 @@ object Dependencies {
 
   private val akkaTestkitDeps = Seq(
     "com.typesafe.akka"             %% "akka-actor-testkit-typed" % Version.akkaVer % Test
-  )
-
-  private val persistenceDep = Seq(
-    "com.typesafe.akka"            %% "akka-persistence-query" % Version.akkaVer,
-    "com.github.dnvriend"          %% "akka-persistence-jdbc" % "3.5.2",
-    "mysql"                        %  "mysql-connector-java" % "8.0.18"
-  )
-
-  private val commonsDep = Seq(
-    "org.apache.commons" % "commons-lang3" % "3.1",
-    "commons-io" % "commons-io" % "2.5"
-  )
-
-  private val mockDep = Seq(
-    "org.scalamock" %% "scalamock" % "4.4.0" % Test,
-    "org.powermock" % "powermock-api-mockito2" % "2.0.2" % Test
   )
 
   private val persistenceDep = Seq(
