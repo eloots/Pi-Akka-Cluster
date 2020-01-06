@@ -175,4 +175,3 @@ lazy val exercise_102_display_cluster_sharding = project
 lazy val exercise_103_display_cluster_crdt = project
    .configure(CommonSettings.configure)
    .dependsOn(common % "test->test;compile->compile")
-
