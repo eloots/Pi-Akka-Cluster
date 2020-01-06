@@ -18,6 +18,7 @@
   * limitations under the License.
   */
 
+import sbt.Keys.libraryDependencies
 import sbt._
 
 object Version {
@@ -44,31 +45,55 @@ object Dependencies {
     "com.typesafe.akka"             %% "akka-serialization-jackson",
   ).map (_ % Version.akkaVer)
 
+  private val pi4jDeps = Seq(
+    "com.pi4j" % "pi4j-core",
+    "com.pi4j" % "pi4j-device",
+    "com.pi4j" % "pi4j-gpio-extension"
+
+  ).map (_ % "1.2")
+
+
   private val logbackDeps = Seq (
     "ch.qos.logback"                 %  "logback-classic",
   ).map (_ % Version.logbackVer)
-  
+
 //  private val commercialModulesDeps = Seq(
 //    "com.lightbend.akka"            %% "akka-split-brain-resolver",
 //  ).map (_ % Version.akkaSBRVer)
-  
+
   private val akkaHttpDeps = Seq(
     "com.typesafe.akka"             %% "akka-http",
     "com.typesafe.akka"             %% "akka-http-spray-json",
   ).map (_ % Version.akkaHttpVer)
-  
+
   private val akkaManagementDeps = Seq(
     "com.lightbend.akka.management" %% "akka-management",
     "com.lightbend.akka.management" %% "akka-management-cluster-bootstrap",
     "com.lightbend.akka.management" %% "akka-management-cluster-http",
   ).map (_ % Version.akkaManagementVer)
-  
+
   private val scalaTestDeps = Seq(
     "org.scalatest"                 %% "scalatest" % Version.scalaTestVer % Test
   )
-  
+
   private val akkaTestkitDeps = Seq(
     "com.typesafe.akka"             %% "akka-actor-testkit-typed" % Version.akkaVer % Test
+  )
+
+  private val persistenceDep = Seq(
+    "com.typesafe.akka"            %% "akka-persistence-query" % Version.akkaVer,
+    "com.github.dnvriend"          %% "akka-persistence-jdbc" % "3.5.2",
+    "mysql"                        %  "mysql-connector-java" % "8.0.18"
+  )
+
+  private val commonsDep = Seq(
+    "org.apache.commons" % "commons-lang3" % "3.1",
+    "commons-io" % "commons-io" % "2.5"
+  )
+
+  private val mockDep = Seq(
+    "org.scalamock" %% "scalamock" % "4.4.0" % Test,
+    "org.powermock" % "powermock-api-mockito2" % "2.0.2" % Test
   )
 
   val dependencies: Seq[ModuleID] =
@@ -76,7 +101,11 @@ object Dependencies {
     logbackDeps ++
     //commercialModulesDeps ++
     akkaHttpDeps ++
-    akkaManagementDeps ++ 
-    scalaTestDeps ++ 
-    akkaTestkitDeps
+    akkaManagementDeps ++
+    scalaTestDeps ++
+    mockDep ++
+    akkaTestkitDeps ++
+    pi4jDeps ++
+    persistenceDep ++
+    commonsDep
 }

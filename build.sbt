@@ -32,7 +32,10 @@ lazy val pi_cluster_master = (project in file("."))
     exercise_068_split_brain_resolver_keep_referee,
     exercise_069_split_brain_resolver_keep_oldest,
     exercise_070_split_brain_resolver_down_all,
-    exercise_071_clustered_sudoku_solver
+    exercise_071_clustered_sudoku_solver,
+    exercise_101_display_cluster_status,
+    exercise_102_display_cluster_sharding,
+    exercise_103_display_cluster_crdt
  ).settings(CommonSettings.commonSettings: _*)
 
 lazy val common = project.settings(CommonSettings.commonSettings: _*)
@@ -160,3 +163,16 @@ lazy val exercise_070_split_brain_resolver_down_all = project
 lazy val exercise_071_clustered_sudoku_solver = project
   .configure(CommonSettings.configure)
   .dependsOn(common % "test->test;compile->compile")
+
+lazy val exercise_101_display_cluster_status = project
+   .configure(CommonSettings.configure)
+   .dependsOn(common % "test->test;compile->compile")
+
+lazy val exercise_102_display_cluster_sharding = project
+   .configure(CommonSettings.configure)
+   .dependsOn(common % "test->test;compile->compile")
+
+lazy val exercise_103_display_cluster_crdt = project
+   .configure(CommonSettings.configure)
+   .dependsOn(common % "test->test;compile->compile")
+
