@@ -35,7 +35,7 @@ object PiClusterSingleton {
   }
 }
 
-class PiClusterSingleton(context: ActorContext[PiClusterSingleton.Command],
+class PiClusterSingleton private (context: ActorContext[PiClusterSingleton.Command],
                          settings: Settings,
                          clusterStatusTracker: ActorRef[ClusterStatusTracker.ClusterEvent]) {
 

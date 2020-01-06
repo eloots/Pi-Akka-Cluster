@@ -40,7 +40,7 @@ package akka.cluster.pi
 
 import akka.actor.typed.Behavior
 import akka.actor.typed.scaladsl.{ActorContext, Behaviors}
-import org.neopixel._
+import org.neopixel.Neopixel
 
 object LedStripVisualiser {
 
@@ -51,7 +51,7 @@ object LedStripVisualiser {
   }
 }
 
-class LedStripVisualiser(context: ActorContext[ClusterStatusTracker.NodeState],
+class LedStripVisualiser private (context: ActorContext[ClusterStatusTracker.NodeState],
                          settings: Settings) {
 
   import settings._
@@ -80,27 +80,16 @@ class LedStripVisualiser(context: ActorContext[ClusterStatusTracker.NodeState],
         setLeaderIndicator(true)
       case ClusterStatusTracker.IsNoLeader =>
         setLeaderIndicator(false)
-      case ClusterStatusTracker.PiClusterSingletonRunning =>
-        setSingletonIndicator(singletonRunning = true)
-      case ClusterStatusTracker.PiClusterSingletonNotRunning =>
-        setSingletonIndicator(singletonRunning = false)
-    }
+      }
 
   private def setLeaderIndicator(isLeader: Boolean): Behavior[ClusterStatusTracker.NodeState] = {
     if (isLeader)
       ledStripDriver ! LedStripDriver.SetLedState(logicalToPhysicalLEDMapping(LeaderLedNumber), leaderIndicatorColor, None)
     else
-      ledStripDriver ! LedStripDriver.SetLedState(logicalToPhysicalLEDMapping(LeaderLedNumber), Black, None)
+      ledStripDriver ! LedStripDriver.SetLedState(logicalToPhysicalLEDMapping(LeaderLedNumber), Neopixel.Black, None)
     Behaviors.same
   }
 
-  private def setSingletonIndicator(singletonRunning: Boolean): Behavior[ClusterStatusTracker.NodeState] = {
-    if (singletonRunning)
-      ledStripDriver ! LedStripDriver.SetLedState(logicalToPhysicalLEDMapping(SingletonLedNumber), singletonIndicatorColor, None)
-    else
-      ledStripDriver ! LedStripDriver.SetLedState(logicalToPhysicalLEDMapping(SingletonLedNumber), Black, None)
-    Behaviors.same
-  }
   private def setLedState(nodeLedId: Int, color: Long, blinker: Option[LedStripDriver.Blinker]): Behavior[ClusterStatusTracker.NodeState] = {
     ledStripDriver ! LedStripDriver.SetLedState(logicalToPhysicalLEDMapping(nodeLedId), color, blinker)
     Behaviors.same

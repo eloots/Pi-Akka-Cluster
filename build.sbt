@@ -22,11 +22,20 @@ lazy val pi_cluster_master = (project in file("."))
     exercise_050_cluster_cluster_singleton_akka_bootstrap_discovery_via_config,
     exercise_051_cluster_singleton_akka_bootstrap_discovery_via_akka_dns,
     exercise_060_cluster_base,
-
+    exercise_061_cluster_weakly_up,
+    exercise_062_cluster_singleton,
+    exercise_063_cluster_weakly_up_disabled,
+    exercise_064_cluster_akka_bootstrap_discovery_via_config,
+    exercise_065_cluster_akka_bootstrap_discovery_via_akka_dns,
+    exercise_066_cluster_split_brain_resolver_keep_majority,
+    exercise_067_cluster_split_brain_resolver_static_quorum,
+    exercise_068_split_brain_resolver_keep_referee,
+    exercise_069_split_brain_resolver_keep_oldest,
+    exercise_070_split_brain_resolver_down_all,
+    exercise_071_clustered_sudoku_solver,
     exercise_101_display_cluster_status,
     exercise_102_display_cluster_sharding,
     exercise_103_display_cluster_crdt
-      
  ).settings(CommonSettings.commonSettings: _*)
 
 lazy val common = project.settings(CommonSettings.commonSettings: _*)
@@ -108,6 +117,50 @@ lazy val exercise_051_cluster_singleton_akka_bootstrap_discovery_via_akka_dns = 
   .dependsOn(common % "test->test;compile->compile")
 
 lazy val exercise_060_cluster_base = project
+  .configure(CommonSettings.configure)
+  .dependsOn(common % "test->test;compile->compile")
+
+lazy val exercise_061_cluster_weakly_up = project
+  .configure(CommonSettings.configure)
+  .dependsOn(common % "test->test;compile->compile")
+
+lazy val exercise_062_cluster_singleton = project
+  .configure(CommonSettings.configure)
+  .dependsOn(common % "test->test;compile->compile")
+
+lazy val exercise_063_cluster_weakly_up_disabled = project
+  .configure(CommonSettings.configure)
+  .dependsOn(common % "test->test;compile->compile")
+
+lazy val exercise_064_cluster_akka_bootstrap_discovery_via_config = project
+  .configure(CommonSettings.configure)
+  .dependsOn(common % "test->test;compile->compile")
+
+lazy val exercise_065_cluster_akka_bootstrap_discovery_via_akka_dns = project
+  .configure(CommonSettings.configure)
+  .dependsOn(common % "test->test;compile->compile")
+
+lazy val exercise_066_cluster_split_brain_resolver_keep_majority = project
+  .configure(CommonSettings.configure)
+  .dependsOn(common % "test->test;compile->compile")
+
+lazy val exercise_067_cluster_split_brain_resolver_static_quorum = project
+  .configure(CommonSettings.configure)
+  .dependsOn(common % "test->test;compile->compile")
+
+lazy val exercise_068_split_brain_resolver_keep_referee = project
+  .configure(CommonSettings.configure)
+  .dependsOn(common % "test->test;compile->compile")
+
+lazy val exercise_069_split_brain_resolver_keep_oldest = project
+  .configure(CommonSettings.configure)
+  .dependsOn(common % "test->test;compile->compile")
+
+lazy val exercise_070_split_brain_resolver_down_all = project
+  .configure(CommonSettings.configure)
+  .dependsOn(common % "test->test;compile->compile")
+
+lazy val exercise_071_clustered_sudoku_solver = project
   .configure(CommonSettings.configure)
   .dependsOn(common % "test->test;compile->compile")
 

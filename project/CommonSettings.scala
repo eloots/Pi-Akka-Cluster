@@ -34,7 +34,7 @@ object CommonSettings {
     organization := "com.lightbend.training",
     version := "1.3.0",
     scalaVersion := Version.scalaVer,
-    scalacOptions ++= CompileOptions.compileOptions,
+    scalacOptions in Compile ++= CompileOptions.compileOptions,
     unmanagedSourceDirectories in Compile := List((scalaSource in Compile).value, (javaSource in Compile).value),
     unmanagedSourceDirectories in Test := List((scalaSource in Test).value, (javaSource in Test).value),
     testOptions += Tests.Argument(TestFrameworks.JUnit, "-v"),

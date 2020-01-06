@@ -23,7 +23,7 @@ import sbt._
 
 object Version {
   val akkaVer           = "2.6.1"
-  val akkaHttpVer       = "10.1.10"
+  val akkaHttpVer       = "10.1.11"
   val logbackVer        = "1.2.3"
   val scalaVer          = "2.13.1"
   val akkaSBRVer        = "1.1.12"
@@ -41,19 +41,17 @@ object Dependencies {
     "com.typesafe.akka"             %% "akka-persistence-typed",
     "com.typesafe.akka"             %% "akka-slf4j",
     "com.typesafe.akka"             %% "akka-stream",
-    "com.typesafe.akka"             %% "akka-discovery"
+    "com.typesafe.akka"             %% "akka-discovery",
+    "com.typesafe.akka"             %% "akka-serialization-jackson",
   ).map (_ % Version.akkaVer)
 
   private val pi4jDeps = Seq(
     "com.pi4j" % "pi4j-core",
     "com.pi4j" % "pi4j-device",
     "com.pi4j" % "pi4j-gpio-extension"
-
   ).map (_ % "1.2")
 
-
   private val logbackDeps = Seq (
-    "ch.qos.logback"                 %  "logback-classic",
     "ch.qos.logback"                 %  "logback-classic",
   ).map (_ % Version.logbackVer)
 
@@ -77,7 +75,7 @@ object Dependencies {
   )
 
   private val akkaTestkitDeps = Seq(
-    "com.typesafe.akka"             %% "akka-testkit" % Version.akkaVer % Test
+    "com.typesafe.akka"             %% "akka-actor-testkit-typed" % Version.akkaVer % Test
   )
 
   private val persistenceDep = Seq(
