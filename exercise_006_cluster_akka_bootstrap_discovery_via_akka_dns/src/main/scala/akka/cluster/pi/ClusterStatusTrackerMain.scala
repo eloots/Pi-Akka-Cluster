@@ -21,7 +21,7 @@
 package akka.cluster.pi
 
 import akka.NotUsed
-import akka.actor.typed.scaladsl.Behaviors
+import akka.actor.typed.scaladsl.{ActorContext, Behaviors}
 import akka.actor.typed.{ActorSystem, Behavior, Terminated}
 import akka.management.cluster.bootstrap.ClusterBootstrap
 import akka.management.scaladsl.AkkaManagement
@@ -29,7 +29,14 @@ import akka.management.scaladsl.AkkaManagement
 object Main {
   def apply(settings: Settings): Behavior[NotUsed] = Behaviors.setup { context =>
     val ledStripController = context.spawn(LedStripVisualiser(settings), "led-strip-controller")
-    val clusterStatusTracker = context.spawn(ClusterStatusTracker(settings), "cluster-status-tracker")
+    val clusterStatusTracker =
+      context.spawn(
+        ClusterStatusTracker(
+          settings,
+          Some((context: ActorContext[ClusterStatusTracker.ClusterEvent]) => PiClusterSingleton(settings, context.self))
+        ),
+        "cluster-status-tracker"
+      )
     clusterStatusTracker ! ClusterStatusTracker.SubscribeVisualiser(ledStripController)
     Behaviors.receiveSignal {
       case (_, Terminated(_)) =>

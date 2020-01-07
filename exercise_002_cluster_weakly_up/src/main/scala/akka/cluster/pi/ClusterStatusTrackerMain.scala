@@ -28,7 +28,7 @@ import akka.management.scaladsl.AkkaManagement
 object Main {
   def apply(settings: Settings): Behavior[NotUsed] = Behaviors.setup { context =>
     val ledStripController = context.spawn(LedStripVisualiser(settings), "led-strip-controller")
-    val clusterStatusTracker = context.spawn(ClusterStatusTracker(settings), "cluster-status-tracker")
+    val clusterStatusTracker = context.spawn(ClusterStatusTracker(settings, None), "cluster-status-tracker")
     clusterStatusTracker ! ClusterStatusTracker.SubscribeVisualiser(ledStripController)
     Behaviors.receiveSignal {
       case (_, Terminated(_)) =>

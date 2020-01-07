@@ -21,7 +21,7 @@
 package akka.cluster.pi
 
 import akka.NotUsed
-import akka.actor.typed.scaladsl.{Behaviors, Routers}
+import akka.actor.typed.scaladsl.{ActorContext, Behaviors, Routers}
 import akka.actor.typed.{ActorSystem, Behavior, Terminated}
 import akka.cluster.typed.{ClusterSingleton, SingletonActor}
 import akka.management.scaladsl.AkkaManagement
@@ -30,7 +30,14 @@ object Main {
   def apply(settings: Settings): Behavior[NotUsed] = Behaviors.setup { context =>
     // Start CLusterStatusTracker & LedStripVisualiser
     val ledStripController = context.spawn(LedStripVisualiser(settings), "led-strip-controller")
-    val clusterStatusTracker = context.spawn(ClusterStatusTracker(settings), "cluster-status-tracker")
+    val clusterStatusTracker =
+      context.spawn(
+        ClusterStatusTracker(
+          settings,
+          Some((context: ActorContext[ClusterStatusTracker.ClusterEvent]) => PiClusterSingleton(settings, context.self))
+        ),
+        "cluster-status-tracker"
+      )
     clusterStatusTracker ! ClusterStatusTracker.SubscribeVisualiser(ledStripController)
 
     // Start SodukuSolver: we'll run one instance/cluster node

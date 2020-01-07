@@ -37,7 +37,7 @@ class SudokuProblemSender private (sudokuSolver: ActorRef[SudokuSolver.Command],
   private val initialUpdate =
     SudokuSolver.InitialRowUpdates(rowUpdates, solutionWrapper)
 
-  timers.startTimerAtFixedRate(SendNewSudoku, 10.millis) // on a 5 node RPi 4 based cluster in steady state, this can be lowered to about 6ms
+  timers.startTimerAtFixedRate(SendNewSudoku, 25.millis) // on a 5 node RPi 4 based cluster in steady state, this can be lowered to about 6ms
 
   def sending(): Behavior[Command] = Behaviors.receiveMessagePartial {
     case SendNewSudoku =>
