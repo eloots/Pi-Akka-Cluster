@@ -20,11 +20,13 @@
 
 package org.neopixel
 
-import neopixel.{rpi_ws281x => ws, rpi_ws281xConstants => wsC}
+import neopixel.{rpi_ws281xConstants => wsC}
 
 object Main {
   def main(args: Array[String]): Unit = {
     System.loadLibrary("rpi_ws281x")
+
+    import Neopixel.{Adafruit_NeoPixel, color}
 
     // LED strip configuration:
     val LED_COUNT = 8 // Number of LED pixels.
