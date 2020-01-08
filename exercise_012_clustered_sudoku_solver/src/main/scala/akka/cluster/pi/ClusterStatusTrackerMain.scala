@@ -34,7 +34,7 @@ object Main {
       context.spawn(
         ClusterStatusTracker(
           settings,
-          Some((context: ActorContext[ClusterStatusTracker.ClusterEvent]) => PiClusterSingleton(settings, context.self))
+          Some(contextToClusterSingleton(settings))
         ),
         "cluster-status-tracker"
       )
@@ -52,6 +52,11 @@ object Main {
         Behaviors.stopped
     }
   }
+
+  private def contextToClusterSingleton(settings: Settings): ActorContextToSingletonBehavior  =
+    (context: ActorContext[ClusterStatusTracker.ClusterEvent]) => PiClusterSingleton(settings, context.self)
+
+  type ActorContextToSingletonBehavior = ActorContext[ClusterStatusTracker.ClusterEvent] => Behavior[PiClusterSingleton.Command]
 }
 
 object ClusterStatusTrackerMain {

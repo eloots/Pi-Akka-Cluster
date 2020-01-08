@@ -77,11 +77,12 @@ object ClusterStatusTracker {
         )
     }
 
+  type ActorContextToSingletonBehavior = (ActorContext[ClusterStatusTracker.ClusterEvent]) => Behavior[_]
 }
 
 class ClusterStatusTracker private (context: ActorContext[ClusterStatusTracker.ClusterEvent],
                                     settings: Settings,
-                                    optSingleton: Option[ActorContext[ClusterStatusTracker.ClusterEvent] => Behavior[_]]
+                                    optSingleton: Option[ClusterStatusTracker.ActorContextToSingletonBehavior]
                                    ) {
   import ClusterStatusTracker._
 
