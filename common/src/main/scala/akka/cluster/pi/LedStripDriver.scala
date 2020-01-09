@@ -26,9 +26,8 @@ import neopixel.{rpi_ws281xConstants => wsC}
 import org.neopixel.Neopixel.{Adafruit_NeoPixel, Black}
 
 object LedStripDriver {
-
   sealed trait Command
-  final case class SetLedState(ledId: Int, color: Long, blinkInterval: Option[Blinker]) extends Command
+  final case class SetLedState(ledId: Int, color: Long, optBlinker: Option[Blinker]) extends Command
   private final case object Heartbeat extends  Command
   private final case object WeaklyUpHeartBeat extends Command
 
