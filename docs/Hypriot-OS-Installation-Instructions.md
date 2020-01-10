@@ -24,16 +24,16 @@ Using the `akka-pi-os.yml` file in this repo, a 16GB micro SD card and a flash c
 
 > NOTE: Edit `akka-pi-os.yml` to change line: `static ip_address=192.168.200.10/24` for each node.
 
-The command to flash the card is:
+The command to flash the card is (**always check the [Hypriot downloads page](https://blog.hypriot.com/downloads/) to find out what the most recent version is!**):
 
 ```
-Pi-Akka-Cluster git:(master) ✗ flash -n node-0 -u akka-pi-os.yml \
-     https://github.com/hypriot/image-builder-rpi/releases/download/v1.11.2/hypriotos-rpi-v1.11.2.img.zip
+Pi-Akka-Cluster git:(master) ✗ flash -n node-1 -u akka-pi-os.yml \
+   https://github.com/hypriot/image-builder-rpi/releases/download/v1.12.0/hypriotos-rpi-v1.12.0.img.zip
 ```
 
 `-n node-0` specifies the host name for the node. For other nodes, set it to a name of the host this card is destined for (`node-0` through `node-4`)
 
-We're also using the latest version of Hypriot (1.11.2 at the time of writing). For a complete list of available versions, see the [downloads page](https://blog.hypriot.com/downloads/).
+We're also using the latest version of Hypriot (1.12.0 at the time of writing). For a complete list of available versions, see the [downloads page](https://blog.hypriot.com/downloads/).
 
 Next:
 
