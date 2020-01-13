@@ -69,13 +69,6 @@ write_files:
     path: /usr/local/bin/install-kubernetes
 
   - content: |
-      sudo apt-get update
-      sudo apt-get install -y galternatives openjdk-8-jdk
-    owner: root:staff
-    permissions: '0755'
-    path: /usr/local/bin/install-java
-
-  - content: |
       #!/bin/bash -e
       
       cat > /home/akkapi/.profile-tmux <<EOF
