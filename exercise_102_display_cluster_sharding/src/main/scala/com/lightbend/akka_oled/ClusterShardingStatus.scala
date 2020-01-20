@@ -29,14 +29,13 @@ import akka.pattern.{ask, pipe}
 import akka.util.Timeout
 import akka_oled.ButtonPushHandlers.{NEXT_SCREEN, RESET_SCREEN}
 import akka_oled.{ButtonPushHandlers, Logo}
-import com.lightbend.akka_oled.Client.{Get, PostTransaction}
+import com.lightbend.akka_oled.Client.{Get, PostPoints}
 import com.lightbend.akka_oled.ClusterShardingStatus.{Notification, SwitchFromTitleToScreen}
 import eroled.{BasicFont, OLEDWindow, SmartOLED}
 
 import scala.collection.mutable
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._
-import scala.language.postfixOps
 
 object ClusterShardingStatus {
 
@@ -63,26 +62,28 @@ class ClusterShardingStatus extends Actor with ActorLogging with Logo with Butto
 
    var cluster =  mutable.LinkedHashMap[String, String]("Node 0" -> "N/A", "Node 1" -> "N/A", "Node 2" -> "N/A")
    val clients = mutable.Map[String, Int]()
+   val shardsClients = mutable.Map[String, Set[String]]()
 
-   implicit val timeout: Timeout = 3.seconds
+
+   implicit val timeout: Timeout = 6.seconds
 
    val extractEntityId: ShardRegion.ExtractEntityId = {
-      case msg@PostTransaction(name, _) => (name, msg)
+      case msg@PostPoints(name, _) => (name, msg)
       case msg@Get(name) => (name, msg)
    }
 
-   val numberOfShards = 100
+   val numberOfShards = 6
 
    val extractShardId: ShardRegion.ExtractShardId = {
-      case PostTransaction(id, _) => (id.hashCode % numberOfShards).toString
-      case Get(id) => (id.hashCode % numberOfShards).toString
+      case PostPoints(id, _) => (Math.abs(id.hashCode) % numberOfShards).toString
+      case Get(id) => (Math.abs(id.hashCode) % numberOfShards).toString
       case ShardRegion.StartEntity(id) =>
          // StartEntity is used by remembering entities feature
-         (id.hashCode % numberOfShards).toString
+         (Math.abs(id.hashCode) % numberOfShards).toString
    }
 
    val counterRegion: ActorRef = ClusterSharding(context.system).start(
-      typeName = "BankAccount",
+      typeName = "GameStorage",
       entityProps = Client.props(self),
       settings = ClusterShardingSettings(context.system),
       extractEntityId = extractEntityId,
@@ -125,7 +126,9 @@ class ClusterShardingStatus extends Actor with ActorLogging with Logo with Butto
       renderState
    }
 
-   private def renderState: Unit = {
+
+   private def renderState(): Unit = {
+
       if (!showingLogo && !showingTitle) {
          if(currentScreen == 0) {
             if (!cluster.isEmpty)
@@ -134,7 +137,10 @@ class ClusterShardingStatus extends Actor with ActorLogging with Logo with Butto
                oled.drawString(0, 21, "Joining cluster")
          } else {
             if (!clients.isEmpty)
-               oled.drawMultilineString(clients.map[String] { case (key, value) => key + ": " + value + "        " }.mkString("\n"))
+               oled.drawMultilineString(shardsClients.flatMap[String] {
+                  case (key, clients) => clients.map{
+                     name => "Shard#" + key + "->"+name+": " + this.clients.getOrElse(name,0)
+                  }}.mkString("\n"))
             else
                oled.drawMultilineString("No data")
          }
@@ -193,18 +199,23 @@ class ClusterShardingStatus extends Actor with ActorLogging with Logo with Butto
       case get@Get(name) =>
          //(counterRegion ? ShardRegion.getShardRegionStateInstance).pipeTo(self)
          (counterRegion ? get).pipeTo(sender())
-      case post@PostTransaction(name, amount) =>
-         (counterRegion ? PostTransaction(name, amount)).pipeTo(sender())
+      case post@PostPoints(name, amount) =>
+         (counterRegion ? PostPoints(name, amount)).pipeTo(sender())
       case CurrentShardRegionState(set) =>
          //add new shards that were rebalanced
-         val entityIds = set.flatMap(_.entityIds)
+         val entityIds:Set[String] = set.flatMap(_.entityIds)
+
+         shardsClients.clear()
+         set.foreach(a =>
+            shardsClients.put(a.shardId.toString, a.entityIds.map(_.toString))
+         )
 
          entityIds.foreach(a => if (clients.get(a).isEmpty) clients += a -> 0)
          //remove old shards
          clients.foreach { case (k, v) => if (!entityIds.contains(k)) clients -= k }
 
          renderState
-         context.system.scheduler.scheduleOnce(2.seconds, counterRegion, ShardRegion.getShardRegionStateInstance)
+         context.system.scheduler.scheduleOnce(1.seconds, counterRegion, ShardRegion.getShardRegionStateInstance)
 
 
       case msg@MemberUp(member) =>

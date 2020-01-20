@@ -28,7 +28,6 @@ import eroled.{BasicFont, OLEDWindow, SmartOLED}
 
 import scala.collection.mutable
 import scala.concurrent.duration._
-import scala.language.postfixOps
 
 object ClusterNodeStatus {
 
@@ -82,10 +81,10 @@ class ClusterNodeStatus extends Actor with ActorLogging with Logo {
 
       state.get += mapHostToName(member.address.host.get) -> status
 
-      renderState
+      renderState()
    }
 
-   private def renderState: Unit = {
+   private def renderState(): Unit = {
       if (showingLogo) {
          oled.clearRam()
          showingLogo = false
@@ -99,7 +98,7 @@ class ClusterNodeStatus extends Actor with ActorLogging with Logo {
 
    def running(): Receive = {
       case SWITCH_FROM_LOGO_TO_SCREEN =>
-         renderState
+         renderState()
 
       case msg@MemberUp(member) =>
          nodeStatus(member, "Up")
@@ -158,7 +157,7 @@ class ClusterNodeStatus extends Actor with ActorLogging with Logo {
       }
       state.get += "Leader" -> mapHostToName(address.host.getOrElse("N/A"))
 
-      renderState
+      renderState()
    }
 
    override def postStop(): Unit = {
