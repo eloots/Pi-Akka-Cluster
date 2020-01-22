@@ -2,7 +2,7 @@ package akka.cluster.pi
 
 trait SudokuTestHelpers {
 
-  import ReductionRules.{reductionRuleOne, reductionRuleTwo}
+  import akkapi.cluster.ReductionRules.{reductionRuleOne, reductionRuleTwo}
 
   def stringToReductionSet(stringDef: Vector[String]): ReductionSet = {
     for {

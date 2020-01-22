@@ -2,7 +2,7 @@ package akka.cluster.pi
 
 import org.scalatest.{Matchers, WordSpec}
 
-import CellMappings._
+import akkapi.cluster.CellMappings._
 
 class CellMappingSpec extends WordSpec with Matchers {
 
