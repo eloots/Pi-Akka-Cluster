@@ -37,16 +37,23 @@ You'll see that 2 additional actors are created: a `SudokuSolver` and a
 
 You will see that the two remaining LEDs (on the 10-LED strip) are put to use:
 
-- LED #9 blinks for ±15ms each time the Sudoku solver receives a new Sudoku problem. It can blink using one of three colors, each with a specific meaning:
+- LED #9 blinks for ±15ms each time the Sudoku solver receives a new Sudoku
+  problem. It can blink using one of three colors, each with a specific meaning:
+
     - Green when sudoku problem can be handled immediately.
     - Blue when problem has to be stashed because solver is busy.
     - Red when problem is dropped due to stash buffer full.
-- LED #10 is lit (color is always Green) when the Suduko solver on the node is actively solving a Sudoku. The rate at which Sudoku problems are sent is such that a single node can't keep up with the pace. So, if there's only a single node in the cluster, eventually the stash buffer (200 items) will fill up and requests will be dropped.
+
+- LED #10 is lit (color is always Green) when the Suduko solver on the node is
+  actively solving a Sudoku. The rate at which Sudoku problems are sent is such
+  that a single node can't keep up with the pace. So, if there's only a single
+  node in the cluster, eventually the stash buffer (200 items) will fill up and
+  requests will be dropped.
 
 Many more interesting tests can be done:
 
 `NOTE:` Depending on the type of nodes in your cluster (Raspberry 3B, 3B+, 4B),
-        the speed at which sudoku problems are solved can differ a lot (2 to 3x).
+      the speed at which sudoku problems are solved can differ a lot (2 to 3x).
 
 - Start up all nodes and wait until a steady state is reached (LEDs 9 & 10
   should blink Green in cadence). Next, partition the network and observe
