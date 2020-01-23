@@ -1,6 +1,6 @@
-package akka.cluster.pi
+package akkapi.cluster
 
-import akkapi.cluster.{Block, Row}
+import SudokuDetailProcessor.{BlockUpdate, SudokuDetailUnchanged, Update}
 
 class SudokuDetailProcessorSpec extends BaseAkkaSpec with SudokuTestHelpers {
 

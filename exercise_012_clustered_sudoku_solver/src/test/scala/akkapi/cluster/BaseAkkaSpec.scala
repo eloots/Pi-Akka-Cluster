@@ -1,4 +1,4 @@
-package akka.cluster.pi
+package akkapi.cluster
 
 import akka.actor.testkit.typed.scaladsl.ActorTestKit
 import org.scalatest.BeforeAndAfterAll

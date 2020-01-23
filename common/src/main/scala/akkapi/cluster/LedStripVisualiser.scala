@@ -38,25 +38,25 @@ package akkapi.cluster
  *
  */
 
-import akka.actor.typed.Behavior
+import akka.actor.typed.{ActorRef, Behavior}
 import akka.actor.typed.scaladsl.{ActorContext, Behaviors}
 import org.neopixel.Neopixel
 
 object LedStripVisualiser {
 
-  def apply(settings: Settings): Behavior[ClusterStatusTracker.NodeState] =
+  def apply(settings: Settings,
+            ledStripDriver: ActorRef[LedStripDriver.Command]): Behavior[ClusterStatusTracker.NodeState] =
     Behaviors.setup { context =>
-        new LedStripVisualiser(context, settings)
+        new LedStripVisualiser(context, settings, ledStripDriver)
           .running()
   }
 }
 
 class LedStripVisualiser private (context: ActorContext[ClusterStatusTracker.NodeState],
-                         settings: Settings) {
+                                  settings: Settings,
+                                  ledStripDriver: ActorRef[LedStripDriver.Command]) {
 
   import settings._
-
-  private val ledStripDriver = context.spawn(LedStripDriver(settings), "led-strip-driver")
 
   def running(): Behavior[ClusterStatusTracker.NodeState] = Behaviors
     .receiveMessage[ClusterStatusTracker.NodeState] {

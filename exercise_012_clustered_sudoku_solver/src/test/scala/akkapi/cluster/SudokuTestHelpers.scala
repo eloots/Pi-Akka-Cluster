@@ -1,4 +1,4 @@
-package akka.cluster.pi
+package akkapi.cluster
 
 trait SudokuTestHelpers {
 

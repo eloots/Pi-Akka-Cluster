@@ -5,8 +5,6 @@ import java.io.File
 import akka.actor.typed.scaladsl.{ActorContext, Behaviors, TimerScheduler}
 import akka.actor.typed.{ActorRef, Behavior}
 
-import scala.concurrent.duration._
-
 object SudokuProblemSender {
 
   sealed trait Command
@@ -18,31 +16,61 @@ object SudokuProblemSender {
     SudokuIO.readSudokuFromFile(new File("sudokus/001.sudoku"))
       .map { case (rowIndex, update) => SudokuDetailProcessor.RowUpdate(rowIndex, update) }
 
-  def apply(sudokuSolver: ActorRef[SudokuSolver.Command]): Behavior[Command] =
+  def apply(sudokuSolver: ActorRef[SudokuSolver.Command],
+            sudokuSolverSettings: SudokuSolverSettings.type): Behavior[Command] =
     Behaviors.setup { context =>
       Behaviors.withTimers { timers =>
-        new SudokuProblemSender(sudokuSolver, context, timers).sending()
+        new SudokuProblemSender(sudokuSolver, context, timers, sudokuSolverSettings).sending()
       }
     }
 }
 
 class SudokuProblemSender private (sudokuSolver: ActorRef[SudokuSolver.Command],
-                          context: ActorContext[SudokuProblemSender.Command],
-                          timers: TimerScheduler[SudokuProblemSender.Command]) {
+                                   context: ActorContext[SudokuProblemSender.Command],
+                                   timers: TimerScheduler[SudokuProblemSender.Command],
+                                   sudokuSolverSettings: SudokuSolverSettings.type) {
   import SudokuProblemSender._
 
   private val solutionWrapper: ActorRef[SudokuSolver.Response] =
     context.messageAdapter(response => SolutionWrapper(response))
 
-  private val initialUpdate =
-    SudokuSolver.InitialRowUpdates(rowUpdates, solutionWrapper)
+  private val initialSudokuField = rowUpdates.toSudokuField
 
-  timers.startTimerAtFixedRate(SendNewSudoku, 25.millis) // on a 5 node RPi 4 based cluster in steady state, this can be lowered to about 6ms
+  private val rowUpdatesSeq = LazyList.continually(
+    Seq(
+      initialSudokuField,
+      initialSudokuField.flipVertically,
+      initialSudokuField.flipHorizontally,
+      initialSudokuField.flipHorizontally.flipVertically,
+      initialSudokuField.flipVertically.flipHorizontally,
+//      initialSudokuField.remapNumbers(Map(1 -> 3, 3 -> 1, 7 -> 8, 8 -> 9, 9 -> 7)),
+      initialSudokuField.columnSwap(0,1),
+      initialSudokuField.rowSwap(4,5).rowSwap(0, 2),
+      initialSudokuField.randomSwapAround,
+      initialSudokuField.randomSwapAround,
+      initialSudokuField.rotateCW,
+      initialSudokuField.rotateCCW,
+      initialSudokuField.rotateCW.rotateCW,
+      initialSudokuField.transpose,
+      initialSudokuField.randomSwapAround,
+      initialSudokuField.rotateCW.transpose,
+      initialSudokuField.randomSwapAround,
+      initialSudokuField.rotateCCW.transpose,
+      initialSudokuField.randomSwapAround,
+      initialSudokuField.randomSwapAround,
+      initialSudokuField.flipVertically.transpose,
+      initialSudokuField.flipVertically.rotateCW,
+      initialSudokuField.columnSwap(4,5).columnSwap(0, 2).rowSwap(3,4),
+      initialSudokuField.rotateCW.rotateCW.transpose
+    ).map(_.toRowUpdates)).flatten.iterator
+
+  private val problemSendInterval = sudokuSolverSettings.ProblemSender.sendInterval
+  timers.startTimerAtFixedRate(SendNewSudoku, problemSendInterval) // on a 5 node RPi 4 based cluster in steady state, this can be lowered to about 6ms
 
   def sending(): Behavior[Command] = Behaviors.receiveMessagePartial {
     case SendNewSudoku =>
       context.log.debug("sending new sudoku problem")
-      sudokuSolver ! initialUpdate
+      sudokuSolver ! SudokuSolver.InitialRowUpdates(rowUpdatesSeq.next, solutionWrapper)
       Behaviors.same
     case SolutionWrapper(solution: SudokuSolver.SudokuSolution) =>
       context.log.info(s"${SudokuIO.sudokuPrinter(solution)}")
