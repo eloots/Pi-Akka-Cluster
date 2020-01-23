@@ -35,9 +35,10 @@ object SudokuSolver {
     }.toMap
   }
 
-  def apply(ledStripDriver: ActorRef[LedStripDriver.Command]): Behavior[Command] =
+  def apply(ledStripDriver: ActorRef[LedStripDriver.Command],
+            sudokuSolverSettings: SudokuSolverSettings): Behavior[Command] =
     Behaviors.supervise[Command] {
-      Behaviors.withStash(capacity = 200) { buffer =>
+      Behaviors.withStash(capacity = sudokuSolverSettings.SudokuSolver.stashBufferSize) { buffer =>
         Behaviors.setup { context =>
           new SudokuSolver(context, buffer, ledStripDriver).idle()
         }

@@ -30,6 +30,7 @@ import akka.management.scaladsl.AkkaManagement
 
 object Main {
   def apply(settings: Settings): Behavior[NotUsed] = Behaviors.setup { context =>
+    val sudokuSolverSettings = SudokuSolverSettings("sudokusolver.conf")
     // Start CLusterStatusTracker & LedStripVisualiser
     val ledStripDriver = context.spawn(LedStripDriver(settings), "led-strip-driver")
     val ledStripController = context.spawn(LedStripVisualiser(settings, ledStripDriver), "led-strip-controller")
@@ -44,11 +45,11 @@ object Main {
     clusterStatusTracker ! ClusterStatusTracker.SubscribeVisualiser(ledStripController)
 
     // Start SodukuSolver: we'll run one instance/cluster node
-    context.spawn(SudokuSolver(ledStripDriver), s"sudoku-solver")
+    context.spawn(SudokuSolver(ledStripDriver, sudokuSolverSettings), s"sudoku-solver")
     // We'll use a [cluster-aware] group router
     val sudokuSolverGroup = context.spawn(Routers.group(SudokuSolver.Key).withRoundRobinRouting(), "sudoku-solvers")
     // And run one instance if the Sudoku problem sender in the cluster
-    ClusterSingleton(context.system).init(SingletonActor(SudokuProblemSender(sudokuSolverGroup, SudokuSolverSettings), "sudoku-problem-sender"))
+    ClusterSingleton(context.system).init(SingletonActor(SudokuProblemSender(sudokuSolverGroup, sudokuSolverSettings), "sudoku-problem-sender"))
 
     Behaviors.receiveSignal {
       case (_, Terminated(_)) =>

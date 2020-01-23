@@ -17,7 +17,7 @@ object SudokuProblemSender {
       .map { case (rowIndex, update) => SudokuDetailProcessor.RowUpdate(rowIndex, update) }
 
   def apply(sudokuSolver: ActorRef[SudokuSolver.Command],
-            sudokuSolverSettings: SudokuSolverSettings.type): Behavior[Command] =
+            sudokuSolverSettings: SudokuSolverSettings): Behavior[Command] =
     Behaviors.setup { context =>
       Behaviors.withTimers { timers =>
         new SudokuProblemSender(sudokuSolver, context, timers, sudokuSolverSettings).sending()
@@ -28,7 +28,7 @@ object SudokuProblemSender {
 class SudokuProblemSender private (sudokuSolver: ActorRef[SudokuSolver.Command],
                                    context: ActorContext[SudokuProblemSender.Command],
                                    timers: TimerScheduler[SudokuProblemSender.Command],
-                                   sudokuSolverSettings: SudokuSolverSettings.type) {
+                                   sudokuSolverSettings: SudokuSolverSettings) {
   import SudokuProblemSender._
 
   private val solutionWrapper: ActorRef[SudokuSolver.Response] =
