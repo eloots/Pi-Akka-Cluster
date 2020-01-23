@@ -26,14 +26,14 @@ Resolver in case of a partitioned cluster).
 You'll see that 2 additional actors are created: a `SudokuSolver` and a
 `SudokuProblemGenerator`. Also, a group router is created.
 
-2. Run `sbt universal:packageBin` to create the packaged binaries.
-3. Use the `copy` script to copy the binaries to each node in the cluster.
-4. Run the example on the cluster by using the `run` command with the
+1. Run `sbt universal:packageBin` to create the packaged binaries.
+2. Use the `copy` script to copy the binaries to each node in the cluster.
+3. Run the example on the cluster by using the `run` command with the
    appropriate exercise number.
-5. The problem sender send problems at a fixed rate which can be changed
+4. The problem sender send problems at a fixed rate which can be changed
    with the `sudoku-solver.problem-sender.send-interval` settings in the
    `sudokusolver.conf` configuration file.
-6. Observe sudoku solver in action.
+5. Observe sudoku solver in action.
 
 You will see that the two remaining LEDs (on the 10-LED strip) are put to use:
 
