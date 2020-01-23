@@ -13,12 +13,12 @@ object SudokuSolverSettings {
 
 class SudokuSolverSettings(config: Config) {
   object SudokuSolver {
-    val stashBufferSize: Int = config.getInt("sudoku-solver.solver-stash-buffer-size")
+    val StashBufferSize: Int = config.getInt("sudoku-solver.solver-stash-buffer-size")
   }
 
   object ProblemSender {
 
-    val sendInterval: FiniteDuration =
+    val SendInterval: FiniteDuration =
       Duration(config.getDuration("sudoku-solver.problem-sender.send-interval", Millis), Millis)
   }
 }
