@@ -1,6 +1,6 @@
-package akkapi
+package akkapi.cluster
 
-package object cluster {
+package object sudoku {
 
   type Seq[+A] = scala.collection.immutable.Seq[A]
   val Seq = scala.collection.immutable.Seq

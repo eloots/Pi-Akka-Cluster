@@ -24,9 +24,9 @@ import akka.NotUsed
 import akka.actor.typed.scaladsl.adapter.TypedActorSystemOps
 import akka.actor.typed.scaladsl.{ActorContext, Behaviors, Routers}
 import akka.actor.typed.{ActorSystem, Behavior, Terminated}
-import akkapi.cluster.{ClusterStatusTracker, LedStripDriver, LedStripVisualiser, Settings}
 import akka.cluster.typed.{ClusterSingleton, SingletonActor}
 import akka.management.scaladsl.AkkaManagement
+import akkapi.cluster.sudoku.{SudokuSolverSettings, SudokuSolver, SudokuProblemSender}
 
 object Main {
   def apply(settings: Settings): Behavior[NotUsed] = Behaviors.setup { context =>

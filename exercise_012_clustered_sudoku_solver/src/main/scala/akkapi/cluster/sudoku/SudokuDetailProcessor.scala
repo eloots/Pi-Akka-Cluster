@@ -1,8 +1,8 @@
-package akkapi.cluster
+package akkapi.cluster.sudoku
 
 import akka.actor.typed.scaladsl.Behaviors
 import akka.actor.typed.{ActorRef, Behavior}
-import akkapi.cluster.SudokuDetailProcessor.UpdateSender
+import akkapi.cluster.sudoku.SudokuDetailProcessor.UpdateSender
 
 object SudokuDetailProcessor {
 

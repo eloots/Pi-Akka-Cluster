@@ -1,4 +1,4 @@
-package akkapi.cluster
+package akkapi.cluster.sudoku
 
 sealed trait SudokoDetailType
 case class Row(id: Int) extends SudokoDetailType

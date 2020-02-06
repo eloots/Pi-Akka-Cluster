@@ -1,8 +1,8 @@
-package akkapi.cluster
+package akkapi.cluster.sudoku
 
 trait SudokuTestHelpers {
 
-  import akkapi.cluster.ReductionRules.{reductionRuleOne, reductionRuleTwo}
+  import akkapi.cluster.sudoku.ReductionRules.{reductionRuleOne, reductionRuleTwo}
 
   def stringToReductionSet(stringDef: Vector[String]): ReductionSet = {
     for {

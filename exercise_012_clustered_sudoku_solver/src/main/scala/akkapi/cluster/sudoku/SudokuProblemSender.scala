@@ -1,4 +1,4 @@
-package akkapi.cluster
+package akkapi.cluster.sudoku
 
 import java.io.File
 

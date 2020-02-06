@@ -1,8 +1,9 @@
-package akkapi.cluster
+package akkapi.cluster.sudoku
 
 import akka.actor.typed.receptionist.{Receptionist, ServiceKey}
 import akka.actor.typed.scaladsl.{ActorContext, Behaviors, StashBuffer}
 import akka.actor.typed.{ActorRef, Behavior, SupervisorStrategy}
+import akkapi.cluster.{CborSerializable, LedStripDriver}
 import org.neopixel.Neopixel
 
 import scala.concurrent.duration._

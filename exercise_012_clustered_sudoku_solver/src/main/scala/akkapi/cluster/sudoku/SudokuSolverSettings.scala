@@ -1,9 +1,8 @@
-package akkapi.cluster
+package akkapi.cluster.sudoku
 
 import com.typesafe.config.{Config, ConfigFactory}
 
 import scala.concurrent.duration.{Duration, FiniteDuration, MILLISECONDS => Millis}
-import scala.concurrent.duration.{Duration, FiniteDuration}
 
 object SudokuSolverSettings {
 

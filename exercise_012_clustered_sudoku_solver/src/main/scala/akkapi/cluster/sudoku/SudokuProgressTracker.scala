@@ -1,4 +1,4 @@
-package akkapi.cluster
+package akkapi.cluster.sudoku
 
 import akka.actor.typed.scaladsl.{ActorContext, Behaviors}
 import akka.actor.typed.{ActorRef, Behavior}

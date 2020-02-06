@@ -1,8 +1,7 @@
-package akkapi.cluster
+package akkapi.cluster.sudoku
 
+import akkapi.cluster.sudoku.CellMappings._
 import org.scalatest.{Matchers, WordSpec}
-
-import akkapi.cluster.CellMappings._
 
 class CellMappingSpec extends WordSpec with Matchers {
 
