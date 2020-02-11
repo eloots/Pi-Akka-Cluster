@@ -104,6 +104,8 @@ class LedStripDriver private (context: ActorContext[LedStripDriver.Command],
     case WeaklyUpHeartBeat =>
       for (ledId <- weaklyUpNodes) setPixelColorAndShow(ledId, nodeWeaklyUpColor)
       run(hearbeatLedIsOn, weaklyUpLedIsOn = true, weaklyUpNodes, blinkers)
+    case BlinkerTerminated(blinker) =>
+      run(hearbeatLedIsOn, weaklyUpLedIsOn, weaklyUpNodes, blinkers - blinker)
   }.receiveSignal {
     case (_, signal) if signal == PostStop =>
       resetAllLeds(strip)

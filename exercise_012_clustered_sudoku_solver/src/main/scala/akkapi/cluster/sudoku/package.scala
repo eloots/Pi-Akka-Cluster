@@ -68,9 +68,15 @@ package object sudoku {
     }
 
     def randomSwapAround: SudokuField = {
-      val swapAround = scala.util.Random.shuffle(Vector(1,2,3,4,5,6,7,8,9)).zipWithIndex.map{ case (a, b) => (a, b + 1)}.to(Map) + (0 -> 0)
+      val possibleCellValues = Vector(1,2,3,4,5,6,7,8,9)
+      // Generate a random swapping of cell values. A value 0 is used as a marker for a cell
+      // with an unknown value (i.e. it can still hold all values 0 through 9). As such
+      // a cell with value 0 should remain 0 which is why we add an entry to the generated
+      // Map to that effect
+      val shuffledValuesMap =
+        possibleCellValues.zip(scala.util.Random.shuffle(possibleCellValues)).to(Map) + (0 -> 0)
       SudokuField(sudokuField.sudoku.map { row =>
-        row.map(cell => Set(swapAround(cell.head)))
+        row.map(cell => Set(shuffledValuesMap(cell.head)))
       })
     }
 
