@@ -1,4 +1,4 @@
-package akka.cluster.pi
+package akkapi.cluster.sudoku
 
 import org.scalatest.{Matchers, WordSpec}
 

@@ -22,6 +22,7 @@ package akkapi.cluster
 
 import akka.actor.typed.scaladsl.{ActorContext, Behaviors}
 import akka.actor.typed.{ActorRef, Behavior, PostStop}
+import akkapi.cluster.{ClusterStatusTracker, Settings}
 
 object PiClusterSingleton {
 
