@@ -59,14 +59,6 @@ package object sudoku {
       sudokuField.rotateCW.rowSwap(col1, col2).rotateCCW
     }
 
-    def remapNumbers(mapping: Map[Int, Int]): SudokuField = {
-      require(mapping.keySet == mapping.values.to(Set))
-      val mapping_0 = mapping + (0 -> 0)
-      SudokuField(sudokuField.sudoku.map { row =>
-        row.map(cell => Set(mapping_0(cell.head)))
-      })
-    }
-
     def randomSwapAround: SudokuField = {
       val possibleCellValues = Vector(1,2,3,4,5,6,7,8,9)
       // Generate a random swapping of cell values. A value 0 is used as a marker for a cell
