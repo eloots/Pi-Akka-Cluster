@@ -19,13 +19,12 @@
   */
 package com.lightbend.akka_oled
 
-import akka.actor.{Actor, ActorLogging, ActorRef, Address, Props}
+import akka.actor.{Actor, ActorLogging, Address, Props}
 import akka.cluster.{Cluster, Member}
 import akka.cluster.ClusterEvent.{InitialStateAsEvents, LeaderChanged, MemberEvent, MemberExited, MemberJoined, MemberLeft, MemberRemoved, MemberUp, MemberWeaklyUp, ReachabilityEvent, ReachableMember, UnreachableMember}
 import akka.cluster.MemberStatus.{Up, WeaklyUp}
-import akka.cluster.ddata.Replicator.{Changed, Subscribe, Update, UpdateSuccess, WriteLocal, WriteTo}
+import akka.cluster.ddata.Replicator.{Changed, Subscribe, Update, WriteLocal}
 import akka.cluster.ddata.{DistributedData, LWWMap, LWWMapKey}
-import akka.cluster.sharding.ShardRegion
 import akka_oled.ButtonPushHandlers.{NEXT_SCREEN, RESET_SCREEN}
 import akka_oled.{ButtonPushHandlers, Logo}
 import com.lightbend.akka_oled.ClusterCRDTStatus.{Get, SwitchFromTitleToScreen, UpdateStatus}
@@ -34,7 +33,6 @@ import eroled.{BasicFont, OLEDWindow, SmartOLED}
 import scala.collection.mutable
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._
-import scala.language.postfixOps
 
 object  ClusterCRDTStatus{
    val ACTOR_NAME = "cluster-Sharding-status"
@@ -87,11 +85,11 @@ class ClusterCRDTStatus extends Actor with ActorLogging with Logo with ButtonPus
       ()
    }
 
-   private def renderTitle {
+   private def renderTitle():Unit = {
       showingLogo = false
       showingTitle = true
       oled.clearRam()
-      oled.drawString(0, 21, "Screen " + (currentScreen) + ": " + screens(currentScreen))
+      oled.drawString(0, 21, "Screen " + currentScreen + ": " + screens(currentScreen))
       log.info("Rendered title")
       context.system.scheduler.scheduleOnce(2 second, self, SwitchFromTitleToScreen(currentScreen))
    }
@@ -107,16 +105,16 @@ class ClusterCRDTStatus extends Actor with ActorLogging with Logo with ButtonPus
 
    private def nodeStatus(member: Member, status: String): Unit = {
       cluster += mapHostToName(member.address.host.get) -> status
-      renderState
+      renderState()
    }
 
    private def changeLeader(address: Address): Unit = {
       cluster += "Leader" -> mapHostToName(address.host.getOrElse("N/A"))
-      renderState
+      renderState()
    }
 
 
-   private def renderState: Unit = {
+   private def renderState(): Unit = {
       if (!showingLogo && !showingTitle) {
          if(currentScreen == 0) {
             if (!cluster.isEmpty)
@@ -136,34 +134,34 @@ class ClusterCRDTStatus extends Actor with ActorLogging with Logo with ButtonPus
       case UpdateStatus(name,status) =>
          currentValue += (name -> status)
          replicator ! Update(Cache, LWWMap.empty[String, String], WriteLocal)(_ :+ (name -> status))
-         renderState
+         renderState()
 
       case Get(name) =>
          sender ! currentValue.get(name)
 
       case c @ Changed(Cache) =>
          currentValue = c.get(Cache).entries
-         renderState
+         renderState()
 
       case RESET_SCREEN =>
          currentScreen = 0
          log.info("Reset Screen")
-         renderTitle
+         renderTitle()
 
       case NEXT_SCREEN =>
          currentScreen = if (currentScreen == screens.size - 1) 0 else currentScreen + 1
          log.info("Next screen")
-         renderTitle
+         renderTitle()
 
       case SWITCH_FROM_LOGO_TO_SCREEN =>
-         renderTitle
+         renderTitle()
 
       case SwitchFromTitleToScreen(screen) =>
          if (screen == currentScreen) {
             showingTitle = false
             log.info("Render screen")
             oled.clearRam()
-            renderState
+            renderState()
          }
 
 

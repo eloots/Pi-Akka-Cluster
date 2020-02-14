@@ -1,4 +1,6 @@
-#CRDT data structures
+# CRDT data structures
+
+This exercise using installation with OLED displays. Instructions can be found [here](../docs/display/display-assembly-instructions.md)
 
 Exercise represents akka cluster with CRDT that serves as distributed cache. 
 Information is being updated on one node and then
@@ -6,13 +8,13 @@ spreads through cluster nodes eventually. Cache has data about network servers s
 For example: NodeA is UP and Node B is Down.
 
 Exercise has two screens:
-- First shows cluster node statuses
-- Second shows CRDT data that is spreading through cluster with gossip protocol
+- First one shows cluster node statuses
+- Second one shows CRDT data that is spreading through cluster with gossip protocol
 
 To switch between screens you need to push the button
 
 
-#Initialize CRDT data
+# Initialize CRDT data
 To initialize data you need to run following. This will add information about nodes to cache
 
 ```
@@ -23,7 +25,7 @@ curl -d '{"status":"Down"}' -H "Content-Type: application/json" -X POST http://n
 ```
 
 Notice that data is spread across cluster with delay that gives gossip protocols. Still CRDT is approach 
-with high availability with eventual consistency.
+with high availability and eventual consistency.
 
 To read Node status you need to run
 `curl http://node-0:8080/status/NodeA`

@@ -21,18 +21,20 @@ package com.lightbend.akka_oled
 
 import akka.actor.{ActorRef, Props}
 import akka.persistence.PersistentActor
-import com.lightbend.akka_oled.Client.{Get, PostTransaction, Stop, TransactionAdded}
+import com.lightbend.akka_oled.Client.{Get, PostPoints, Stop, PointsAdded}
 import com.lightbend.akka_oled.ClusterShardingStatus.Notification
 
 object Client {
 
-   case class PostTransaction(name: String, amount: Int)
+   trait Message
 
-   case object Stop
+   case class PostPoints(name: String, amount: Int) extends Message
 
-   case class Get(name: String)
+   case object Stop extends Message
 
-   final case class TransactionAdded(name: String, amount: Int)
+   case class Get(name: String) extends Message
+
+   final case class PointsAdded(name: String, points: Int) extends Message
 
    def props(ref: ActorRef) = Props(new Client(ref))
 }
@@ -40,9 +42,9 @@ object Client {
 class Client(ref: ActorRef) extends PersistentActor {
    override def persistenceId: String = self.path.name
 
-   def updateState(event: TransactionAdded): Unit = {
+   def updateState(event: PointsAdded): Unit = {
       name = name.orElse(Some(event.name))
-      total += event.amount
+      total += event.points
       ref ! Notification(persistenceId, total)
    }
 
@@ -51,12 +53,16 @@ class Client(ref: ActorRef) extends PersistentActor {
    var total: Int = 0
 
    override def receiveRecover: Receive = {
-      case evt: TransactionAdded => updateState(evt)
+      case evt: PointsAdded => updateState(evt)
    }
 
    override def receiveCommand: Receive = {
-      case PostTransaction(name, amount) =>
-         persist(TransactionAdded(name, amount))(updateState)
+      case PostPoints(name, amount) =>
+         persist(PointsAdded(name, amount)) {
+            a =>
+               updateState(a)
+               sender() ! "Ok\n"
+         }
       case Get(name) =>
          sender() ! total
          ref ! Notification(name, total)

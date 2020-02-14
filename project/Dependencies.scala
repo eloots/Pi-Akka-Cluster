@@ -28,7 +28,7 @@ object Version {
   val scalaVer          = "2.13.1"
   val akkaSBRVer        = "1.1.12"
   val akkaManagementVer = "1.0.5"
-  val scalaTestVer      = "3.0.8"
+  val scalaTestVer      = "3.1.0"
 }
 
 object Dependencies {
@@ -90,8 +90,7 @@ object Dependencies {
   )
 
   private val mockDep = Seq(
-    "org.scalamock" %% "scalamock" % "4.4.0" % Test,
-    "org.powermock" % "powermock-api-mockito2" % "2.0.2" % Test
+    "org.mockito" %% "mockito-scala" % "1.11.2" % Test
   )
 
   val dependencies: Seq[ModuleID] =
