@@ -1,9 +1,10 @@
 package akkapi.cluster.sudoku
 
 import akkapi.cluster.sudoku.CellMappings._
-import org.scalatest.{Matchers, WordSpec}
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 
-class CellMappingSpec extends WordSpec with Matchers {
+class CellMappingSpec extends AnyWordSpec with Matchers {
 
   "Mapping row coordinates" should {
     "result in correct column & block coordinates" in {
