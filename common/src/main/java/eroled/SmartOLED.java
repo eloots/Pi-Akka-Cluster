@@ -22,7 +22,7 @@ package eroled;
 
 import java.io.IOException;
 
-import static jdk.nashorn.internal.objects.NativeMath.min;
+
 
 public class SmartOLED extends BasicOLED {
     public SmartOLED(Font font) throws IOException, InterruptedException {
@@ -79,7 +79,7 @@ public class SmartOLED extends BasicOLED {
             if (maxLength == 0 || (i % font.getScreenHeight() == 0)) {
                 int tempKeyMax = 0;
                 int tempValueMax = 0;
-                for (int j = i; j < min(i + font.getScreenHeight(), pStr.length); j++) {
+                for (int j = i; j < Math.min(i + font.getScreenHeight(), pStr.length); j++) {
                     if (tempKeyMax < pStr[j][0].length()) tempKeyMax = pStr[j][0].length();
                     if (tempValueMax < pStr[j][1].length()) tempValueMax = pStr[j][1].length();
 
