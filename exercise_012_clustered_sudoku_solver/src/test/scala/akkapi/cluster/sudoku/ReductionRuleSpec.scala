@@ -1,8 +1,9 @@
 package akkapi.cluster.sudoku
 
-import org.scalatest.{Matchers, WordSpec}
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 
-class ReductionRuleSpec extends WordSpec with Matchers with SudokuTestHelpers {
+class ReductionRuleSpec extends AnyWordSpec with Matchers with SudokuTestHelpers {
   "Applying reduction rules" should {
     "Eliminate values in isolated complete sets from occurrences in other cells (First reduction rule)" in {
       /**

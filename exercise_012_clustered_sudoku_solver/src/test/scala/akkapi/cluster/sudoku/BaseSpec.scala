@@ -1,7 +1,8 @@
 package akkapi.cluster.sudoku
 
-import org.scalatest.{Matchers, WordSpec}
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 
-abstract class BaseSpec extends WordSpec with Matchers {
+abstract class BaseSpec extends AnyWordSpec with Matchers {
 
 }

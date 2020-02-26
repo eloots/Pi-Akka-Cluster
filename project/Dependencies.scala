@@ -28,7 +28,7 @@ object Version {
   val scalaVer          = "2.13.1"
   val akkaSBRVer        = "1.1.12"
   val akkaManagementVer = "1.0.5"
-  val scalaTestVer      = "3.1.0"
+  val scalaTestVer      = "3.1.1"
 }
 
 object Dependencies {
