@@ -18,18 +18,17 @@
   * limitations under the License.
   */
 
-package akkapi.cluster
+package akka.cluster.pi
 
 import akka.NotUsed
 import akka.actor.typed.scaladsl.Behaviors
-import akka.actor.typed.scaladsl.adapter.TypedActorSystemOps
 import akka.actor.typed.{ActorSystem, Behavior, Terminated}
 import akka.management.scaladsl.AkkaManagement
+import akkapi.cluster.Settings
 
 object Main {
   def apply(settings: Settings): Behavior[NotUsed] = Behaviors.setup { context =>
-    val ledStripDriver = context.spawn(LedStripDriver(settings), "led-strip-driver")
-    val ledStripController = context.spawn(LedStripVisualiser(settings, ledStripDriver), "led-strip-controller")
+    val ledStripController = context.spawn(LedStripVisualiser(settings), "led-strip-controller")
     val clusterStatusTracker = context.spawn(ClusterStatusTracker(settings, None), "cluster-status-tracker")
     clusterStatusTracker ! ClusterStatusTracker.SubscribeVisualiser(ledStripController)
     Behaviors.receiveSignal {
@@ -48,6 +47,6 @@ object ClusterStatusTrackerMain {
     val system = ActorSystem[NotUsed](Main(settings), settings.actorSystemName, config)
 
     // Start Akka HTTP Management extension
-    AkkaManagement(system.toClassic).start()
+    AkkaManagement(system.classicSystem).start()
   }
 }

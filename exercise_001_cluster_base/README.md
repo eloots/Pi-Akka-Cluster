@@ -39,4 +39,7 @@ In this exercise, we will explore the formation of an Akka Cluster with up-to
                 It flashes 3 times in green when the membership state just converged
                 It blinks in white when the cluster is operating normally
 
-Note that in this exercise, the cluster gossip interval (and other parameters related to it) are slowed down on purpose in order to be able to get more time to see what is happening - normally, things move along faster. This is configured in `src/main/application.conf`.
+Note that in this exercise, the cluster gossip interval (and other parameters
+related to it) are slowed down on purpose in order to be able to get more time
+to see what is happening - normally, things move along faster. This is 
+configured in `src/main/application.conf`.
