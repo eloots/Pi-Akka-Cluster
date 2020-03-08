@@ -35,7 +35,7 @@ object CommonSettings {
     version := "1.3.0",
     scalaVersion := Version.scalaVer,
     scalacOptions in Compile ++= CompileOptions.compileOptions,
-    javacOptions in Compile ++= Seq("--release", "8"),
+    javacOptions in Compile ++= Seq("--release", "11"),
     unmanagedSourceDirectories in Compile := List((scalaSource in Compile).value, (javaSource in Compile).value),
     unmanagedSourceDirectories in Test := List((scalaSource in Test).value, (javaSource in Test).value),
     testOptions += Tests.Argument(TestFrameworks.JUnit, "-v"),

@@ -15,7 +15,7 @@ Removed the changelog & list of maintainers. Git history contains this informati
 ## Instructions
 
 - Make sure you completed the installation of
-    - Java 8 SDK.
+    - Java 11 SDK.
     - Some terminal ([iTerm-2 on Mac](https://iterm2.com), [Terminator on Linux](https://gnometerminator.blogspot.com/p/introduction.html) style OS-es, Powershell or [ConEmu on Windows](https://conemu.github.io)).
     - curl.
 - Clone [this project](https://github.com/lightbend/Pi-Akka-Cluster) on your laptop.
