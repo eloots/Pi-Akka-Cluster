@@ -6,6 +6,8 @@ This code is used on a Raspberry-Pi based Akka Cluster to visually demonstrate c
 
 Each node is equipped with an 10-LED RGB strip where different LED's are used to show each node's state (`Joining`, `Up`, `Weakly-up`, `Unreachable`, `Leaving`, `Exiting` and `Down`/`Removed`). In addition, it shows if a node has a so-called _leader_ role and whether a node is running an Akka Cluster Singleton (if one is created on the cluster).
 
+> In addition to 10-LED Cluster there is also OLED display based cluster. Instructions for display assembly can be found [here](docs/display/display-version.md) 
+
 In the last series of exercises, we deploy an actor based application (a Sudoku Solver) on the cluster and add monitoring (`Cinnamon`/`Prometheus`/`Grafana`) and tracing to the set-up (`Open-tracing`/`Zipkin`).
 
 ## Maintainers & Changelog
@@ -32,6 +34,8 @@ If you want to build your own physical cluster, you may want to have a look at t
 
 The easiest and _fastest_ way to flash a Hypriot OS instance that is ready to use for the Akka Cluster software can be found [here](docs/Hypriot-OS-Installation-Instructions.md).
 
+Display version instructions are a little different and available [here](docs/display/display-installation-instuctions.md) 
+
 ## Travel router configuration
 
 In some cases it can be handy to use a so-called travel router which allows you to connect to a Wifi network on location, and still get access to a physical network with a fixed IP network address. This is because, currently, all nodes have statically configured IP addresses.
@@ -44,3 +48,4 @@ Details on how to configure such a (TP-Link TL-WR802N) router can be found [here
 - A custom 10-LED strip that can be directly plugged on a Raspberry Pi board's GPIO connector can now be bought from Lightbend! You can buy them in a pack of 5 [here](https://shop.lightbend.com/products/custom-led-strips-for-raspberry-pi-clusters).
 - A schematic of the LED strip can be found [here](docs/images/raspberry_led_platine_v2.pdf)
 
+>Instructions for Display assembly are available [here](docs/display/display-assembly-instructions.md)

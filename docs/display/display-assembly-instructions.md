@@ -22,7 +22,7 @@ In order to make connector you need
 - Double row right angle connector for display [link] (https://www.amazon.com/10PCS-40Pin-2-54mm-Right-Header/dp/B07VSC4PWW/ref=sr_1_2?keywords=double+Row+Right+Angle&qid=1575646161&s=electronics&sr=1-2)
 
 Connection schema shown below:
-![](display-connector.png)
+![](images/display-connector.png)
 
 You can use standard or Dupont connectors.
 
@@ -40,4 +40,4 @@ in order to stick it to the top side of cluster.
 
 Connection schema shown below:
 
-![](button.png)
+![](images/button.png)
