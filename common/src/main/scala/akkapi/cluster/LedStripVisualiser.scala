@@ -78,7 +78,7 @@ class LedStripVisualiser private (context: ActorContext[ClusterStatusTracker.Nod
         setLedState(nodeLedId, nodeWeaklyUpColor, Some(LedStripDriver.WeaklyUpBlinker))
       case ClusterStatusTracker.IsLeader =>
         setLeaderIndicator(true)
-      case ClusterStatusTracker.IsNoLeader =>
+      case ClusterStatusTracker.IsNoLeader(_) =>
         setLeaderIndicator(false)
       case ClusterStatusTracker.PiClusterSingletonRunning =>
         setSingletonIndicator(singletonRunning = true)

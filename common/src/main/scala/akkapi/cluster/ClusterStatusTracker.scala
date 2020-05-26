@@ -33,6 +33,7 @@ package akkapi.cluster
  * to register.
  */
 
+import akka.actor.Address
 import akka.actor.typed.scaladsl.{ActorContext, Behaviors}
 import akka.actor.typed.{ActorRef, Behavior}
 import akka.cluster.ClusterEvent._
@@ -52,7 +53,7 @@ object ClusterStatusTracker {
   final case class NodeUnreachable(nodeId: Int) extends NodeState
   final case class NodeWeaklyUp(nodeId: Int) extends NodeState
   final case object IsLeader extends NodeState
-  final case object IsNoLeader extends NodeState
+  final case class IsNoLeader(nodeId: Option[Int]) extends NodeState
   final case object PiClusterSingletonRunning extends NodeState
   final case object PiClusterSingletonNotRunning extends NodeState
 
@@ -66,14 +67,26 @@ object ClusterStatusTracker {
   final case class SubscribeVisualiser(subscriber: ActorRef[ClusterStatusTracker.NodeState]) extends ClusterEvent
   final case class UnsubscribeVisualiser(subscriber: ActorRef[ClusterStatusTracker.NodeState]) extends ClusterEvent
 
+  case class Status(thisHost:String,
+                    nodesState: Map[String, NodeState],
+                    singletonRunning: Boolean,
+                    leader: Option[Address],
+                    subscribers: Set[ActorRef[ClusterStatusTracker.NodeState]]){
+    def isLeader():Boolean = leader.exists(_.host.get == thisHost)
+  }
+
   def apply(settings: Settings, optSingleton: Option[ActorContext[ClusterStatusTracker.ClusterEvent] => Behavior[_]]): Behavior[ClusterEvent] =
     Behaviors.setup { context =>
+      val thisHost = settings.config.getString("akka.remote.artery.canonical.hostname")
+
       new ClusterStatusTracker(context, settings, optSingleton)
         .running(
+          Status(thisHost,
           Map.empty[String, NodeState],
-          isLeader = false,
           singletonRunning = false,
+          leader = None,
           subscribers = Set.empty[ActorRef[ClusterStatusTracker.NodeState]]
+        )
         )
     }
 
@@ -86,8 +99,6 @@ class ClusterStatusTracker private (context: ActorContext[ClusterStatusTracker.C
                                    ) {
   import ClusterStatusTracker._
 
-  private val thisHost = settings.config.getString("akka.remote.artery.canonical.hostname")
-
   private val memberEventAdapter: ActorRef[MemberEvent] = context.messageAdapter(MemberChange)
   Cluster(context.system).subscriptions ! Subscribe(memberEventAdapter, classOf[MemberEvent])
 
@@ -99,92 +110,80 @@ class ClusterStatusTracker private (context: ActorContext[ClusterStatusTracker.C
 
   createPiClusterSingleton()
 
-  def running(nodesState: Map[String, NodeState],
-              isLeader: Boolean,
-              singletonRunning: Boolean,
-              subscribers: Set[ActorRef[ClusterStatusTracker.NodeState]]): Behavior[ClusterStatusTracker.ClusterEvent] = Behaviors.receiveMessage {
+  def running(status:Status): Behavior[ClusterStatusTracker.ClusterEvent] = Behaviors.receiveMessage {
     case PiClusterSingletonOnNode =>
-      processSingletonState(nodesState, isLeader, singletonRunning = true, subscribers)
+      processSingletonState(status.copy(singletonRunning = true))
     case PiClusterSingletonNotOnNode =>
-      processSingletonState(nodesState, isLeader, singletonRunning = false, subscribers)
+      processSingletonState(status.copy(singletonRunning = false))
 
     case UnsubscribeVisualiser(subscriber) =>
-      running(nodesState, isLeader, singletonRunning, subscribers - subscriber)
+      running(status.copy(subscribers =  status.subscribers - subscriber))
 
     case SubscribeVisualiser(newSubscriber) =>
-      val updatedSubscribers = subscribers + newSubscriber
+      val updatedSubscribers = status.subscribers + newSubscriber
       for {
-        (_, nodeState) <- nodesState
+        (_, nodeState) <- status.nodesState
         subscriber <- updatedSubscribers
       } subscriber ! nodeState
-      processLeaderChange(nodesState, isLeader, singletonRunning, updatedSubscribers)
-      processSingletonState(nodesState, isLeader, singletonRunning, updatedSubscribers)
+      val newStatus = status.copy(subscribers=updatedSubscribers)
+      processLeaderChange(newStatus)
+      processSingletonState(newStatus)
 
     case ReachabilityChange(reachabilityChange) =>
       reachabilityChange match {
         case UnreachableMember(member) =>
-          processMemberChange(member, NodeUnreachable(mapHostToNodeId(member)), nodesState, isLeader, singletonRunning, subscribers)
+          processMemberChange(member, NodeUnreachable(mapHostToNodeId(member)),status)
         case ReachableMember(member) if member.status == Up =>
-          processMemberChange(member, NodeUp(mapHostToNodeId(member)), nodesState, isLeader, singletonRunning, subscribers)
+          processMemberChange(member, NodeUp(mapHostToNodeId(member)), status)
         case ReachableMember(member) if member.status == WeaklyUp =>
-          processMemberChange(member, NodeWeaklyUp(mapHostToNodeId(member)), nodesState, isLeader, singletonRunning, subscribers)
+          processMemberChange(member, NodeWeaklyUp(mapHostToNodeId(member)), status)
       }
 
     case MemberChange(memberChange) =>
       memberChange match {
         case MemberJoined(member) =>
-          processMemberChange(member, NodeJoining(mapHostToNodeId(member)), nodesState, isLeader, singletonRunning, subscribers)
+          processMemberChange(member, NodeJoining(mapHostToNodeId(member)), status)
         case MemberUp(member) =>
-          processMemberChange(member, NodeUp(mapHostToNodeId(member)), nodesState, isLeader, singletonRunning, subscribers)
+          processMemberChange(member, NodeUp(mapHostToNodeId(member)), status)
         case MemberLeft(member) =>
-          processMemberChange(member, NodeLeaving(mapHostToNodeId(member)), nodesState, isLeader, singletonRunning, subscribers)
+          processMemberChange(member, NodeLeaving(mapHostToNodeId(member)), status)
         case MemberExited(member) =>
-          processMemberChange(member, NodeExiting(mapHostToNodeId(member)), nodesState, isLeader, singletonRunning, subscribers)
+          processMemberChange(member, NodeExiting(mapHostToNodeId(member)), status)
         case MemberRemoved(member, _) =>
-          processMemberChange(member, NodeRemoved(mapHostToNodeId(member)), nodesState, isLeader, singletonRunning, subscribers)
+          processMemberChange(member, NodeRemoved(mapHostToNodeId(member)), status)
         case MemberDowned(member) =>
-          processMemberChange(member, NodeDown(mapHostToNodeId(member)), nodesState, isLeader, singletonRunning, subscribers)
+          processMemberChange(member, NodeDown(mapHostToNodeId(member)), status)
         case MemberWeaklyUp(member) =>
-          processMemberChange(member, NodeWeaklyUp(mapHostToNodeId(member)), nodesState, isLeader, singletonRunning, subscribers)
+          processMemberChange(member, NodeWeaklyUp(mapHostToNodeId(member)), status)
       }
 
-    case LeaderChange(LeaderChanged(None)) =>
-      processLeaderChange(nodesState, isLeader = false, singletonRunning, subscribers)
-    case LeaderChange(LeaderChanged(Some(leader))) if leader.host.getOrElse("") == thisHost =>
-      processLeaderChange(nodesState, isLeader = true, singletonRunning, subscribers)
-    case LeaderChange(LeaderChanged(Some(leader))) =>
-      processLeaderChange(nodesState, isLeader = false, singletonRunning, subscribers)
-
+    case LeaderChange(LeaderChanged(leaderOption)) =>
+      processLeaderChange(status.copy(leader = leaderOption))
   }
 
-  def processLeaderChange(nodesState: Map[String, NodeState],
-                          isLeader: Boolean,
-                          singletonRunning: Boolean,
-                          subscribers: Set[ActorRef[ClusterStatusTracker.NodeState]]): Behavior[ClusterStatusTracker.ClusterEvent] = {
-    for ( subscriber <- subscribers) subscriber ! (if (isLeader) IsLeader else IsNoLeader)
-    running(nodesState, isLeader, singletonRunning, subscribers)
+  def processLeaderChange(status:Status): Behavior[ClusterStatusTracker.ClusterEvent] = {
+    val nodeId = status.leader.map{ l => settings.HostToLedMapping(l.host.get)}
+    for ( subscriber <- status.subscribers) subscriber ! (if (status.isLeader) IsLeader else IsNoLeader(nodeId))
+    running(status)
   }
 
   def processMemberChange(member: Member,
                           newState: NodeState,
-                          nodesState: Map[String, NodeState],
-                          isLeader: Boolean,
-                          singletonRunning: Boolean,
-                          subscribers: Set[ActorRef[ClusterStatusTracker.NodeState]]): Behavior[ClusterStatusTracker.ClusterEvent] = {
+                          status:Status): Behavior[ClusterStatusTracker.ClusterEvent] = {
     val nodeName = member.address.host.get
-    for ( subscriber <- subscribers) subscriber ! newState
-    running(nodesState + (nodeName -> newState), isLeader, singletonRunning, subscribers)
+    for ( subscriber <- status.subscribers) subscriber ! newState
+    running(status.copy(nodesState = status.nodesState + (nodeName -> newState)))
   }
 
-  def processSingletonState(nodesState: Map[String, NodeState],
-                            isLeader: Boolean,
-                            singletonRunning: Boolean,
-                            subscribers: Set[ActorRef[ClusterStatusTracker.NodeState]]): Behavior[ClusterStatusTracker.ClusterEvent] = {
-    for (subscriber <- subscribers) if (singletonRunning) subscriber ! PiClusterSingletonRunning else subscriber ! PiClusterSingletonNotRunning
-    running(nodesState, isLeader, singletonRunning = singletonRunning, subscribers)
+  def processSingletonState(status:Status): Behavior[ClusterStatusTracker.ClusterEvent] = {
+    for (subscriber <- status.subscribers)
+      if (status.singletonRunning) subscriber ! PiClusterSingletonRunning else subscriber ! PiClusterSingletonNotRunning
+    running(status)
   }
 
-  def mapHostToNodeId(member: Member): Int = settings.HostToLedMapping(member.address.host.get)
+  def mapHostToNodeId(member: Member): Int = {
+    settings.HostToLedMapping(member.address.host.get)
+  }
 
   def createPiClusterSingleton(): Unit = {
     optSingleton.foreach(singleton =>

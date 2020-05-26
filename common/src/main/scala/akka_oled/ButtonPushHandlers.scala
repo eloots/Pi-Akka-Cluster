@@ -19,16 +19,11 @@
   */
 package akka_oled
 
-import akka.actor.ActorRef
-import akka_oled.ButtonPushHandlers.{NEXT_SCREEN, RESET_SCREEN}
+import akka.actor.typed.ActorRef
+import akkapi.cluster.OledDriver
 import com.pi4j.io.gpio.{GpioController, GpioFactory, GpioPinDigitalInput, PinPullResistance, RaspiPin}
 import com.pi4j.io.gpio.event.{GpioPinDigitalStateChangeEvent, GpioPinListenerDigital}
 
-object ButtonPushHandlers{
-   case object NEXT_SCREEN
-   case object RESET_SCREEN
-   case object PREVIOUS_SCREEN
-}
 
 /**
   * Listener for single button push. Send back to actor NEXT_SCREEN or
@@ -40,11 +35,11 @@ trait ButtonPushHandlers {
    var counter = 0
    val lastClick = 0
    val RESET_DELAY = 1000
-   def onStop(): Unit = gpio.removeAllListeners()
-
    private[this] def diff(last: Option[Long]): Long = System.currentTimeMillis() - last.getOrElse(0L)
 
-   def initButtonPush(actor: ActorRef): Unit = {
+   def onStop(): Unit = gpio.removeAllListeners()
+
+   def initButtonPush(actor: ActorRef[OledDriver.Command]): Unit = {
       val upButton: GpioPinDigitalInput = gpio.provisionDigitalInputPin(RaspiPin.GPIO_16, PinPullResistance.PULL_UP)
 
       upButton.addListener(new GpioPinListenerDigital() {
@@ -54,9 +49,9 @@ trait ButtonPushHandlers {
             counter += 1
             if (event.getState.isLow && diff(lastPush) > DELAY) { // display pin state on console
                if(diff(lastPush) < RESET_DELAY){
-                  actor ! RESET_SCREEN
-               }else{
-                  actor ! NEXT_SCREEN
+                  actor ! OledDriver.FirstScreen
+               } else {
+                  actor ! OledDriver.NextScreen
                }
                lastPush = Some(System.currentTimeMillis())
             }

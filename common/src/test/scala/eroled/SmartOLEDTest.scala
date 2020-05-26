@@ -7,7 +7,7 @@ import org.scalatest.wordspec.AnyWordSpec
 class SmartOLEDTest extends AnyWordSpec with MockitoSugar {
    "SmartOLED" should {
       "draw spreadsheet in columns if less then screen" in {
-         val a: SmartOLED = mock[SmartOLED]
+         val a: TextCanvas = mock[TextCanvas]
          when(a.setFont(any(classOf[Font]))).thenCallRealMethod()
          when(a.drawSpreadsheetInColumns(any(classOf[Array[Array[String]]]))).thenCallRealMethod()
          a.setFont(new BasicFont())
@@ -20,7 +20,7 @@ class SmartOLEDTest extends AnyWordSpec with MockitoSugar {
       }
 
       "draw spreadsheet for many key-values" in {
-         val a: SmartOLED = mock[SmartOLED]
+         val a: TextCanvas = mock[TextCanvas]
          when(a.setFont(any(classOf[Font]))).thenCallRealMethod()
          when(a.drawSpreadsheetInColumns(any(classOf[Array[Array[String]]]))).thenCallRealMethod()
 
@@ -39,7 +39,7 @@ class SmartOLEDTest extends AnyWordSpec with MockitoSugar {
 
 
       "draw keyValues" in {
-         val a: SmartOLED = mock[SmartOLED]
+         val a: TextCanvas = mock[TextCanvas]
          when(a.setFont(any(classOf[Font]))).thenCallRealMethod()
          when(a.drawKeyValues(any(classOf[Array[Array[String]]]))).thenCallRealMethod()
 

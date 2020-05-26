@@ -1,75 +1,76 @@
 /**
-  * Copyright © 2016-2020 Lightbend, Inc.
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  * http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  *
-  * NO COMMERCIAL SUPPORT OR ANY OTHER FORM OF SUPPORT IS OFFERED ON
-  * THIS SOFTWARE BY LIGHTBEND, Inc.
-  *
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ * Copyright © 2016-2020 Lightbend, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *
+ * NO COMMERCIAL SUPPORT OR ANY OTHER FORM OF SUPPORT IS OFFERED ON
+ * THIS SOFTWARE BY LIGHTBEND, Inc.
+ *
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.lightbend.akka_oled
 
-import akka.actor.{ActorRef, ActorSystem}
+import akka.NotUsed
+import akka.actor.typed.scaladsl.Behaviors
+import akka.actor.typed.scaladsl.adapter.TypedActorSystemOps
+import akka.actor.typed.{ActorSystem, Behavior, Terminated}
+import akka.cluster.ddata.LWWMapKey
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
-import akka.http.scaladsl.server.Directives.{as, complete, concat, entity, get, onSuccess, pathPrefix, post}
 import akka.management.scaladsl.AkkaManagement
+import akka.stream.Materializer
+import akkapi.cluster.{ClusterStatusTracker, OledClusterVisualizer, OledDriver, Settings}
+import spray.json.DefaultJsonProtocol
 
-import com.typesafe.config.ConfigFactory
-import akka.pattern.ask
-import scala.concurrent.{ExecutionContextExecutor}
-import akka.util.Timeout
-import akka.http.scaladsl.server.Directives._
-import com.lightbend.akka_oled.ClusterCRDTStatus.{Get, UpdateStatus}
-import spray.json.{DefaultJsonProtocol, RootJsonFormat}
+object Main extends SprayJsonSupport with DefaultJsonProtocol {
 
-import scala.concurrent.duration._
-import scala.concurrent.Future
+  case class NodeStatus(status: String)
 
-object Main extends SprayJsonSupport with DefaultJsonProtocol{
-   case class NodeStatus(status:String)
-   def main(args: Array[String]): Unit = {
-      val baseConfig = ConfigFactory.load()
-      implicit val transactionFormat: RootJsonFormat[NodeStatus] = jsonFormat1(NodeStatus)
-      implicit val system: ActorSystem = ActorSystem("akka-oled", baseConfig)
-      val clusterStatusTracker: ActorRef = system.actorOf(ClusterCRDTStatus.props(),ClusterCRDTStatus.ACTOR_NAME)
+  implicit val transactionFormat = jsonFormat1(NodeStatus)
 
-      implicit val timeout: Timeout = 3.seconds
-      implicit val executionContext: ExecutionContextExecutor = system.dispatcher
+  def apply(settings: Settings): Behavior[NotUsed] = Behaviors.setup { ctx =>
 
-      val route =
-         pathPrefix("status" / """[0-9a-zA-Z]+""".r) { node =>
-            concat(
-               get {
-                  val total:Future[Option[String]] = clusterStatusTracker.ask(Get(node)).mapTo[Option[String]]
-                  onSuccess(total) {
-                     a: Option[String] => complete(a.getOrElse("N/A") + "\n")
-                  }
-               },
-               post {
-                  entity(as[NodeStatus]) { status =>
-                     clusterStatusTracker ! UpdateStatus(node, status.status)
-                     complete("Ok\n")
-                  }
-               }
-            )
-         }
+    val oledDriver = ctx.spawn(OledDriver(settings), "oled-driver")
+    oledDriver ! OledDriver.RegisterView("Cluster State", 0)
+    oledDriver ! OledDriver.RegisterView("Distributed Data State", 1)
 
+    val clusterView = ctx.spawn(OledClusterVisualizer(0, settings, oledDriver), "oled-cluster-view")
+    val clusterStatusTracker = ctx.spawn(ClusterStatusTracker(settings, None), "cluster-status-tracker")
+    clusterStatusTracker ! ClusterStatusTracker.SubscribeVisualiser(clusterView)
 
-      Http().bindAndHandle(route,
-         interface = baseConfig.getString("cluster-node-configuration.node-hostname"), port = 8080)
+    val ddataTracker = ctx.spawn(
+      DistributedDataTracker(1, LWWMapKey[String, String]("cache"), oledDriver),
+      "oled-ddata-view")
 
-      AkkaManagement(system).start
+    val routes = new Routes(ddataTracker)(ctx.system)
 
-   }
+    implicit val untypedSystem: akka.actor.ActorSystem = ctx.system.toClassic
+    implicit val mat: Materializer = Materializer.createMaterializer(ctx.system.toClassic)
+    Http()(ctx.system.toClassic).bindAndHandle(routes.route,
+      settings.config.getString("cluster-node-configuration.external-ip"), 8080)
+
+    Behaviors.receiveSignal {
+      case (_, Terminated(_)) =>
+        Behaviors.stopped
+    }
+  }
+}
+
+object DisplayDistributedDataMain {
+  def main(args: Array[String]): Unit = {
+    val settings = Settings()
+    val system = ActorSystem[NotUsed](Main(settings), "akka-oled", settings.config)
+
+    // Start Akka HTTP Management extension
+    AkkaManagement(system).start()
+  }
 }
