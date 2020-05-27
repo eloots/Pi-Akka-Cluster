@@ -2,8 +2,10 @@
 
 ### Network Config
 To be able to reproduce network partitioning and still have access to node we'll have two networks configured for each PI.
-* Ethernet network will be used by clustering cross node communications. Default IPs are 192.168.1.10X here.
-* WiFi will be used for all other communications: Akka management, Akka persistence, REST endpoints. Default IPs are 192.168.8.10X.
+* Ethernet network will be used by clustering cross node communications. Default IPs are 192.168.1.10X here. All nodes must be connected with ethernet switch.
+* WiFi will be used for all other communications: Akka management, Akka persistence, REST endpoints. Default IPs are 192.168.8.10X. Laptop communicates with nodes via WiFi only
+
+![Network diagram](./images/network.png)
 
 ### Laptop config
 
@@ -15,6 +17,8 @@ On your Mac, add the following entries to your _/etc/hosts_ file:
 192.168.8.103 node-3
 ```
 Also you need to join the same WiFi network that PI Cluster is in.
+
+As next step you need to configure password-less login. Procedure is described [here](../Hypriot-OS-Course-Preparation-Instructions.md#Configure password-less login)
 
 ### Preparing SD cards with linux image
 
@@ -37,7 +41,7 @@ network = {
           }
 ```
 
-The command to flash the card is (**always check the [Hypriot downloads page](https://blog.hypriot.com/downloads/) to find out what the most recent version is!**):
+Download and install the Hypriot _**flash**_ tool by following the instructions in the **Installation** section [here](https://github.com/hypriot/flash#installation).
 
 ```
 Pi-Akka-Cluster git:(master) ✗ flash -n node-0 -u akka-pi-os-display.yml \
@@ -46,4 +50,4 @@ Pi-Akka-Cluster git:(master) ✗ flash -n node-0 -u akka-pi-os-display.yml \
 
 `-n node-0` specifies the host name for the node. For other nodes, set it to a name of the host this card is destined for (`node-0` through `node-4`)
 
-Next you need to insert SD cards to PIs and start your nodes. It takes time for them to finish configuration and start for the first time
+Next you need to insert SD cards to PIs and start your nodes. It takes 4-5 min for them to finish configuration and start for the first time
