@@ -22,13 +22,13 @@ import sbt.Keys.libraryDependencies
 import sbt._
 
 object Version {
-  val akkaVer           = "2.6.3"
-  val akkaHttpVer       = "10.1.11"
+  val akkaVer           = "2.6.6"
+  val akkaHttpVer       = "10.1.12"
   val logbackVer        = "1.2.3"
-  val scalaVer          = "2.13.1"
+  val scalaVersion      = "2.13.2"
   val akkaSBRVer        = "1.1.12"
-  val akkaManagementVer = "1.0.5"
-  val scalaTestVer      = "3.1.1"
+  val akkaManagementVer = "1.0.8"
+  val scalaTestVer      = "3.1.2"
 }
 
 object Dependencies {
