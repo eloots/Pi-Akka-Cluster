@@ -27,23 +27,22 @@ import static java.lang.Math.min;
 
 
 /**
- * Buffer oriented API. It's faster that SmartOled
- * Still sometimes we want to use slow API to show quick operations to user
+ * Fast Buffer oriented API for graphics. So far for demos image rendering can be quick
+ * Still sometimes we want to use slow API to show text to user.
  */
-public class OLEDWindow {
-    BasicOLED oled;
+public class DrawingCanvas {
+    BasicOLEDDriver oled;
     int x;
     int y;
     int width;
     int height;
     byte[] buffer;
-    byte _0F = 0x0F;
 
-    public OLEDWindow(BasicOLED oled,
-                      int x,
-                      int y,
-                      int width,
-                      int height) {
+    public DrawingCanvas(BasicOLEDDriver oled,
+                         int x,
+                         int y,
+                         int width,
+                         int height) {
         this.oled = oled;
         this.x = x;
         this.y = y;
@@ -76,11 +75,15 @@ public class OLEDWindow {
         buffer[ofs] = v;
     }
 
-    public void drawBwImageCentered(int width, int height, byte color, byte[] data) {
-        drawBwImage((this.width-width)/2, (this.height-height)/2, width,height,color,data,0);
+    public void drawBwImageCentered(int width, int height, byte[] data) {
+        drawBwImageInternal((this.width - width) / 2, (this.height - height) / 2, width, height, (byte)0xFF, data, 0);
     }
 
-    public void drawBwImage(int x, int y, int width, int height, byte color, byte[] data, int offs) {
+    public void drawBwImage(int x, int y, int width, int height, byte[] data) {
+        drawBwImageInternal(x, y, width, height, (byte) 0xFF, data, 0);
+    }
+
+    private void drawBwImageInternal(int x, int y, int width, int height, byte color, byte[] data, int offs) {
         int pos = offs;
         for (int yy = 0; yy < height; yy++) {
             int ox = x;
@@ -93,35 +96,6 @@ public class OLEDWindow {
                         setPixel(x, y, (byte) 0);
                     mask = mask >> 1;
                     x = x + 1;
-                }
-                pos++;
-            }
-            x = ox;
-            y = y + 1;
-        }
-    }
-
-    public void drawBigBwImage(int x, int y, int width, int height, byte color, byte[] data, int offs) {
-        int pos = offs;
-        byte black = 0;
-        for (int yy = 0; yy < height; yy++) {
-            int ox = x;
-            for (int xx = 0; xx < width / 8; xx++) {
-                int mask = 128;
-                for (int pp = 0; pp < 8; pp++) {
-                    if ((data[pos] & mask) > 0) {
-                        setPixel(x, y, color);
-                        setPixel(x + 1, y, color);
-                        setPixel(x, y + 1, color);
-                        setPixel(x + 1, y + 1, color);
-                    } else {
-                        setPixel(x, y, black);
-                        setPixel(x + 1, y, black);
-                        setPixel(x, y + 1, black);
-                        setPixel(x + 1, y + 1, black);
-                    }
-                    mask = mask >> 1;
-                    x = x + 2;
                 }
                 pos++;
             }
@@ -181,6 +155,10 @@ public class OLEDWindow {
                 error += dx;
             }
         }
+    }
+
+    public void clear() throws IOException  {
+        oled.clearRam();
     }
 
     public void drawRectangle(int x, int y, int width, int height, byte color) {

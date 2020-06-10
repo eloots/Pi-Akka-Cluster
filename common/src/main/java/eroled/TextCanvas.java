@@ -22,17 +22,19 @@ package eroled;
 
 import java.io.IOException;
 
-
-
-public class SmartOLED extends BasicOLED {
-    public SmartOLED(Font font) throws IOException, InterruptedException {
+/**
+ * Slow text rendering API
+ */
+public class TextCanvas {
+    public TextCanvas(BasicOLEDDriver oledDriver, Font font) throws IOException, InterruptedException {
         super();
         this.font = font;
+        this.oledDriver=oledDriver;
     }
 
     private static final String COLUMN_DELIMETER = " | ";
     private Font font;
-
+    private BasicOLEDDriver oledDriver;
     public void setFont(Font font) {
         this.font = font;
     }
@@ -40,9 +42,9 @@ public class SmartOLED extends BasicOLED {
     public void drawSingleAscii(int x, int y, char c) throws IOException {
         int[] letter = font.getChar(c);
         for (int i = 0; i < 16; i++) {
-            setRowAddress(y + i);
-            setColumnAddress(x);
-            writeInstruction(0x5c);
+            oledDriver.setRowAddress(y + i);
+            oledDriver.setColumnAddress(x);
+            oledDriver.writeInstruction(0x5c);
             dataProcessing(letter[i]);
         }
     }
@@ -67,6 +69,10 @@ public class SmartOLED extends BasicOLED {
                 multiline.append(s + "\n");
         }
         drawMultilineString(multiline.toString());
+    }
+
+    public void clear() throws IOException  {
+        oledDriver.clearRam();
     }
 
     public void drawKeyValues(String[][] pStr) throws IOException {
@@ -103,9 +109,7 @@ public class SmartOLED extends BasicOLED {
 
     private String generateWhitespaces(int length) {
         StringBuffer outputBuffer = new StringBuffer(length);
-        for (int i = 0; i < length; i++) {
-            outputBuffer.append(" ");
-        }
+        outputBuffer.append(" ".repeat(Math.max(0, length)));
         return outputBuffer.toString();
     }
 
@@ -162,10 +166,10 @@ public class SmartOLED extends BasicOLED {
         int d3 = h15 | h16;
         int d4 = h17 | h18;
 
-        writeData(d1);
-        writeData(d2);
-        writeData(d3);
-        writeData(d4);
+        oledDriver.writeData(d1);
+        oledDriver.writeData(d2);
+        oledDriver.writeData(d3);
+        oledDriver.writeData(d4);
     }
 
 

@@ -42,19 +42,25 @@ write_files:
 
       # static IP configuration:
       interface eth0
-      static ip_address=192.168.1.102/24
+      static ip_address=192.168.1.100/24
       # static ip6_address=fd51:42f8:caae:d92e::ff/64
-      static routers=192.168.200.1
-      static domain_name_servers=192.168.200.1 8.8.8.8
+      #static routers=192.168.1.1
+      #static domain_name_servers=192.168.1.1 8.8.8.8
+
+      interface wlan0
+      metric 204
+      static ip_address=192.168.8.100/24
+      static routers=192.168.8.1
+      static domain_name_servers=192.168.8.1 8.8.8.8
     path: /etc/dhcpcd.conf
 
   - content: |
       # Cluster #0
-      192.168.200.10 node-0
-      192.168.200.11 node-1
-      192.168.200.12 node-2
-      192.168.200.13 node-3
-      192.168.200.14 node-4
+      192.168.1.100 node-0
+      192.168.1.101 node-1
+      192.168.1.102 node-2
+      192.168.1.103 node-3
+      192.168.1.104 node-4
     path: /etc/cluster-hosts
 
   - content: |
@@ -78,6 +84,17 @@ write_files:
         #turn spi on for display
         dtparam=spi=on
     path: /boot/config.txt
+
+  - content: |
+      ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+      update_config=1
+      country=US
+
+      network={
+              ssid="GL-MT300N-V2-e9f"
+              psk="goodlife"
+      }
+    path: /etc/wpa_supplicant/wpa_supplicant.conf
 
   - content: |
       #!/bin/bash -e
@@ -116,6 +133,11 @@ write_files:
 
 # These commands will be ran once on first boot only
 runcmd:
+  - systemctl restart dhcpcd
+  # need some time while node joined wifi network
+  - sleep 5s
+  # debig info if wifi is connected
+  - iwconfig wlan0
   # Install a few extra packages - this could be done in the package section
   - apt-get update
   - apt-get -y install tmux
@@ -127,16 +149,15 @@ runcmd:
   - apt-get -y install iftop
   - apt-get -y install wiringpi
   # Add cluster hosts to /etc/hosts
-  - 'cat /etc/cluster-hosts >> /etc/hosts'
-  - 'rm /etc/cluster-hosts'
+  - cat /etc/cluster-hosts >> /etc/hosts
+  - rm /etc/cluster-hosts
+  - systemctl restart avahi-daemon
   # Install AdoptOpenJDK 11
   - wget -qO - https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public | apt-key add -
   - echo "deb https://adoptopenjdk.jfrog.io/adoptopenjdk/deb buster main" | tee /etc/apt/sources.list.d/adoptopenjdk.list
   - apt-get update
   - apt-get install -y adoptopenjdk-11-hotspot
 
-  # Activate WiFi interface
-#  - 'ifup wlan0'
-
+#need reboot to make spi=on
 power_state:
  mode: reboot

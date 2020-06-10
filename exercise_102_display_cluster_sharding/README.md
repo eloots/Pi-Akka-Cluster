@@ -27,7 +27,7 @@ curl -d '{"points":40}' -H "Content-Type: application/json" -X POST http://node-
 
 `curl http://node-0:8080/user/Peter`
 
-Read request can trigger rehidration of persistent actor.
+Read request can trigger restoring of persistent actor.
 This can be seen on display as quick updates of point number once system applies all updates from database to actor
 
 # Read state of cluster

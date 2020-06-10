@@ -26,6 +26,7 @@ fi
 
 EXERCISE_RUNSCRIPT=$(cd exercises/$EXERCISE_FOLDER/bin && ls |grep -v .bat)
 NODE=`hostname`
+WIFI_IP=`ip route show | awk '/dev wlan0 proto/ { print $9 }'`
 
 echo "Running $EXERCISE_RUNSCRIPT on $NODE"
 
@@ -39,4 +40,9 @@ fi
 
 LedStripType=${LED_STRIP_TYPE:-eight-led-reversed-order}
 
-(cd exercises/$EXERCISE_FOLDER && sudo bin/$EXERCISE_RUNSCRIPT -Dcluster-node-configuration.node-hostname=$NODE -Dakka.management.http.hostname=$NODE -Dcluster-status-indicator.led-strip-type=$LED_STRIP_TYPE)
+if [ "$EXERCISE_NR" -lt 100 ]; then
+  (cd exercises/$EXERCISE_FOLDER && sudo bin/$EXERCISE_RUNSCRIPT -Dcluster-node-configuration.node-hostname=$NODE -Dakka.management.http.hostname=$NODE -Dcluster-status-indicator.led-strip-type=$LED_STRIP_TYPE)
+else
+  # if runnning display labs - we have slightly different network
+  (cd exercises/$EXERCISE_FOLDER && sudo bin/$EXERCISE_RUNSCRIPT -Dcluster-node-configuration.node-hostname=$NODE -Dcluster-node-configuration.external-ip=$WIFI_IP -Dakka.management.http.hostname=$WIFI_IP)
+fi
