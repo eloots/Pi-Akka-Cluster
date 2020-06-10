@@ -1,3 +1,6 @@
+import sbt._
+
+Global / onChangedBuildSource := ReloadOnSourceChanges
 
 lazy val `pi_cluster_master` = (project in file("."))
   .aggregate(
@@ -11,7 +14,6 @@ lazy val `pi_cluster_master` = (project in file("."))
     `exercise_006_cluster_akka_bootstrap_discovery_via_akka_dns`,
     `exercise_007_cluster_split_brain_resolver_keep_majority`,
     `exercise_008_cluster_split_brain_resolver_static_quorum`,
-    `exercise_009_split_brain_resolver_keep_referee`,
     `exercise_010_split_brain_resolver_keep_oldest`,
     `exercise_011_split_brain_resolver_down_all`,
     `exercise_012_clustered_sudoku_solver`,
@@ -22,9 +24,12 @@ lazy val `pi_cluster_master` = (project in file("."))
     `exercise_101_display_cluster_status`,
     `exercise_102_display_cluster_sharding`,
     `exercise_103_display_cluster_crdt`
- ).settings(CommonSettings.commonSettings: _*)
+  )
+  .settings(ThisBuild / scalaVersion := Version.scalaVersion)
+  .settings(CommonSettings.commonSettings: _*)
 
-lazy val common = project.settings(CommonSettings.commonSettings: _*)
+lazy val common = project
+  .settings(CommonSettings.commonSettings: _*)
 
 lazy val `exercise_000_initial_state` = project
   .configure(CommonSettings.configure)
@@ -59,10 +64,6 @@ lazy val `exercise_007_cluster_split_brain_resolver_keep_majority` = project
   .dependsOn(common % "test->test;compile->compile")
 
 lazy val `exercise_008_cluster_split_brain_resolver_static_quorum` = project
-  .configure(CommonSettings.configure)
-  .dependsOn(common % "test->test;compile->compile")
-
-lazy val `exercise_009_split_brain_resolver_keep_referee` = project
   .configure(CommonSettings.configure)
   .dependsOn(common % "test->test;compile->compile")
 
