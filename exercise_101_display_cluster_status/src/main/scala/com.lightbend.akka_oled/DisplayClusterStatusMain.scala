@@ -27,28 +27,28 @@ import akkapi.cluster.{ClusterStatusTracker, OledClusterVisualizer, OledDriver, 
 
 
 object Main {
-   def apply(settings: Settings): Behavior[NotUsed] = Behaviors.setup { context =>
-      val oledDriver = context.spawn(OledDriver(settings), "oled-driver")
-      val clusterView = context.spawn(OledClusterVisualizer(0, settings, oledDriver), "oled-cluster-view")
-      oledDriver ! OledDriver.RegisterView("Cluster State",0)
-      val clusterStatusTracker = context.spawn(ClusterStatusTracker(settings, None), "cluster-status-tracker")
-      clusterStatusTracker ! ClusterStatusTracker.SubscribeVisualiser(clusterView)
-      Behaviors.receiveSignal {
-         case (_, Terminated(_)) =>
-            Behaviors.stopped
-      }
-   }
+  def apply(settings: Settings): Behavior[NotUsed] = Behaviors.setup { context =>
+    val oledDriver = context.spawn(OledDriver(settings), "oled-driver")
+    val clusterView = context.spawn(OledClusterVisualizer(0, settings, oledDriver), "oled-cluster-view")
+    oledDriver ! OledDriver.RegisterView("Cluster State", 0)
+    val clusterStatusTracker = context.spawn(ClusterStatusTracker(settings, None), "cluster-status-tracker")
+    clusterStatusTracker ! ClusterStatusTracker.SubscribeVisualiser(clusterView)
+    Behaviors.receiveSignal {
+      case (_, Terminated(_)) =>
+        Behaviors.stopped
+    }
+  }
 }
 
 object DisplayClusterStatusMain {
-   def main(args: Array[String]): Unit = {
-      val settings = Settings()
-      val config = settings.config
-      val system = ActorSystem[NotUsed](Main(settings), "akka-oled", config)
+  def main(args: Array[String]): Unit = {
+    val settings = Settings()
+    val config = settings.config
+    val system = ActorSystem[NotUsed](Main(settings), "akka-oled", config)
 
-      // Start Akka HTTP Management extension
-      AkkaManagement(system).start()
-   }
+    // Start Akka HTTP Management extension
+    AkkaManagement(system).start()
+  }
 }
 
 

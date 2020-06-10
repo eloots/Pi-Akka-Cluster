@@ -39,7 +39,7 @@ object ClientEntity {
   val TypeKey: EntityTypeKey[Command] =
     EntityTypeKey[Command]("ClientEntity")
 
-  final case class ClientPoints(name: String, points: Int, visualizer:ActorRef[Notification]) {
+  final case class ClientPoints(name: String, points: Int, visualizer: ActorRef[Notification]) {
     def add(delta: Int) = copy(points = points + delta)
   }
 
@@ -48,12 +48,12 @@ object ClientEntity {
       cmd match {
         case pp@PostPoints(name, amount) =>
           Effect.persist(PointsAdded(name, amount)).thenRun(s => {
-            state.visualizer ! Notification(s.name,s.points)
+            state.visualizer ! Notification(s.name, s.points)
             pp.replyTo ! "Ok\n"
           })
         case g@Get(_) =>
           g.replyTo ! state.points
-          state.visualizer ! Notification(state.name,state.points)
+          state.visualizer ! Notification(state.name, state.points)
           Effect.none
       }
   }
@@ -63,7 +63,7 @@ object ClientEntity {
   }
 
 
-  def apply(entityId: String, persistenceId: PersistenceId, visualizer:ActorRef[Notification]): Behavior[ClientEntity.Command] =
+  def apply(entityId: String, persistenceId: PersistenceId, visualizer: ActorRef[Notification]): Behavior[ClientEntity.Command] =
     Behaviors.setup { _ =>
       EventSourcedBehavior(persistenceId, ClientPoints(entityId, 0, visualizer), commandHandler, eventHandler)
     }

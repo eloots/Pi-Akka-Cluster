@@ -4,7 +4,7 @@ import akka.actor.typed.scaladsl.{ActorContext, Behaviors, TimerScheduler}
 import akka.actor.typed.{Behavior, PostStop}
 import akka_oled.{ButtonPushHandlers, Logo}
 import akkapi.cluster.OledDriver.ScreenState.ScreenState
-import akkapi.cluster.OledDriver.{OledDisplayState, ScreenState, SwitchFromTitleToScreen}
+import akkapi.cluster.OledDriver.{Command, FirstScreen, NextScreen, OledDisplayState, PrevScreen, RegisterView, ScreenState, SwitchFromLogoToTitle, SwitchFromTitleToScreen, UpdateView}
 import eroled.{BasicFont, BasicOLEDDriver, DrawingCanvas, TextCanvas}
 
 import scala.concurrent.duration._
@@ -55,7 +55,7 @@ object OledDriver {
     (new TextCanvas(driver, new BasicFont()), new DrawingCanvas(driver, 0, 0, 256, 64))
   }
 
-  def apply(settings: Settings): Behavior[OledDriver.Command] =
+  def apply(settings: Settings): Behavior[Command] =
     Behaviors.setup { context =>
       Behaviors.withTimers[Command] { timer =>
         val (text, graphics) = createCanvas()
@@ -71,45 +71,45 @@ object OledDriver {
 
 class OledDriver private(
                           settings: Settings,
-                          context: ActorContext[OledDriver.Command],
-                          timers: TimerScheduler[OledDriver.Command],
+                          context: ActorContext[Command],
+                          timers: TimerScheduler[Command],
                           text: TextCanvas,
                           drawing: DrawingCanvas) extends Logo with ButtonPushHandlers {
   initButtonPush(context.self)
   renderLogo()
-  timers.startSingleTimer(OledDriver.SwitchFromLogoToTitle(0), 2.second)
+  timers.startSingleTimer(SwitchFromLogoToTitle(0), 2.second)
 
   def running(state: OledDisplayState
-             ): Behavior[OledDriver.Command] =
-    Behaviors.receive[OledDriver.Command] {
+             ): Behavior[Command] =
+    Behaviors.receive[Command] {
       (_, message) =>
         message match {
-          case OledDriver.RegisterView(name, orderNum) =>
+          case RegisterView(name, orderNum) =>
             running(state.copy(views = state.views + (orderNum -> (name -> ""))))
-          case OledDriver.UpdateView(orderNum, content) =>
+          case UpdateView(orderNum, content) =>
             val (name, _) = state.views(orderNum)
             val newState = state.copy(views = state.views + (orderNum -> (name -> content)));
             if (state.isContentScreen() && state.currentScreen == orderNum)
               renderScreen(newState)
             else
               running(newState)
-          case OledDriver.SwitchFromLogoToTitle(screen) =>
+          case SwitchFromLogoToTitle(screen) =>
             val newState = state.copy(currentScreen = screen, screenState = ScreenState.Title)
             renderTitle(newState)
-          case OledDriver.SwitchFromTitleToScreen(screen) =>
+          case SwitchFromTitleToScreen(screen) =>
             val newState = state.copy(currentScreen = screen, screenState = ScreenState.Content)
             text.clear()
             renderScreen(newState)
 
           // navigating over screens with button
-          case OledDriver.FirstScreen =>
+          case FirstScreen =>
             val newState = state.copy(currentScreen = 0, screenState = ScreenState.Title)
             renderTitle(newState)
-          case OledDriver.NextScreen =>
+          case NextScreen =>
             val nextScreen = if (state.currentScreen + 1 <= state.getMaxScreensNum()) state.currentScreen + 1 else 0
             val newState = state.copy(currentScreen = nextScreen, screenState = ScreenState.Title)
             renderTitle(newState)
-          case OledDriver.PrevScreen =>
+          case PrevScreen =>
             val prevScreen = if (state.currentScreen - 1 >= 0) state.currentScreen - 1 else state.getMaxScreensNum
             val newState = state.copy(currentScreen = prevScreen, screenState = ScreenState.Title)
             renderTitle(newState)
@@ -122,7 +122,7 @@ class OledDriver private(
     }
 
 
-  private def renderTitle(state: OledDisplayState): Behavior[OledDriver.Command] = {
+  private def renderTitle(state: OledDisplayState): Behavior[Command] = {
     text.clear()
     text.drawString(0, 21, "Screen " + state.currentScreen + ": " + state.getCurrentViewName())
     timers.startSingleTimer(SwitchFromTitleToScreen(state.currentScreen), 2.second)
@@ -135,7 +135,7 @@ class OledDriver private(
     drawing.drawScreenBuffer()
   }
 
-  private def renderScreen(state: OledDisplayState): Behavior[OledDriver.Command] = {
+  private def renderScreen(state: OledDisplayState): Behavior[Command] = {
     text.drawMultilineString(state.getCurrentViewContent())
     running(state)
   }

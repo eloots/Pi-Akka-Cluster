@@ -41,7 +41,7 @@ fi
 LedStripType=${LED_STRIP_TYPE:-eight-led-reversed-order}
 
 if [ "$EXERCISE_NR" -lt 100 ]; then
- (cd exercises/$EXERCISE_FOLDER && sudo bin/$EXERCISE_RUNSCRIPT -Dcluster-node-configuration.node-hostname=$NODE -Dcluster-node-configuration.external-ip=$WIFI_IP -Dakka.management.http.hostname=$NODE -Dcluster-status-indicator.led-strip-type=$LED_STRIP_TYPE)
+  (cd exercises/$EXERCISE_FOLDER && sudo bin/$EXERCISE_RUNSCRIPT -Dcluster-node-configuration.node-hostname=$NODE -Dakka.management.http.hostname=$NODE -Dcluster-status-indicator.led-strip-type=$LED_STRIP_TYPE)
 else
   # if runnning display labs - we have slightly different network
   (cd exercises/$EXERCISE_FOLDER && sudo bin/$EXERCISE_RUNSCRIPT -Dcluster-node-configuration.node-hostname=$NODE -Dcluster-node-configuration.external-ip=$WIFI_IP -Dakka.management.http.hostname=$WIFI_IP)

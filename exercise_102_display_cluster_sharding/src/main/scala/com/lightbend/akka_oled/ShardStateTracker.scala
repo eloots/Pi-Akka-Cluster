@@ -28,13 +28,13 @@ object ShardStateScheduler {
   case class Tick()
 
   def apply(shardState: ActorRef[ClusterShardingQuery],
-             shardTracker: ActorRef[CurrentShardRegionState]): Behavior[Tick] =
+            shardTracker: ActorRef[CurrentShardRegionState]): Behavior[Tick] =
     Behaviors.withTimers { timer =>
       timer.startTimerAtFixedRate(Tick(), 1.second)
       Behaviors.receiveMessage { _: Tick =>
-          shardState ! GetShardRegionState(ClientEntity.TypeKey, shardTracker)
-          Behaviors.same
+        shardState ! GetShardRegionState(ClientEntity.TypeKey, shardTracker)
+        Behaviors.same
       }
 
-  }
+    }
 }

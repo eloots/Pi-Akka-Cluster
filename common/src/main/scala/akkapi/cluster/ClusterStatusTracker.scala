@@ -62,17 +62,17 @@ object ClusterStatusTracker {
   private final case class ReachabilityChange(reachabilityEvent: ReachabilityEvent) extends ClusterEvent
   private final case class MemberChange(event: MemberEvent) extends ClusterEvent
   private final case class LeaderChange(event: LeaderChanged) extends ClusterEvent
-  final case object PiClusterSingletonOnNode extends  ClusterEvent
-  final case object PiClusterSingletonNotOnNode extends  ClusterEvent
+  final case object PiClusterSingletonOnNode extends ClusterEvent
+  final case object PiClusterSingletonNotOnNode extends ClusterEvent
   final case class SubscribeVisualiser(subscriber: ActorRef[ClusterStatusTracker.NodeState]) extends ClusterEvent
   final case class UnsubscribeVisualiser(subscriber: ActorRef[ClusterStatusTracker.NodeState]) extends ClusterEvent
 
-  case class Status(thisHost:String,
+  case class Status(thisHost: String,
                     nodesState: Map[String, NodeState],
                     singletonRunning: Boolean,
                     leader: Option[Address],
-                    subscribers: Set[ActorRef[ClusterStatusTracker.NodeState]]){
-    def isLeader():Boolean = leader.exists(_.host.get == thisHost)
+                    subscribers: Set[ActorRef[ClusterStatusTracker.NodeState]]) {
+    def isLeader(): Boolean = leader.exists(_.host.get == thisHost)
   }
 
   def apply(settings: Settings, optSingleton: Option[ActorContext[ClusterStatusTracker.ClusterEvent] => Behavior[_]]): Behavior[ClusterEvent] =
@@ -82,21 +82,22 @@ object ClusterStatusTracker {
       new ClusterStatusTracker(context, settings, optSingleton)
         .running(
           Status(thisHost,
-          Map.empty[String, NodeState],
-          singletonRunning = false,
-          leader = None,
-          subscribers = Set.empty[ActorRef[ClusterStatusTracker.NodeState]]
-        )
+            Map.empty[String, NodeState],
+            singletonRunning = false,
+            leader = None,
+            subscribers = Set.empty[ActorRef[ClusterStatusTracker.NodeState]]
+          )
         )
     }
 
   type ActorContextToSingletonBehavior = (ActorContext[ClusterStatusTracker.ClusterEvent]) => Behavior[_]
 }
 
-class ClusterStatusTracker private (context: ActorContext[ClusterStatusTracker.ClusterEvent],
-                                    settings: Settings,
-                                    optSingleton: Option[ClusterStatusTracker.ActorContextToSingletonBehavior]
-                                   ) {
+class ClusterStatusTracker private(context: ActorContext[ClusterStatusTracker.ClusterEvent],
+                                   settings: Settings,
+                                   optSingleton: Option[ClusterStatusTracker.ActorContextToSingletonBehavior]
+                                  ) {
+
   import ClusterStatusTracker._
 
   private val memberEventAdapter: ActorRef[MemberEvent] = context.messageAdapter(MemberChange)
@@ -110,14 +111,14 @@ class ClusterStatusTracker private (context: ActorContext[ClusterStatusTracker.C
 
   createPiClusterSingleton()
 
-  def running(status:Status): Behavior[ClusterStatusTracker.ClusterEvent] = Behaviors.receiveMessage {
+  def running(status: Status): Behavior[ClusterStatusTracker.ClusterEvent] = Behaviors.receiveMessage {
     case PiClusterSingletonOnNode =>
       processSingletonState(status.copy(singletonRunning = true))
     case PiClusterSingletonNotOnNode =>
       processSingletonState(status.copy(singletonRunning = false))
 
     case UnsubscribeVisualiser(subscriber) =>
-      running(status.copy(subscribers =  status.subscribers - subscriber))
+      running(status.copy(subscribers = status.subscribers - subscriber))
 
     case SubscribeVisualiser(newSubscriber) =>
       val updatedSubscribers = status.subscribers + newSubscriber
@@ -125,14 +126,14 @@ class ClusterStatusTracker private (context: ActorContext[ClusterStatusTracker.C
         (_, nodeState) <- status.nodesState
         subscriber <- updatedSubscribers
       } subscriber ! nodeState
-      val newStatus = status.copy(subscribers=updatedSubscribers)
+      val newStatus = status.copy(subscribers = updatedSubscribers)
       processLeaderChange(newStatus)
       processSingletonState(newStatus)
 
     case ReachabilityChange(reachabilityChange) =>
       reachabilityChange match {
         case UnreachableMember(member) =>
-          processMemberChange(member, NodeUnreachable(mapHostToNodeId(member)),status)
+          processMemberChange(member, NodeUnreachable(mapHostToNodeId(member)), status)
         case ReachableMember(member) if member.status == Up =>
           processMemberChange(member, NodeUp(mapHostToNodeId(member)), status)
         case ReachableMember(member) if member.status == WeaklyUp =>
@@ -161,21 +162,21 @@ class ClusterStatusTracker private (context: ActorContext[ClusterStatusTracker.C
       processLeaderChange(status.copy(leader = leaderOption))
   }
 
-  def processLeaderChange(status:Status): Behavior[ClusterStatusTracker.ClusterEvent] = {
-    val nodeId = status.leader.map{ l => settings.HostToLedMapping(l.host.get)}
-    for ( subscriber <- status.subscribers) subscriber ! (if (status.isLeader) IsLeader else IsNoLeader(nodeId))
+  def processLeaderChange(status: Status): Behavior[ClusterStatusTracker.ClusterEvent] = {
+    val nodeId = status.leader.map { l => settings.HostToLedMapping(l.host.get) }
+    for (subscriber <- status.subscribers) subscriber ! (if (status.isLeader) IsLeader else IsNoLeader(nodeId))
     running(status)
   }
 
   def processMemberChange(member: Member,
                           newState: NodeState,
-                          status:Status): Behavior[ClusterStatusTracker.ClusterEvent] = {
+                          status: Status): Behavior[ClusterStatusTracker.ClusterEvent] = {
     val nodeName = member.address.host.get
-    for ( subscriber <- status.subscribers) subscriber ! newState
+    for (subscriber <- status.subscribers) subscriber ! newState
     running(status.copy(nodesState = status.nodesState + (nodeName -> newState)))
   }
 
-  def processSingletonState(status:Status): Behavior[ClusterStatusTracker.ClusterEvent] = {
+  def processSingletonState(status: Status): Behavior[ClusterStatusTracker.ClusterEvent] = {
     for (subscriber <- status.subscribers)
       if (status.singletonRunning) subscriber ! PiClusterSingletonRunning else subscriber ! PiClusterSingletonNotRunning
     running(status)

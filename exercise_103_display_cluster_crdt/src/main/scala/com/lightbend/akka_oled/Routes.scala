@@ -32,5 +32,4 @@ class Routes(tracker: ActorRef[DistributedDataTracker.Command])(implicit system:
         )
     }
 
-
 }

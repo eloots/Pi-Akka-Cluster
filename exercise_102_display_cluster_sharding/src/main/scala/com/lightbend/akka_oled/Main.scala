@@ -37,6 +37,7 @@ import scala.concurrent.ExecutionContextExecutor
 object Main extends SprayJsonSupport with DefaultJsonProtocol {
 
   case class AddPoints(points: Int)
+
   implicit val transactionFormat = jsonFormat1(AddPoints)
 
   def apply(settings: Settings): Behavior[NotUsed] = Behaviors.setup { ctx =>
@@ -61,7 +62,7 @@ object Main extends SprayJsonSupport with DefaultJsonProtocol {
         shardVisualizer)
     })
     val tracker = ctx.spawn(ShardStateTracker(shardVisualizer), "oled-sharding-tracker")
-    ctx.spawn(ShardStateScheduler(sharding.shardState,tracker), "oled-sharding-scheduler")
+    ctx.spawn(ShardStateScheduler(sharding.shardState, tracker), "oled-sharding-scheduler")
 
     val routes = new Routes(sharding)
 

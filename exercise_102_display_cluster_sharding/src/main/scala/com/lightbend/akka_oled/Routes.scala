@@ -10,10 +10,13 @@ import com.lightbend.akka_oled.ClientEntity.{Get, PostPoints}
 import com.lightbend.akka_oled.Main.AddPoints
 
 import scala.concurrent.duration._
-object Routes{
-  case class NodeStatus(status:String)
+
+object Routes {
+
+  case class NodeStatus(status: String)
 
 }
+
 class Routes(sharding: ClusterSharding)(implicit system: ActorSystem[_]) extends SprayJsonSupport {
   implicit val timeout: Timeout = 8.seconds
   implicit val scheduler = system.scheduler
