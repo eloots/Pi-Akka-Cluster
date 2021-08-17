@@ -65,7 +65,7 @@ object Main {
 
 object ClusterStatusTrackerMain {
   def main(args: Array[String]): Unit = {
-
+    
     val osArch = System.getProperty("os.arch")
     println(s"os.arch = $osArch")
 
@@ -76,6 +76,7 @@ object ClusterStatusTrackerMain {
       println(s"Running on a 32-bit architecture")
       System.loadLibrary("rpi_ws281x")
     }
+
     val settings = Settings()
     val config = settings.config
     val system = ActorSystem[NotUsed](Main(settings), settings.actorSystemName, config)

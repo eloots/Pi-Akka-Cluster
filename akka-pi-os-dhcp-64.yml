@@ -88,7 +88,7 @@ write_files:
       EOF
 
       cat >> /home/akkapi/.profile <<EOF
-
+      
       . .profile-tmux
       EOF
     owner: root:staff
@@ -96,7 +96,7 @@ write_files:
     path: /usr/local/bin/finish-install
 
   - encoding: b64
-  - content: |
+  - content: | 
       f0VMRgIBAQAAAAAAAAAAAAMAtwABAAAAVBoAAAAAAABAAAAAAAAAAFiVAQAAAAAAAAAAAEAAOAAJ
       AEAAJAAjAAYAAAAEAAAAQAAAAAAAAABAAAAAAAAAAEAAAAAAAAAA+AEAAAAAAAD4AQAAAAAAAAgA
       AAAAAAAAAwAAAAQAAAA4AgAAAAAAADgCAAAAAAAAOAIAAAAAAAAbAAAAAAAAABsAAAAAAAAAAQAA
