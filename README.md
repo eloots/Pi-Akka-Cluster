@@ -49,3 +49,14 @@ Details on how to configure such a (TP-Link TL-WR802N) router can be found [here
 - A schematic of the LED strip can be found [here](docs/images/raspberry_led_platine_v2.pdf)
 
 >Instructions for Display assembly are available [here](docs/display/display-assembly-instructions.md)
+
+
+## Running 64-bit Ubuntu
+
+Ubuntu has a 64-bit ARM version with built-in cloud-init support. The `akka-pi-os-dhcp-64.yml` cloud-init file has the required modifications to flash a card for that version of the OS on ARM.
+
+This has been verified on a RPi4. A slightly modified version of the Hypriot flash utility is required though.
+
+```
+flash -n node-1 -u akka-pi-os-dhcp-64.yml \\n   http://cdimage.ubuntu.com/releases/20.04/release/ubuntu-20.04.2-preinstalled-server-arm64+raspi.img.xz
+```

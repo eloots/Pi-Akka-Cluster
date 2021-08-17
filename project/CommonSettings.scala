@@ -71,6 +71,7 @@ object CommonSettings {
         mappings in Universal ++=
           Seq(
             file("nodeFiles/librpi_ws281x.so") -> "lib/librpi_ws281x.so",
+            file("nodeFiles/librpi_ws281x_64.so") -> "lib/librpi_ws281x_64.so",
             file("sudokus/001.sudoku") -> "sudokus/001.sudoku"
           ),
         javaOptions in Universal ++=

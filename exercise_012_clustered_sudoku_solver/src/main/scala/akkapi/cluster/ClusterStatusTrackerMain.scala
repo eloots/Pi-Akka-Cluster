@@ -65,8 +65,17 @@ object Main {
 
 object ClusterStatusTrackerMain {
   def main(args: Array[String]): Unit = {
-    System.loadLibrary("rpi_ws281x")
+    
+    val osArch = System.getProperty("os.arch")
+    println(s"os.arch = $osArch")
 
+    if (System.getProperty("os.arch") == "aarch64") {
+      println(s"Running on a 64-bit architecture")
+      System.loadLibrary("rpi_ws281x_64")
+    } else {
+      println(s"Running on a 32-bit architecture")
+      System.loadLibrary("rpi_ws281x")
+    }
     val settings = Settings()
     val config = settings.config
     val system = ActorSystem[NotUsed](Main(settings), settings.actorSystemName, config)
