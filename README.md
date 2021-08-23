@@ -53,9 +53,14 @@ Details on how to configure such a (TP-Link TL-WR802N) router can be found [here
 
 ## Running 64-bit Ubuntu
 
-Ubuntu has a 64-bit ARM version with built-in cloud-init support. The `akka-pi-os-dhcp-64.yml` cloud-init file has the required modifications to flash a card for that version of the OS on ARM.
+Ubuntu has a 64-bit ARM version with built-in cloud-init support. As such, you can
+flash 64-bit capable boards (Raspberry Pi 3 or 4) with this operating system. The
+`akka-pi-os-dhcp-64.yml` cloud-init file has the required modifications to flash a
+card for that version of the OS on ARM, with the most important difference with the
+`akka-pi-os-dhcp-32.yml` being a 64-bit binary for the installation progress tracker.
 
-This has been verified on a RPi4. A slightly modified version of the Hypriot flash utility is required though.
+This has been verified on a RPi4. A slightly modified version of the Hypriot flash
+utility is required though.
 
 ```
 flash -n node-1 -u akka-pi-os-dhcp-64.yml \\n   http://cdimage.ubuntu.com/releases/20.04/release/ubuntu-20.04.2-preinstalled-server-arm64+raspi.img.xz
