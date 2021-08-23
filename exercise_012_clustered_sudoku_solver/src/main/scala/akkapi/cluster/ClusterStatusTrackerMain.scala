@@ -65,7 +65,7 @@ object Main {
 
 object ClusterStatusTrackerMain {
   def main(args: Array[String]): Unit = {
-    
+
     val osArch = System.getProperty("os.arch")
     println(s"os.arch = $osArch")
 

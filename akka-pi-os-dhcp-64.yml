@@ -62,33 +62,33 @@ write_files:
 
   - content: |
       #!/bin/bash -e
-      
+
       cat > /home/akkapi/.profile-tmux <<EOF
       tnr() {
          tmux new -s run
       }
-      
+
       tr() {
          tmux attach -t run
       }
-      
+
       tnl() {
          tmux new -s log
       }
-      
+
       tl() {
          tmux attach -t log
       }
-      
+
       tkillall() {
          for session in \`tmux ls | sed -e 's/:.*//'\`;do
            tmux kill-session -t \$session
          done
       }
       EOF
-      
+
       cat >> /home/akkapi/.profile <<EOF
-      
+
       . .profile-tmux
       EOF
     owner: root:staff
@@ -96,7 +96,7 @@ write_files:
     path: /usr/local/bin/finish-install
 
   - encoding: b64
-  - content: | 
+  - content: |
       f0VMRgIBAQAAAAAAAAAAAAMAtwABAAAAVBoAAAAAAABAAAAAAAAAAFiVAQAAAAAAAAAAAEAAOAAJ
       AEAAJAAjAAYAAAAEAAAAQAAAAAAAAABAAAAAAAAAAEAAAAAAAAAA+AEAAAAAAAD4AQAAAAAAAAgA
       AAAAAAAAAwAAAAQAAAA4AgAAAAAAADgCAAAAAAAAOAIAAAAAAAAbAAAAAAAAABsAAAAAAAAAAQAA

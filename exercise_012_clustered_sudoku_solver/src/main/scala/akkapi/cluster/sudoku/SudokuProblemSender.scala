@@ -71,7 +71,7 @@ class SudokuProblemSender private (sudokuSolver: ActorRef[SudokuSolver.Command],
   def sending(): Behavior[Command] = Behaviors.receiveMessagePartial {
     case SendNewSudoku =>
       context.log.debug("sending new sudoku problem")
-      sudokuSolver ! SudokuSolver.InitialRowUpdates(rowUpdatesSeq.next, solutionWrapper)
+      sudokuSolver ! SudokuSolver.InitialRowUpdates(rowUpdatesSeq.next(), solutionWrapper)
       Behaviors.same
     case SolutionWrapper(solution: SudokuSolver.SudokuSolution) =>
       context.log.info(s"${SudokuIO.sudokuPrinter(solution)}")
