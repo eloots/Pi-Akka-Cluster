@@ -115,7 +115,7 @@ object SudokuIO {
     val dataLines = new FileLineTraversable(sudokuInputFile).toList
     val cellsIn =
       dataLines
-        .map { inputLine => """\|""".r replaceAllIn(inputLine, "")}     // Remove 3x3 separator character
+        .map { inputLine => """\|""".r.replaceAllIn(inputLine, "")}     // Remove 3x3 separator character
         .filter (_ != "---+---+---")              // Remove 3x3 line separator
         .map ("""^[1-9 ]{9}$""".r findFirstIn(_)) // Input data should only contain values 1-9 or ' '
         .collect { case Some(x) => x}

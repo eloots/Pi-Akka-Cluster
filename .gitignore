@@ -13,7 +13,8 @@ collectedLogs.zip
 .bloop/
 .metals/
 .swp
-project/metals.sbt
+metals.sbt
+.bsp
 
 # sbt specific
 .cache/

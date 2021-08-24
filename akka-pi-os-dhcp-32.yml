@@ -7,6 +7,8 @@ hostname: static
 manage_etc_hosts: false
 # don't write debian.org into apt mirrors
 apt_preserve_sources_list: true
+# Enable password authentication with the SSH daemon
+ssh_pwauth: true
 
 packages:
 
@@ -26,7 +28,9 @@ users:
     sudo: ALL=(ALL) NOPASSWD:ALL
     shell: /bin/bash
     groups: users,docker,video
+    ssh-import-id: None
     plain_text_passwd: akkapi
+    ssh-authorized-keys: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDkrgM1almJcqu6FaKDrscUVghlJOO6m7wayVnmH0bQEv4uQQ9SZmkCegrGJ63iMI8X0xUShkwYLippePpj0RiucL1e9/FtzqSdu6IHaPFJg7w5G6cEV2c1mvyJRHpi86+Yt3t4z67aSw77uAWkNFKShtSEbePfF5WX/LGknxRND6f3db+SmmOSy5w5qgC4GmG31gnJX6j7s0xWRiMicyYdGzKOKB4VkQi2YY7bj7hwri4EUHgIZlYuxST57L68CyTVwnF8c39dK6xflea4fkn+3TlNakFw0rrP3iqy8bkaU2cHnMyWIsYF4fbec1JnKngtIGiungvV9QTJzTpMF7ufEFiYl2uzCZgZGhmXsFDo9WoMjKHTJcbM0cm2OWWOrllOGdY2V580szaJR293jQx0OvNhxA3kTAe1aNmpBOfWhhjxxQsPCaPeHTdNG2L3iN9gYT8mms84ENO7OSUYsiMYMas9EMybyYY3Mvd4NUruIxlRgT84kpgyecC/8iQJwvI7vkdZRLlzQ0B614VCA3RH27ZULODSCPz2oFHFfHrMvdxGa4FTYJCWQFBAltWuPjQ8wmNdnKWX85jlc9MPlJ5WK8VIC1f5hVJd6qjSt009WNEt/y6h9xb5qixgZmBRkGpNe/2fyzx1sn0gyVm90wQXDSoT1fWhxZKJciPuHMvYcw== eric.loots@gmail.com
     lock_passwd: false
     ssh_pwauth: true
     chpasswd: { expire: false }
@@ -1581,16 +1585,16 @@ runcmd:
   - /tmp/progresstracker -c &
   # Install a few extra packages - this could be done in the package section,
   # but if we do it here, the installation progress tracker will start earlier.
-  - apt update
-  - apt install -y tmux file jq dnsutils zip iftop
+  - apt-get update
+  - apt-get install -y tmux file jq dnsutils zip iftop
   # Add cluster hosts to /etc/hosts
   - 'cat /etc/cluster-hosts >> /etc/hosts'
   - 'rm /etc/cluster-hosts'
   # Install AdoptOpenJDK 11
   - wget -qO - https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public | apt-key add -
   - echo "deb https://adoptopenjdk.jfrog.io/adoptopenjdk/deb buster main" | tee /etc/apt/sources.list.d/adoptopenjdk.list
-  - apt update
-  - apt install -y adoptopenjdk-11-hotspot
+  - apt-get update
+  - apt-get install -y adoptopenjdk-11-hotspot
   # Send SIGTERM to progress tracker - all LEDs switch to green
   - pkill progresstracker
 

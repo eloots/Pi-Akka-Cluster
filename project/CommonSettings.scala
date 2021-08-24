@@ -34,18 +34,17 @@ object CommonSettings {
     organization := "com.lightbend.training",
     version := "1.3.0",
     scalaVersion := Version.scalaVersion,
-    scalacOptions in Compile ++= CompileOptions.compileOptions,
-    javacOptions in Compile ++= Seq("--release", "11"),
-    unmanagedSourceDirectories in Compile := List((scalaSource in Compile).value, (javaSource in Compile).value),
-    unmanagedSourceDirectories in Test := List((scalaSource in Test).value, (javaSource in Test).value),
+    Compile  /scalacOptions ++= CompileOptions.compileOptions,
+    Compile / javacOptions ++= Seq("--release", "11"),
+    Compile / unmanagedSourceDirectories := List((Compile / scalaSource).value, (Compile / javaSource).value),
     testOptions += Tests.Argument(TestFrameworks.JUnit, "-v"),
-    logBuffered in Test := false,
-    parallelExecution in Test := false,
-    parallelExecution in GlobalScope := false,
-    parallelExecution in ThisBuild := false,
-    fork in Test := false,
-    publishArtifact in packageSrc := false,
-    publishArtifact in packageDoc := false,
+    Test / logBuffered := false,
+    Test / unmanagedSourceDirectories := List((Test / scalaSource).value, (Test / javaSource).value),
+    Test / parallelExecution := false,
+    GlobalScope / parallelExecution := false,
+    Test / fork := false,
+    packageSrc / publishArtifact := false,
+    packageDoc / publishArtifact := false,
     libraryDependencies ++= Dependencies.dependencies,
 //    credentials += Credentials(Path.userHome / ".lightbend" / "commercial.credentials"),
 //    resolvers += "com-mvn" at "https://repo.lightbend.com/commercial-releases/",
@@ -68,12 +67,13 @@ object CommonSettings {
 //    )
       .enablePlugins(DockerPlugin, JavaAppPackaging)
       .settings(
-        mappings in Universal ++=
+        Universal / mappings ++=
           Seq(
             file("nodeFiles/librpi_ws281x.so") -> "lib/librpi_ws281x.so",
+            file("nodeFiles/librpi_ws281x_64.so") -> "lib/librpi_ws281x_64.so",
             file("sudokus/001.sudoku") -> "sudokus/001.sudoku"
           ),
-        javaOptions in Universal ++=
+        Universal / javaOptions ++=
           Seq(
             "-Djava.library.path=lib",
             "-Dcluster-node-configuration.cluster-id=cluster-0",

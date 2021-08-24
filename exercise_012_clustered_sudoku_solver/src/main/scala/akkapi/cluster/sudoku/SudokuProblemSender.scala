@@ -34,6 +34,8 @@ class SudokuProblemSender private (sudokuSolver: ActorRef[SudokuSolver.Command],
   private val solutionWrapper: ActorRef[SudokuSolver.Response] =
     context.messageAdapter(response => SolutionWrapper(response))
 
+  context.log.info("Dit is een demo ~~>")
+
   private val initialSudokuField = rowUpdates.toSudokuField
 
   private val rowUpdatesSeq = LazyList.continually(
@@ -69,7 +71,7 @@ class SudokuProblemSender private (sudokuSolver: ActorRef[SudokuSolver.Command],
   def sending(): Behavior[Command] = Behaviors.receiveMessagePartial {
     case SendNewSudoku =>
       context.log.debug("sending new sudoku problem")
-      sudokuSolver ! SudokuSolver.InitialRowUpdates(rowUpdatesSeq.next, solutionWrapper)
+      sudokuSolver ! SudokuSolver.InitialRowUpdates(rowUpdatesSeq.next(), solutionWrapper)
       Behaviors.same
     case SolutionWrapper(solution: SudokuSolver.SudokuSolution) =>
       context.log.info(s"${SudokuIO.sudokuPrinter(solution)}")
