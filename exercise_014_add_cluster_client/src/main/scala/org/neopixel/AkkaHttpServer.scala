@@ -58,7 +58,6 @@ object AkkaHttpServer extends Directives with JsonSupport {
     val conf = ConfigFactory.load("sudokuclient")
 
     implicit val system = ActorSystem("sudoku-solver-system", conf)
-    implicit val materializer = ActorMaterializer()
     implicit val executionContext = system.dispatcher
 
     val clusterClient = initiateClusterClient(system)
