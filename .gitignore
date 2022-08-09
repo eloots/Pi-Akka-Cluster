@@ -1,3 +1,6 @@
+# Cloud-init specific
+meta-data
+
 *.class
 *.log
 .bookmark

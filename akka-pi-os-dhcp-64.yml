@@ -2,6 +2,8 @@
 # vim: syntax=yaml
 #
 
+timezone: Europe/Brussels
+
 # Set your hostname here, the manage_etc_hosts will update the hosts file entries as well
 hostname: static
 manage_etc_hosts: false
@@ -14,15 +16,6 @@ packages:
 
 # You could modify this for your own user information
 users:
-  - name: pirate
-    gecos: "Hypriot Pirate"
-    sudo: ALL=(ALL) NOPASSWD:ALL
-    shell: /bin/bash
-    groups: users,docker,video
-    plain_text_passwd: hypriot
-    lock_passwd: false
-    ssh_pwauth: true
-    chpasswd: { expire: false }
   - name: akkapi
     gecos: "Akka Cluster Pi User"
     sudo: ALL=(ALL) NOPASSWD:ALL
@@ -47,6 +40,8 @@ write_files:
       192.168.200.12 node-2
       192.168.200.13 node-3
       192.168.200.14 node-4
+    owner: root:staff
+    permissions: '0755'
     path: /etc/cluster-hosts
 
   - content: |
@@ -1964,30 +1959,39 @@ write_files:
 
 # These commands will be ran once on first boot only
 runcmd:
-  # Pickup the hostname changes
-  - systemctl restart dhcpcd
-  - sleep 5
-  - systemctl restart avahi-daemon
-  # Build and start initial installation progress tracker: while the initial
-  # installation is running, a red LED walks across the LED strip.
-  - cat /usr/local/bin/progresstracker| base64 -d > /tmp/progresstracker
-  - chmod +x /tmp/progresstracker
-  - /tmp/progresstracker -c &
-  # Add cluster hosts to /etc/hosts
-  - 'cat /etc/cluster-hosts >> /etc/hosts'
-  - 'rm /etc/cluster-hosts'
-  - sleep 30
-  - apt-get update
-  # Install a few extra packages - this could be done in the package section,
-  # but if we do it here, the installation progress tracker will start earlier.
-  - apt-get install -y tmux file jq dnsutils zip iftop
-  # Install AdoptOpenJDK 11
-  - wget -qO - https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public | apt-key add -
-  - echo "deb https://adoptopenjdk.jfrog.io/adoptopenjdk/deb buster main" | tee /etc/apt/sources.list.d/adoptopenjdk.list
-  - apt-get update
-  - apt-get install -y adoptopenjdk-11-hotspot
-  # Send SIGTERM to progress tracker - all LEDs switch to green
-  - pkill progresstracker
+  - |
+    # Fix some permissions on vchiq device
+    echo 'SUBSYSTEM=="vchiq", GROUP="video", MODE="0660"' | sudo tee /etc/udev/rules.d/99-input.rules
+    # Pickup the hostname changes
+    systemctl restart dhcpcd
+    sleep 5
+    echo "Start progress tracker: $(date)"
+    # Build and start initial installation progress tracker: while the initial
+    # installation is running, a red LED walks across the LED strip.
+    cat /usr/local/bin/progresstracker| base64 -d > /tmp/progresstracker
+    chmod +x /tmp/progresstracker
+    /tmp/progresstracker -c &
+    # Add cluster hosts to /etc/hosts
+    cat /etc/cluster-hosts >> /etc/hosts
+    rm /etc/cluster-hosts
+    sleep 10
+    apt-get update
+    # Install a few extra packages - this could be done in the package section,
+    # but if we do it here, the installation progress tracker will start earlier.
+    echo "Starting package installation: $(date)"
+    apt-get install -y tmux
+    apt-get install -y file
+    apt-get install -y file
+    apt-get install -y jq
+    apt-get install -y dnsutils
+    apt-get install -y zip
+    apt-get install -y iftop
+    apt-get install -y net-tools
+    apt-get install -y libraspberrypi-bin
+    apt install -y docker.io
+    # Install OpenJDK 11
+    echo "Starting Java installation: $(date)"
+    apt-get install -y openjdk-11-jdk
+    # Send SIGTERM to progress tracker - all LEDs switch to green
+    pkill progresstracker
 
-  # Activate WiFi interface
-#  - 'ifup wlan0'
