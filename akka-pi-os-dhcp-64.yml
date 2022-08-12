@@ -1979,19 +1979,10 @@ runcmd:
     # Install a few extra packages - this could be done in the package section,
     # but if we do it here, the installation progress tracker will start earlier.
     echo "Starting package installation: $(date)"
-    apt-get install -y tmux
-    apt-get install -y file
-    apt-get install -y file
-    apt-get install -y jq
-    apt-get install -y dnsutils
-    apt-get install -y zip
-    apt-get install -y iftop
-    apt-get install -y net-tools
-    apt-get install -y libraspberrypi-bin
-    apt install -y docker.io
+    apt install -y tmux file file jq dnsutils zip iftop net-tools libraspberrypi-bin sysstat docker.io
     # Install OpenJDK 11
     echo "Starting Java installation: $(date)"
-    apt-get install -y openjdk-11-jdk
+    apt install -y openjdk-11-jdk
     # Send SIGTERM to progress tracker - all LEDs switch to green
     pkill progresstracker
 
