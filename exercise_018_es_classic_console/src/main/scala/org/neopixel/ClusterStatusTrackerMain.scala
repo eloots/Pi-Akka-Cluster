@@ -28,7 +28,17 @@ import neopixel.{rpi_ws281xConstants => wsC}
 
 object ClusterStatusTrackerMain {
   def main(args: Array[String]): Unit = {
-    System.loadLibrary("rpi_ws281x")
+
+    val osArch = System.getProperty("os.arch")
+    println(s"os.arch = $osArch")
+
+    if (System.getProperty("os.arch") == "aarch64") {
+      println(s"Running on a 64-bit architecture")
+      System.loadLibrary("rpi_ws281x_64")
+    } else {
+      println(s"Running on a 32-bit architecture")
+      System.loadLibrary("rpi_ws281x")
+    }
 
     val baseConfig = ConfigFactory.load()
 

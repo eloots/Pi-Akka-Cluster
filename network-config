@@ -1,0 +1,13 @@
+version: 2
+ethernets:
+  eth0:
+    dhcp4: true
+    optional: true
+wifis:
+  renderer: networkd
+  wlan0:
+    dhcp4: true
+    optional: true
+    access-points:
+      "TP-Link_4BBA":
+        password: "b37e3617fad5029ca7e404ed3f2c26cefad442e5df76595e7e59cbf910d8afb3"

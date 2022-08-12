@@ -34,8 +34,6 @@ class SudokuProblemSender private (sudokuSolver: ActorRef[SudokuSolver.Command],
   private val solutionWrapper: ActorRef[SudokuSolver.Response] =
     context.messageAdapter(response => SolutionWrapper(response))
 
-  context.log.info("Dit is een demo ~~>")
-
   private val initialSudokuField = rowUpdates.toSudokuField
 
   private val rowUpdatesSeq = LazyList.continually(

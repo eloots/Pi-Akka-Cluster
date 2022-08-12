@@ -48,7 +48,7 @@ object Main {
     context.spawn(SudokuSolver(ledStripDriver, sudokuSolverSettings), s"sudoku-solver")
     // We'll use a [cluster-aware] group router
     val sudokuSolverGroup = context.spawn(Routers.group(SudokuSolver.Key).withRoundRobinRouting(), "sudoku-solvers")
-    // And run one instance if the Sudoku problem sender in the cluster
+    // And run one instance of the Sudoku problem sender in the cluster
     ClusterSingleton(context.system).init(SingletonActor(SudokuProblemSender(sudokuSolverGroup, sudokuSolverSettings), "sudoku-problem-sender"))
 
     Behaviors.receiveSignal {
@@ -76,6 +76,7 @@ object ClusterStatusTrackerMain {
       println(s"Running on a 32-bit architecture")
       System.loadLibrary("rpi_ws281x")
     }
+
     val settings = Settings()
     val config = settings.config
     val system = ActorSystem[NotUsed](Main(settings), settings.actorSystemName, config)
