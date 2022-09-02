@@ -2141,37 +2141,29 @@ runcmd:
   - |
     # Fix some permissions on vchiq device
     echo 'SUBSYSTEM=="vchiq", GROUP="video", MODE="0660"' | sudo tee /etc/udev/rules.d/99-input.rules
-    # Test sensitive data
-    echo Variable test {{ ds.meta_data.my_key }}
-    cat > /home/akkapi/testfile <<EOF
-    Dit is wat tekst {{ ds.meta_data.my_key }}
-    EOF
+
     # Pickup the hostname changes
     systemctl restart dhcpcd
     sleep 5
     echo "Start progress tracker: $(date)"
+
     # Build and start initial installation progress tracker: while the initial
     # installation is running, a red LED walks across the LED strip.
     cat /usr/local/bin/progresstracker| base64 -d > /tmp/progresstracker
     chmod +x /tmp/progresstracker
     /tmp/progresstracker -c &
+
     # Add cluster hosts to /etc/hosts
     cat /etc/cluster-hosts >> /etc/hosts
     rm /etc/cluster-hosts
     sleep 10
     apt-get update
+
     # Install a few extra packages - this could be done in the package section,
     # but if we do it here, the installation progress tracker will start earlier.
     echo "Starting package installation: $(date)"
-    apt-get install -y tmux
-    apt-get install -y file
-    apt-get install -y file
-    apt-get install -y jq
-    apt-get install -y dnsutils
-    apt-get install -y zip
-    apt-get install -y iftop
-    apt-get install -y net-tools
-    apt-get install -y libraspberrypi-bin
+    apt-get install -y tmux file jq dnsutils zip iftop net-tools libraspberrypi-bin
+
     # Install and start InfluxDB and telegraf
     echo "Starting influxdb and telegraf installation: $(date)"
     curl -sL https://repos.influxdata.com/influxdb.key | apt-key add -
@@ -2179,11 +2171,13 @@ runcmd:
     apt-get update
     apt-get install -y influxdb telegraf
     service influxdb start
+
     # Install and start EMQX
     echo "Starting EMQX installation: $(date)"
     curl -s https://assets.emqx.com/scripts/install-emqx-deb.sh | bash
     apt-get install -y emqx
     service emqx start
+
     # Install and start Grafana
     echo "Starting Grafana installation: $(date)"
     wget -q -O - https://packages.grafana.com/gpg.key | apt-key add -
@@ -2193,19 +2187,30 @@ runcmd:
     /bin/systemctl daemon-reload
     /bin/systemctl enable grafana-server
     /bin/systemctl start grafana-server
+
     # Set telegraph configuration
     echo "Starting telegraf configuration: $(date)"
     cp /etc/telegraf/raspberry-pi.conf /etc/telegraf/telegraf.conf
     cp /etc/telegraf/smappee.conf /etc/telegraf/telegraf.d/smappee.conf
+
     # Adapt some settings for telegraf and start telegraf
     usermod -aG docker telegraf
     usermod -aG video telegraf
     /usr/sbin/setcap 'cap_net_admin,cap_net_raw+ep' $(which ping)
     /bin/systemctl enable telegraf
     /bin/systemctl start telegraf
+
     # Install OpenJDK 11
     echo "Starting Java installation: $(date)"
     apt-get install -y openjdk-11-jdk
+
+    # configuring InfluxDB
+    echo "Configuring InfluxDB $(date)"
+    sudo -u akkapi influx <<ENDCFGINFLUX
+    create database {{ ds.meta_data.influx_db1 }};
+    create user {{ ds.meta_data.influx_user }} with password '{{ ds.meta_data.influx_passwd }}' with all privileges;
+    ENDCFGINFLUX
+
     # Send SIGTERM to progress tracker - all LEDs switch to green
     pkill progresstracker
 
