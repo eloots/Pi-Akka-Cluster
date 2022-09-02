@@ -1,8 +1,0 @@
-# This is the meta-data configuration file for cloud-init. Typically this just
-# contains the instance_id. Please refer to the cloud-init documentation for
-# more information:
-#
-# https://cloudinit.readthedocs.io/
-
-instance_id: cloud-image
-my_key: Eric-Loots
