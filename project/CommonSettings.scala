@@ -45,10 +45,7 @@ object CommonSettings {
     Test / fork := false,
     packageSrc / publishArtifact := false,
     packageDoc / publishArtifact := false,
-    libraryDependencies ++= Dependencies.dependencies,
-//    credentials += Credentials(Path.userHome / ".lightbend" / "commercial.credentials"),
-//    resolvers += "com-mvn" at "https://repo.lightbend.com/commercial-releases/",
-//    resolvers += Resolver.url("com-ivy", url("https://repo.lightbend.com/commercial-releases/"))(Resolver.ivyStylePatterns)
+    libraryDependencies ++= Dependencies.core_dependencies,
   ) ++
     AdditionalSettings.initialCmdsConsole ++
     AdditionalSettings.initialCmdsTestConsole ++
@@ -56,15 +53,36 @@ object CommonSettings {
 
   lazy val configure: Project => Project = (proj: Project) => {
     proj
-    //.enablePlugins(Cinnamon)
-    .settings(CommonSettings.commonSettings: _*)
-//    .settings(
-//      libraryDependencies += Cinnamon.library.cinnamonPrometheus,
-//      libraryDependencies += Cinnamon.library.cinnamonPrometheusHttpServer,
-//      libraryDependencies += Cinnamon.library.cinnamonAkkaHttp,
-//      libraryDependencies += Cinnamon.library.cinnamonOpenTracingZipkin,
-//      libraryDependencies += Cinnamon.library.cinnamonCHMetricsElasticsearchReporter
-//    )
+      .settings(CommonSettings.commonSettings: _*)
+      .enablePlugins(DockerPlugin, JavaAppPackaging)
+      .settings(
+        Universal / mappings ++=
+          Seq(
+            file("nodeFiles/librpi_ws281x.so") -> "lib/librpi_ws281x.so",
+            file("nodeFiles/librpi_ws281x_64.so") -> "lib/librpi_ws281x_64.so",
+            file("sudokus/001.sudoku") -> "sudokus/001.sudoku"
+          ),
+        Universal / javaOptions ++=
+          Seq(
+            "-Djava.library.path=lib",
+            "-Dcluster-node-configuration.cluster-id=cluster-0",
+            "-Dcluster-status-indicator.led-strip-type=ten-led-non-reversed-order"
+          ),
+        //dockerBaseImage := "arm32v7/openjdk",
+        dockerBaseImage := "arm32v7/adoptopenjdk",
+        dockerCommands ++= Seq( Cmd("USER", "root"),
+          Cmd("RUN", "mkdir -p","/dev/mem")  ),
+        dockerChmodType := UserGroupWriteExecute,
+        dockerRepository := Some("docker-registry-default.gsa2.lightbend.com/lightbend"),
+        dockerExposedPorts := Seq(8080, 8558, 2550, 9001),
+        dockerAdditionalPermissions ++= Seq((DockerChmodType.UserGroupPlusExecute, "/tmp"))
+      )
+  }
+
+  lazy val eroled_configure: Project => Project = (proj: Project) => {
+    proj
+      .settings(CommonSettings.commonSettings: _*)
+      .settings(libraryDependencies ++= Dependencies.eroled_dependencies)
       .enablePlugins(DockerPlugin, JavaAppPackaging)
       .settings(
         Universal / mappings ++=

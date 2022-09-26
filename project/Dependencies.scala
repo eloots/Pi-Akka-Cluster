@@ -88,13 +88,15 @@ object Dependencies {
     "org.mockito" %% "mockito-scala" % "1.11.2" % Test
   )
 
-  val dependencies: Seq[ModuleID] =
+  val core_dependencies: Seq[ModuleID] =
     akkaDeps ++
-    logbackDeps ++
-    //commercialModulesDeps ++
-    akkaHttpDeps ++
-    akkaManagementDeps ++
-    scalaTestDeps ++
+      logbackDeps ++
+      //commercialModulesDeps ++
+      akkaHttpDeps ++
+      akkaManagementDeps ++
+      scalaTestDeps
+
+  val eroled_dependencies: Seq[ModuleID] =
     mockDep ++
     akkaTestkitDeps ++
     pi4jDeps ++
