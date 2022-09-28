@@ -74,7 +74,6 @@ Start an `sbt` session and have a look at the available exercises by running the
 ```
 $ sbt
 man [e] > Pi-Akka-Cluster > initial state > projects
-[info] In file:/Users/ericloots/Trainingen/LightbendTraining/Pi-Akka-Cluster/
 [info] 	   common
 [info] 	 * exercise_000_initial_state
 [info] 	   exercise_002_cluster_base
@@ -101,7 +100,7 @@ man [e] > Pi-Akka-Cluster > initial state > projects
 Next, we build the first exercise (`exercise_000_initial_state`):
 
 ```
-man [e] > Pi-Akka-Cluster > initial state > ;clean;universal:packageBin
+man [e] > Pi-Akka-Cluster > initial state > clean;universal:packageBin
 [success] Total time: 0 s, completed Nov 14, 2019 8:21:39 PM
 [success] All package validations passed
 <... elided>

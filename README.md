@@ -45,7 +45,7 @@ Details on how to configure such a (TP-Link TL-WR802N) router can be found [here
 ## Build your own Akka-Cluster on Raspberry Pi
 
 - A bill of material can be found [here](docs/images/BOM.md)
-- A custom 10-LED strip that can be directly plugged on a Raspberry Pi board's GPIO connector can now be bought from Lightbend! You can buy them in a pack of 5 [here](https://shop.lightbend.com/products/custom-led-strips-for-raspberry-pi-clusters).
+- A custom 10-LED strip that can be directly plugged on a Raspberry Pi board's GPIO connector can now be bought from Lunatech! You can buy them in a pack of 5. For more info, send a mail to info@lunatech.com.
 - A schematic of the LED strip can be found [here](docs/images/raspberry_led_platine_v2.pdf)
 
 >Instructions for Display assembly are available [here](docs/display/display-assembly-instructions.md)

@@ -3,7 +3,7 @@ Should you wish to build one of these 5-node Raspberry-Pi based Akka Clusters: h
 
 | Item # | Description | Qty           | Unit Price USD  | Total USD | Notes|
 | --- | ----------- |:-------------:| ---------------:|----------:|------|
-| 1 | [10-LED strip - pack of 5](https://shop.lightbend.com/products/custom-led-strips-for-raspberry-pi-clusters)| 1      |   35.00 |  35.00 | |
+| 1 | 10-LED strip - pack of 5 - for more info, send an email to info@lunatech.com| 1      |   35.00 |  35.00 | |
 | 2 | [Raspberry PI 3 Model B+](https://www.reichelt.de/raspberry-pi-3-b-4x-1-4-ghz-1-gb-ram-wlan-bt-raspberry-pi-3b-p217696.html?)      | 5 | 38.00 |  190.00 | |
 | 3 | [Micro-SD card SanDisk Ultra - 16 GB](https://www.reichelt.de/microsdhc-card-16gb-sandisk-ultra-sdsquar016ggn6ma-p214843.html?)      | 5 | 8.70 |  43.50 | Resist the urge to buy a larger capacity card: you most probably don't need it.|
 | 4-10 | Ethernet Patch cable in different colors ([blue](https://www.reichelt.de/1-0m-cat-5e-kabel-blauw-netwerkkabel-rj45-patchkabel-1-bl-p30382.html?), [red](https://www.reichelt.de/1-0m-cat-5e-kabel-rood-netwerkkabel-rj45-patchkabel-1-rt-p30374.html?), [green](https://www.reichelt.de/1-0m-cat-5e-kabel-groen-netwerkkabel-rj45-patchkabel-1-gn-p30390.html?), [orange](https://www.reichelt.de/1-0m-cat-5e-kabel-oranje-netwerkkabel-rj45-patchkabel-1-or-p129945.html?), [yellow](https://www.reichelt.de/1-0m-cat-5e-kabel-geel-netwerkkabel-rj45-patchkabel-1-ge-p30400.html?), [white](https://www.reichelt.de/1-0m-cat-5e-kabel-wit-netwerkkabel-rj45-patchkabel-1-ws-p129965.html?), [black](https://www.reichelt.de/1-0m-cat-5e-kabel-zwart-netwerkkabel-rj45-patchkabel-1-sw-p129975.html?)) | 7 | 1.00 | 7.00 | Length: 1 meter - 3 feet
@@ -18,7 +18,6 @@ Should you wish to build one of these 5-node Raspberry-Pi based Akka Clusters: h
 
 The parts can be bought via 4 different suppliers:
 
-- Item 1: The 10-LED strips can be bought from Lightbend [here](https://shop.lightbend.com/products/custom-led-strips-for-raspberry-pi-clusters).
 - The majority of the parts can be bought from [Reichelt](https://www.reichelt.de) in Germany. They ship world-wide. Please consult their website for more details. A public shopping basket has been set-up that includes items 2 through 14:
   - Create an account and log-in on the [Reichelt](https://www.reichelt.de) website
   - Open [this public shopping basket](https://www.reichelt.de/my/1537729) and transfer all the items to a new shopping basket.

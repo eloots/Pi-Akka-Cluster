@@ -3,40 +3,7 @@
 # Introduction - SBR module set-up
 
 This exercise is the first in a series of exercises on Akka Split Brain
-Resolver. As Akka Split Brain resolver is a Lightbend commercial module,
-you will have to have access to so-called commercial credentials and you 
-will also have to enable using these credentials. Follow the instructions
-to do this in the following paragraph.
-
-# Setting up your credentials/enable commercial modules
-
-If you're following a workshop, the commercial credentials will be provided 
-to you by the instructor(s). They will be in a file named
-`commercial.credentials` with 4 lines like this:
-
-```scala
-$ more ~/.lightbend/commercial.credentials
-realm = Bintray
-host = dl.bintray.com
-user = deafdeaf-deaf-deaf-deaf-deafdeafdeaf@lightbend
-password = decadeacdecadecadecadecadecadecadecadeca
-```
-
-Put the provided credentials file in a folder named `.lightbend` in your
-home folder.
-
-Next, enable the use of the commercial modules by running the `ecl` script
-in the root folder of the repo:
-
-```scala
-$ ./ecl
-[tmp 80ae104] Commit all user changes before applying patch
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Applying: Enable utilisation of commercial licenses
-```
-
-Finally, if you have any sbt sessions running, reload the changes by running
-the `reload` command from the sbt prompt.
+Resolver.
 
 # Introduction
 
