@@ -18,7 +18,6 @@
 //import com.lightbend.sbt.javaagent.JavaAgent.JavaAgentKeys
 import sbt.Keys._
 import sbt._
-import sbtstudent.AdditionalSettings
 import com.typesafe.sbt.packager.archetypes.{JavaAppPackaging, JavaServerAppPackaging}
 import com.typesafe.sbt.packager.docker.DockerChmodType.UserGroupWriteExecute
 import com.typesafe.sbt.packager.docker.DockerPlugin.autoImport.{dockerAdditionalPermissions, dockerBaseImage, dockerChmodType, dockerCommands, dockerEnvVars, dockerExposedPorts, dockerRepository}
@@ -42,10 +41,7 @@ object CommonSettings {
     packageSrc / publishArtifact := false,
     packageDoc / publishArtifact := false,
     libraryDependencies ++= Dependencies.core_dependencies,
-  ) ++
-    AdditionalSettings.initialCmdsConsole ++
-    AdditionalSettings.initialCmdsTestConsole ++
-    AdditionalSettings.cmdAliases
+  )
 
   lazy val configure: Project => Project = (proj: Project) => {
     proj

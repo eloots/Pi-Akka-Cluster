@@ -134,6 +134,9 @@ class ClusterStatusTracker private(context: ActorContext[ClusterStatusTracker.Cl
           processMemberChange(member, NodeUp(mapHostToNodeId(member)), status)
         case ReachableMember(member) if member.status == WeaklyUp =>
           processMemberChange(member, NodeWeaklyUp(mapHostToNodeId(member)), status)
+        case uhrmc @ ReachableMember(_) =>
+          context.log.warn("Unhandled Member reachability change: {}", uhrmc)
+          Behaviors.same
       }
 
     case MemberChange(memberChange) =>
@@ -152,6 +155,12 @@ class ClusterStatusTracker private(context: ActorContext[ClusterStatusTracker.Cl
           processMemberChange(member, NodeDown(mapHostToNodeId(member)), status)
         case MemberWeaklyUp(member) =>
           processMemberChange(member, NodeWeaklyUp(mapHostToNodeId(member)), status)
+        case mpfs @ MemberPreparingForShutdown(_) =>
+          context.log.info("Member preparing for shutdown: {}", mpfs)
+          Behaviors.same
+        case mrfs@MemberReadyForShutdown(_) =>
+          context.log.info("Member ready for shutdown: {}", mrfs)
+          Behaviors.same
       }
 
     case LeaderChange(LeaderChanged(leaderOption)) =>
@@ -160,7 +169,7 @@ class ClusterStatusTracker private(context: ActorContext[ClusterStatusTracker.Cl
 
   def processLeaderChange(status: Status): Behavior[ClusterStatusTracker.ClusterEvent] = {
     val nodeId = status.leader.map { l => settings.HostToLedMapping(l.host.get) }
-    for (subscriber <- status.subscribers) subscriber ! (if (status.isLeader) IsLeader else IsNoLeader(nodeId))
+    for (subscriber <- status.subscribers) subscriber ! (if (status.isLeader()) IsLeader else IsNoLeader(nodeId))
     running(status)
   }
 
