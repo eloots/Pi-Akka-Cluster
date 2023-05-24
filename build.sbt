@@ -5,6 +5,7 @@ Global / onChangedBuildSource := ReloadOnSourceChanges
 lazy val `pi_cluster_master` = (project in file("."))
   .aggregate(
     core,
+    extension,
     `exercise_000_initial_state`,
     `exercise_001_cluster_base`,
     `exercise_002_cluster_weakly_up`,
@@ -36,13 +37,17 @@ lazy val core_eroled = project
   .settings(libraryDependencies ++= Dependencies.eroled_dependencies)
   .dependsOn(core % "test->test;compile->compile")
 
+lazy val extension = project
+  .settings(CommonSettings.commonSettings: _*)
+  .dependsOn(core % "test->test;compile->compile")
+
 lazy val `exercise_000_initial_state` = project
   .configure(CommonSettings.configure)
   .dependsOn(core % "test->test;compile->compile")
 
 lazy val `exercise_001_cluster_base` = project
   .configure(CommonSettings.configure)
-  .dependsOn(core % "test->test;compile->compile")
+  .dependsOn(core % "test->test;compile->compile", extension)
 
 lazy val `exercise_002_cluster_weakly_up` = project
   .configure(CommonSettings.configure)

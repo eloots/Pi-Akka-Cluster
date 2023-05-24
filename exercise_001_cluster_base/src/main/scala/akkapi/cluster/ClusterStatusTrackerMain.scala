@@ -16,44 +16,4 @@
 
 package akkapi.cluster
 
-import akka.NotUsed
-import akka.actor.typed.scaladsl.Behaviors
-import akka.actor.typed.scaladsl.adapter.TypedActorSystemOps
-import akka.actor.typed.{ActorSystem, Behavior, Terminated}
-import akka.management.scaladsl.AkkaManagement
-
-object Main {
-  def apply(settings: Settings): Behavior[NotUsed] = Behaviors.setup { context =>
-    val ledStripDriver = context.spawn(LedStripDriver(settings), "led-strip-driver")
-    val ledStripController = context.spawn(LedStripVisualiser(settings, ledStripDriver), "led-strip-controller")
-    val clusterStatusTracker = context.spawn(ClusterStatusTracker(settings, None), "cluster-status-tracker")
-    clusterStatusTracker ! ClusterStatusTracker.SubscribeVisualiser(ledStripController)
-    Behaviors.receiveSignal {
-      case (_, Terminated(_)) =>
-        Behaviors.stopped
-    }
-  }
-}
-
-object ClusterStatusTrackerMain {
-  def main(args: Array[String]): Unit = {
-
-    val osArch = System.getProperty("os.arch")
-    println(s"os.arch = $osArch")
-
-    if (System.getProperty("os.arch") == "aarch64") {
-      println(s"Running on a 64-bit architecture")
-      System.loadLibrary("rpi_ws281x_64")
-    } else {
-      println(s"Running on a 32-bit architecture")
-      System.loadLibrary("rpi_ws281x")
-    }
-
-    val settings = Settings()
-    val config = settings.config
-    val system = ActorSystem[NotUsed](Main(settings), settings.actorSystemName, config)
-
-    // Start Akka HTTP Management extension
-    AkkaManagement(system.toClassic).start()
-  }
-}
+object ClusterStatusTrackerMain extends ClusterWithLeds
