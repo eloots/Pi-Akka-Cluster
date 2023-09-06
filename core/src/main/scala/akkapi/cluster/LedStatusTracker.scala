@@ -18,22 +18,14 @@ final class LedController(ledStripDriver: ActorRef[LedStripDriver.Command]) {
 
 final class LedStatusTracker(system: ActorSystem[_]) extends Extension {
 
-//  private var started = false
-//
-//  def start(): Unit =
-//    if (!started) {
-
   val controller = {
-  val osArch = System.getProperty("os.arch")
-      println(s"os.arch = $osArch")
-
-      if (System.getProperty("os.arch") == "aarch64") {
-        println(s"Running on a 64-bit architecture")
-        System.loadLibrary("rpi_ws281x_64")
-      } else {
-        println(s"Running on a 32-bit architecture")
-        System.loadLibrary("rpi_ws281x")
-      }
+    if (System.getProperty("os.arch") == "aarch64") {
+      println(s"Running on a 64-bit architecture")
+      System.loadLibrary("rpi_ws281x_64")
+    } else {
+      println(s"Running on a 32-bit architecture")
+      System.loadLibrary("rpi_ws281x")
+    }
 
     implicit val config = system.settings.config
     val settings = new Settings()
@@ -43,11 +35,8 @@ final class LedStatusTracker(system: ActorSystem[_]) extends Extension {
     val clusterStatusTracker = system.systemActorOf(ClusterStatusTracker(settings), "cluster-status-tracker")
     clusterStatusTracker ! ClusterStatusTracker.SubscribeVisualiser(ledStripController)
 
-
-//      started = true
-
-      new LedController(ledStripDriver)
-    }
+    new LedController(ledStripDriver)
+  }
 }
 
 object LedStatusTracker extends ExtensionId[LedStatusTracker] {
