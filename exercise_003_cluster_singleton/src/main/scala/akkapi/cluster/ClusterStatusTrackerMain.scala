@@ -13,59 +13,26 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-
 package akkapi.cluster
 
 import akka.NotUsed
+import akka.actor.typed.ActorSystem
+import akka.actor.typed.scaladsl.Behaviors
 import akka.actor.typed.scaladsl.adapter.TypedActorSystemOps
-import akka.actor.typed.scaladsl.{ActorContext, Behaviors}
-import akka.actor.typed.{ActorSystem, Behavior, Terminated}
 import akka.management.scaladsl.AkkaManagement
-
-object Main {
-  def apply(settings: Settings): Behavior[NotUsed] = Behaviors.setup { context =>
-    val ledStripDriver = context.spawn(LedStripDriver(settings), "led-strip-driver")
-    val ledStripController = context.spawn(LedStripVisualiser(settings, ledStripDriver), "led-strip-controller")
-    val clusterStatusTracker =
-      context.spawn(
-        ClusterStatusTracker(
-          settings,
-          Some(contextToClusterSingleton(settings))
-        ),
-        "cluster-status-tracker"
-      )
-    clusterStatusTracker ! ClusterStatusTracker.SubscribeVisualiser(ledStripController)
-    Behaviors.receiveSignal {
-      case (_, Terminated(_)) =>
-        Behaviors.stopped
-    }
-  }
-
-  private def contextToClusterSingleton(settings: Settings): ActorContextToSingletonBehavior  =
-    (context: ActorContext[ClusterStatusTracker.ClusterEvent]) => PiClusterSingleton(settings, context.self)
-
-  type ActorContextToSingletonBehavior = ActorContext[ClusterStatusTracker.ClusterEvent] => Behavior[PiClusterSingleton.Command]
-}
+import com.typesafe.config.ConfigFactory
 
 object ClusterStatusTrackerMain {
+
   def main(args: Array[String]): Unit = {
 
-    val osArch = System.getProperty("os.arch")
-    println(s"os.arch = $osArch")
+    val actorSystemName = s"""pi-${ConfigFactory.load().getString("cluster-node-configuration.cluster-id")}-system"""
 
-    if (System.getProperty("os.arch") == "aarch64") {
-      println(s"Running on a 64-bit architecture")
-      System.loadLibrary("rpi_ws281x_64")
-    } else {
-      println(s"Running on a 32-bit architecture")
-      System.loadLibrary("rpi_ws281x")
-    }
+    val system = ActorSystem[NotUsed](Behaviors.ignore, actorSystemName)
 
-    val settings = Settings()
-    val config = settings.config
-    val system = ActorSystem[NotUsed](Main(settings), settings.actorSystemName, config)
+    LedStatusTracker(system).start()
 
     // Start Akka HTTP Management extension
-    AkkaManagement(system).start()
+    AkkaManagement(system.toClassic).start()
   }
 }

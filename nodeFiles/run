@@ -13,7 +13,7 @@ EXERCISE_NR=$(printf %03d $1 2>/dev/null)
 # it is necessary to check if 'unzip' command is still running, if it is, try
 # again in a second... We know that 'unzip' is finished when the zip archive
 # is gone (it is deleted by the 'copy' script
-while [ -f exercises/exercise*${EXERCISE_NR}*.zip ];do 
+while [ -f exercises/exercise*${EXERCISE_NR}*.zip ];do
   sleep 1
 done
 

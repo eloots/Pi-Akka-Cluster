@@ -108,6 +108,8 @@ class Settings(implicit val config: Config) {
   val SingletonLedNumber = 6
   val HeartbeatLedNumber = 7
 
+  val trackSingletons: Boolean = config.getBoolean("cluster-status-indicator.track-singletons")
+
   object LedStripConfig {
 
     val ledBrightness: Short =

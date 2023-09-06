@@ -36,8 +36,11 @@ import akka.cluster.ClusterEvent._
 import akka.cluster.Member
 import akka.cluster.MemberStatus.{Up, WeaklyUp}
 import akka.cluster.typed.{Cluster, ClusterSingleton, SingletonActor, Subscribe}
+import akkapi.cluster.ClusterStatusTracker.ActorContextToSingletonBehavior
 
 object ClusterStatusTracker {
+
+  type ActorContextToSingletonBehavior = ActorContext[ClusterStatusTracker.ClusterEvent] => Behavior[PiClusterSingleton.Command]
 
   sealed trait NodeState
   final case class NodeJoining(nodeId: Int) extends NodeState
@@ -71,11 +74,11 @@ object ClusterStatusTracker {
     def isLeader(): Boolean = leader.exists(_.host.get == thisHost)
   }
 
-  def apply(settings: Settings, optSingleton: Option[ActorContext[ClusterStatusTracker.ClusterEvent] => Behavior[_]]): Behavior[ClusterEvent] =
+  def apply(settings: Settings): Behavior[ClusterEvent] =
     Behaviors.setup { context =>
       val thisHost = settings.config.getString("akka.remote.artery.canonical.hostname")
 
-      new ClusterStatusTracker(context, settings, optSingleton)
+      new ClusterStatusTracker(context, settings)
         .running(
           Status(thisHost,
             Map.empty[String, NodeState],
@@ -85,14 +88,9 @@ object ClusterStatusTracker {
           )
         )
     }
-
-  type ActorContextToSingletonBehavior = (ActorContext[ClusterStatusTracker.ClusterEvent]) => Behavior[_]
 }
 
-class ClusterStatusTracker private(context: ActorContext[ClusterStatusTracker.ClusterEvent],
-                                   settings: Settings,
-                                   optSingleton: Option[ClusterStatusTracker.ActorContextToSingletonBehavior]
-                                  ) {
+class ClusterStatusTracker private(context: ActorContext[ClusterStatusTracker.ClusterEvent], settings: Settings) {
 
   import ClusterStatusTracker._
 
@@ -105,7 +103,8 @@ class ClusterStatusTracker private(context: ActorContext[ClusterStatusTracker.Cl
   private val roleLeadChangedAdapter: ActorRef[LeaderChanged] = context.messageAdapter(LeaderChange)
   Cluster(context.system).subscriptions ! Subscribe(roleLeadChangedAdapter, classOf[LeaderChanged])
 
-  createPiClusterSingleton()
+  if (settings.trackSingletons)
+    createPiClusterSingleton()
 
   def running(status: Status): Behavior[ClusterStatusTracker.ClusterEvent] = Behaviors.receiveMessage {
     case PiClusterSingletonOnNode =>
@@ -191,10 +190,6 @@ class ClusterStatusTracker private(context: ActorContext[ClusterStatusTracker.Cl
     settings.HostToLedMapping(member.address.host.get)
   }
 
-  def createPiClusterSingleton(): Unit = {
-    optSingleton.foreach(singleton =>
-      ClusterSingleton(context.system).init(SingletonActor(singleton(context), "pi-cluster-singleton"))
-    )
-
-  }
+  def createPiClusterSingleton(): Unit =
+      ClusterSingleton(context.system).init(SingletonActor(PiClusterSingleton(context.self), "pi-cluster-singleton"))
 }

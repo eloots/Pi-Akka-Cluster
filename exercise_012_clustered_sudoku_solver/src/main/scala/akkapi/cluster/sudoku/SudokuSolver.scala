@@ -3,7 +3,7 @@ package akkapi.cluster.sudoku
 import akka.actor.typed.receptionist.{Receptionist, ServiceKey}
 import akka.actor.typed.scaladsl.{ActorContext, Behaviors, StashBuffer}
 import akka.actor.typed.{ActorRef, Behavior, SupervisorStrategy}
-import akkapi.cluster.{CborSerializable, LedStripDriver}
+import akkapi.cluster.{CborSerializable, LedController, LedStatusTracker}
 import org.neopixel.Neopixel
 
 import scala.concurrent.duration._
@@ -36,12 +36,12 @@ object SudokuSolver {
     }.toMap
   }
 
-  def apply(ledStripDriver: ActorRef[LedStripDriver.Command],
-            sudokuSolverSettings: SudokuSolverSettings): Behavior[Command] =
+  def apply(sudokuSolverSettings: SudokuSolverSettings): Behavior[Command] =
     Behaviors.supervise[Command] {
       Behaviors.withStash(capacity = sudokuSolverSettings.SudokuSolver.StashBufferSize) { buffer =>
         Behaviors.setup { context =>
-          new SudokuSolver(context, buffer, ledStripDriver).idle()
+          val ledController = LedStatusTracker(context.system).controller
+          new SudokuSolver(context, buffer, ledController).idle()
         }
       }
     }.onFailure[Exception](
@@ -51,7 +51,7 @@ object SudokuSolver {
 
 class SudokuSolver private (context: ActorContext[SudokuSolver.Command],
                             buffer: StashBuffer[SudokuSolver.Command],
-                            ledStripDriver: ActorRef[LedStripDriver.Command]) {
+                            ledController: LedController) {
   import CellMappings._
   import SudokuSolver._
 
@@ -78,8 +78,8 @@ class SudokuSolver private (context: ActorContext[SudokuSolver.Command],
           rowDetailProcessors(row) ! SudokuDetailProcessor.Update(cellUpdates, detailProcessorResponseMapper)
       }
       progressTracker ! SudokuProgressTracker.NewUpdatesInFlight(rowUpdates.size)
-      ledStripDriver ! LedStripDriver.SetLedState(9, Neopixel.Green, None)
-      ledStripDriver ! LedStripDriver.FlashLed("MessageRcvd", 8, Neopixel.Green, 15.millis, None)
+      ledController.setLedState(9, Neopixel.Green, None)
+      ledController.flashLed("MessageRcvd", 8, Neopixel.Green, 15.millis, None)
       processRequest(Some(sender), System.currentTimeMillis())
 
   }
@@ -137,15 +137,15 @@ class SudokuSolver private (context: ActorContext[SudokuSolver.Command],
         context.log.info(s"Sudoku processing time: ${System.currentTimeMillis() - startTime} milliseconds")
         requestor.get ! SudokuSolution(sudoku)
         resetAllDetailProcessors()
-        ledStripDriver ! LedStripDriver.SetLedState(9, Neopixel.Black, None)
+        ledController.setLedState(9, Neopixel.Black, None)
         buffer.unstashAll(idle())
     }
     case msg: InitialRowUpdates if buffer.isFull =>
       context.log.info(s"DROPPING REQUEST")
-      ledStripDriver ! LedStripDriver.FlashLed("MessageRcvd", 8, Neopixel.Red, 15.millis, None)
+      ledController.flashLed("MessageRcvd", 8, Neopixel.Red, 15.millis, None)
       Behaviors.same
     case msg: InitialRowUpdates =>
-      ledStripDriver ! LedStripDriver.FlashLed("MessageRcvd", 8, Neopixel.Blue, 15.millis, None)
+      ledController.flashLed("MessageRcvd", 8, Neopixel.Blue, 15.millis, None)
       buffer.stash(msg)
       Behaviors.same
   }
